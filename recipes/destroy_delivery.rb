@@ -20,8 +20,8 @@ if File.exist?("#{tmp_infra_dir}/delivery.pem")
 
     # Setting the new Chef Server we just created
     with_chef_server "https://#{chef_server_ip}/organizations/#{node['delivery-cluster']['chef-server']['organization']}",
-      :client_name => "delivery",
-      :signing_key_filename => "#{tmp_infra_dir}/delivery.pem"
+      client_name: "delivery",
+      signing_key_filename: "#{tmp_infra_dir}/delivery.pem"
 
     # Destroy Delivery Server
     machine node['delivery-cluster']['delivery']['hostname']  do

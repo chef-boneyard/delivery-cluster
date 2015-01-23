@@ -11,17 +11,17 @@ require 'chef/provisioning/aws_driver'
 
 with_driver 'aws'
 
-with_machine_options ({
-    :bootstrap_options => {
-      :instance_type      => node['delivery-cluster']['aws']['flavor'],
-      :key_name           => node['delivery-cluster']['aws']['key_name'],
-      :security_group_ids => node['delivery-cluster']['aws']['security_group_ids']
-    },
-    :ssh_username => node['delivery-cluster']['aws']['ssh_username'],
-    :image_id     => node['delivery-cluster']['aws']['image_id']
-  })
+with_machine_options(
+  bootstrap_options: {
+    instance_type: node['delivery-cluster']['aws']['flavor'],
+    key_name: node['delivery-cluster']['aws']['key_name'],
+    security_group_ids: node['delivery-cluster']['aws']['security_group_ids']
+  },
+  ssh_username: node['delivery-cluster']['aws']['ssh_username'],
+  image_id:     node['delivery-cluster']['aws']['image_id']
+)
 
-add_machine_options bootstrap_options: { :subnet_id => node['delivery-cluster']['aws']['subnet_id'] } if node['delivery-cluster']['aws']['subnet_id']
+add_machine_options bootstrap_options: { subnet_id: node['delivery-cluster']['aws']['subnet_id'] } if node['delivery-cluster']['aws']['subnet_id']
 add_machine_options use_private_ip_for_ssh: node['delivery-cluster']['aws']['use_private_ip_for_ssh'] if node['delivery-cluster']['aws']['use_private_ip_for_ssh']
 
 # Pre-requisits
@@ -90,8 +90,8 @@ new_chef_server_url = "https://#{chef_server_ip}/organizations/#{node['delivery-
 
 # Setting the new Chef Server we just created
 with_chef_server new_chef_server_url,
-  :client_name => "delivery",
-  :signing_key_filename => "#{tmp_infra_dir}/delivery.pem"
+  client_name: "delivery",
+  signing_key_filename: "#{tmp_infra_dir}/delivery.pem"
 
 Chef::Config.node_name        = 'delivery'
 Chef::Config.client_key       = "#{tmp_infra_dir}/delivery.pem"
@@ -103,11 +103,11 @@ chef_data_bag "keys" do
 end
 
 chef_data_bag_item "keys/delivery_builder_keys" do
-  raw_data ({
-      'id' => "delivery_builder_keys",
-      'builder_key' => File.read("#{tmp_infra_dir}/builder_key.pub"),
-      'delivery_pem' => File.read("#{tmp_infra_dir}/delivery.pem")
-    })
+  raw_data(
+    'id' => "delivery_builder_keys",
+    'builder_key' => File.read("#{tmp_infra_dir}/builder_key.pub"),
+    'delivery_pem' => File.read("#{tmp_infra_dir}/delivery.pem")
+  )
   secret_path "#{tmp_infra_dir}/encrypted_data_bag_secret"
   encryption_version 1
   encrypt true
@@ -213,11 +213,11 @@ chef_data_bag "delivery" do
   action :create # see actions section below
 end
 chef_data_bag_item "delivery/#{deliv_version}" do
-  raw_data ({
+  raw_data(
     "id"       => deliv_version,
     "version"  => deliv_version,
     "platforms" => delivery_artifact
-  })
+  )
   action :create
 end
 
@@ -228,10 +228,12 @@ chef_role node['delivery-cluster']['builders']['role'] do
 end
 
 delivery_attributes = {
-  'applications' => { 'delivery' => deliv_version },
-  'delivery'     => {
+  'applications' => {
+    'delivery' => deliv_version
+  },
+  'delivery' => {
     'chef_server' => new_chef_server_url,
-    'fqdn' => deliv_ip
+    'fqdn'        => deliv_ip
   }
 }
 
@@ -243,11 +245,11 @@ machine node['delivery-cluster']['delivery']['hostname'] do
   # chef_environment environment
   recipe "delivery-server"
   converge true
-  files ({
+  files(
     '/etc/delivery/delivery.pem' => "#{tmp_infra_dir}/delivery.pem",
     '/etc/delivery/builder_key' => "#{tmp_infra_dir}/builder_key",
     '/etc/delivery/builder_key.pub' => "#{tmp_infra_dir}/builder_key.pub"
-  })
+  )
   attributes delivery_attributes
   action :converge
 end
