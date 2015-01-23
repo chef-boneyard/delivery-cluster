@@ -7,6 +7,7 @@
 # All rights reserved - Do Not Redistribute
 #
 
+require 'openssl'
 require 'chef/provisioning/aws_driver'
 
 with_driver 'aws'
