@@ -1,0 +1,12 @@
+name             'delivery_cluster'
+maintainer       'Chef Delivery Team'
+maintainer_email 'delivery-team@chef.io'
+license          'Apache 2.0'
+description      'Installs/Configures the components of Hosted Chef Delivery'
+long_description 'Installs/Configures the components of Hosted Chef Delivery'
+version          '0.1.0'
+
+depends 'chef-server-12'
+depends 'delivery_builder'
+depends 'delivery-server'
+depends 'push-jobs'
