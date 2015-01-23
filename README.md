@@ -1,4 +1,4 @@
-delivery_cluster cookbook
+delivery-cluster cookbook
 ===========
 
 This cookbook setup a full delivery environment.
@@ -42,23 +42,23 @@ This need to have the following ports open:
 Chef Server Settings
 ----------
 You can configure the chef-server with the following attributes:
-1) `['delivery_cluster']['chef_server']['hostname']`     - Hostname of your Chef Server.
-2) `['delivery_cluster']['chef_server']['organization']` - The organization name we will create for the Delivery Environment.
-3) `['delivery_cluster']['chef_server']['flavor']`       - Flavor of the Chef Server.
+1) `['delivery-cluster']['chef_server']['hostname']`     - Hostname of your Chef Server.
+2) `['delivery-cluster']['chef_server']['organization']` - The organization name we will create for the Delivery Environment.
+3) `['delivery-cluster']['chef_server']['flavor']`       - Flavor of the Chef Server.
 
 Delivery Server Settings
 ----------
 You can configure the delivery-server with the following attributes:
-1) `['delivery_cluster']['delivery']['version']`    - Delivery Version. See `attributes/default.rb`
-2) `['delivery_cluster']['delivery']['hostname']`   - Hostname of your Delivery Server.
-3) `['delivery_cluster']['delivery']['enterprise']` - A Delivery Enterprise that it will create.
-4) `['delivery_cluster']['delivery']['flavor']`     - Flavor of the Chef Server.
+1) `['delivery-cluster']['delivery']['version']`    - Delivery Version. See `attributes/default.rb`
+2) `['delivery-cluster']['delivery']['hostname']`   - Hostname of your Delivery Server.
+3) `['delivery-cluster']['delivery']['enterprise']` - A Delivery Enterprise that it will create.
+4) `['delivery-cluster']['delivery']['flavor']`     - Flavor of the Chef Server.
 
 Delivery Build Nodes Settings
 ----------
-2) `['delivery_cluster']['build_nodes']['hostname']` - Hostname (prefix) of your Delivery Build Nodes.
-3) `['delivery_cluster']['build_nodes']['role']`     - Name of the Delivery Build Nodes Role.
-3) `['delivery_cluster']['build_nodes']['N']`        - Number of Build Nodes to create. 
+2) `['delivery-cluster']['build_nodes']['hostname']` - Hostname (prefix) of your Delivery Build Nodes.
+3) `['delivery-cluster']['build_nodes']['role']`     - Name of the Delivery Build Nodes Role.
+3) `['delivery-cluster']['build_nodes']['N']`        - Number of Build Nodes to create.
 
 Supported Platforms
 ----------------

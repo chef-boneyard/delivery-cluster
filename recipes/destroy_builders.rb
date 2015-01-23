@@ -6,18 +6,18 @@ with_driver 'aws'
 if File.exist?("#{tmp_infra_dir}/delivery.pem")
   begin
     # Only if there is an active chef server
-    chef_node = Chef::Node.load(node['delivery_cluster']['chef_server']['hostname'] )
+    chef_node = Chef::Node.load(node['delivery-cluster']['chef_server']['hostname'] )
     chef_server_ip = chef_node['ec2']['public_ipv4']
 
     # Setting the new Chef Server we just created
-    with_chef_server "https://#{chef_server_ip}/organizations/#{node['delivery_cluster']['chef_server']['organization']}",
+    with_chef_server "https://#{chef_server_ip}/organizations/#{node['delivery-cluster']['chef_server']['organization']}",
       :client_name => "delivery",
       :signing_key_filename => "#{tmp_infra_dir}/delivery.pem"
 
     # Destroy Build Nodes
     machine_batch "Destroying Build Nodes" do
-      1.upto(node['delivery_cluster']['build_nodes']['N']) do |i|
-        machine "#{node['delivery_cluster']['build_nodes']['hostname']}-#{i}"
+      1.upto(node['delivery-cluster']['build_nodes']['N']) do |i|
+        machine "#{node['delivery-cluster']['build_nodes']['hostname']}-#{i}"
       end
       action :destroy
     end

@@ -20,6 +20,6 @@ end
 
 # => Enterprise Creds
 execute "Deleting Validator & Delivery User Keys" do
-  command "rm -rf #{tmp_infra_dir}/#{node['delivery_cluster']['delivery']['enterprise']}.creds"
+  command "rm -rf #{tmp_infra_dir}/#{node['delivery-cluster']['delivery']['enterprise']}.creds"
   action :run
 end

@@ -1,4 +1,4 @@
-name             'delivery_cluster'
+name             'delivery-cluster'
 maintainer       'Chef Delivery Team'
 maintainer_email 'delivery-team@chef.io'
 license          'Apache 2.0'

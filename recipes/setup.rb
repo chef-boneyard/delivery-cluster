@@ -32,22 +32,22 @@ end
 
 # First thing we do is create the chef-server EMPTY so
 # we can get the PublicIP that we will use in constantly
-machine node['delivery_cluster']['chef_server']['hostname'] do
-  add_machine_options bootstrap_options: { instance_type: node['delivery_cluster']['chef_server']['flavor'] } if node['delivery_cluster']['chef_server']['flavor']
+machine node['delivery-cluster']['chef_server']['hostname'] do
+  add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['chef_server']['flavor'] } if node['delivery-cluster']['chef_server']['flavor']
   action :nothing
 end.run_action(:converge)
 
 # Kinda feeling this could be an API
 # We extract the ip and then install chef-server using the PublicIP
-chef_node = Chef::Node.load(node['delivery_cluster']['chef_server']['hostname'])
+chef_node = Chef::Node.load(node['delivery-cluster']['chef_server']['hostname'])
 chef_server_ip = chef_node['ec2']['public_ipv4']
 Chef::Log.info("Your Chef Server Public IP is => #{chef_server_ip}")
 
 # Installing Chef Server
-machine node['delivery_cluster']['chef_server']['hostname'] do
+machine node['delivery-cluster']['chef_server']['hostname'] do
   recipe "chef-server-12"
   attributes 'chef-server-12' => {
-    'delivery' => { 'organization' => node['delivery_cluster']['chef_server']['organization'] },
+    'delivery' => { 'organization' => node['delivery-cluster']['chef_server']['organization'] },
     'api_fqdn' => chef_server_ip,
     'store_keys_databag' => false
   }
@@ -56,25 +56,25 @@ end.run_action(:converge)
 
 # Getting the keys from chef-server
 machine_file "/tmp/validator.pem" do
-  machine node['delivery_cluster']['chef_server']['hostname']
+  machine node['delivery-cluster']['chef_server']['hostname']
   local_path "#{tmp_infra_dir}/validator.pem"
   action :nothing
 end.run_action(:download)
 
 machine_file "/tmp/delivery.pem" do
-  machine node['delivery_cluster']['chef_server']['hostname']
+  machine node['delivery-cluster']['chef_server']['hostname']
   local_path "#{tmp_infra_dir}/delivery.pem"
   action :nothing
 end.run_action(:download)
 
 machine_file "/var/opt/opscode/nginx/ca/#{chef_server_ip}.crt" do
-  machine node['delivery_cluster']['chef_server']['hostname']
+  machine node['delivery-cluster']['chef_server']['hostname']
   local_path "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt"
   action :nothing
 end.run_action(:download)
 
 # Shortcut
-new_chef_server_url = "https://#{chef_server_ip}/organizations/#{node['delivery_cluster']['chef_server']['organization']}"
+new_chef_server_url = "https://#{chef_server_ip}/organizations/#{node['delivery-cluster']['chef_server']['organization']}"
 
 # Setting the new Chef Server we just created
 with_chef_server new_chef_server_url,
@@ -138,20 +138,20 @@ end
 # therefore this batch machines.
 machine_batch "Provisioning Delivery Infrastructure" do
   # Creating Delivery Server
-  machine node['delivery_cluster']['delivery']['hostname'] do
-    add_machine_options bootstrap_options: { instance_type: node['delivery_cluster']['delivery']['flavor']  } if node['delivery_cluster']['delivery']['flavor']
+  machine node['delivery-cluster']['delivery']['hostname'] do
+    add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['delivery']['flavor']  } if node['delivery-cluster']['delivery']['flavor']
   end
   # Creating Build Nodes
-  1.upto(node['delivery_cluster']['build_nodes']['N']) do |i|
-    machine "#{node['delivery_cluster']['build_nodes']['hostname']}-#{i}" do
-      add_machine_options bootstrap_options: { instance_type: node['delivery_cluster']['build_nodes']['flavor']  } if node['delivery_cluster']['build_nodes']['flavor']
+  1.upto(node['delivery-cluster']['build_nodes']['N']) do |i|
+    machine "#{node['delivery-cluster']['build_nodes']['hostname']}-#{i}" do
+      add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['build_nodes']['flavor']  } if node['delivery-cluster']['build_nodes']['flavor']
     end
   end
   action :nothing
 end.run_action(:converge)
 
 # Now it is time to get the PublicIP and use it to install Delivery
-deliv_node = Chef::Node.load(node['delivery_cluster']['delivery']['hostname'])
+deliv_node = Chef::Node.load(node['delivery-cluster']['delivery']['hostname'])
 deliv_ip   = deliv_node['ec2']['public_ipv4']
 Chef::Log.info("Your Delivery Server Public IP is => #{deliv_ip}")
 
@@ -165,25 +165,25 @@ Chef::Log.info("Your Delivery Server Public IP is => #{deliv_ip}")
 # Get specific artifact:
 # => artifact = get_delivery_artifact('0.2.21', 'ubuntu', '12.04', '/var/tmp')
 #
-if node['delivery_cluster']['delivery'][deliv_node['platform_family']] && node['delivery_cluster']['delivery']['version'] != 'latest'
+if node['delivery-cluster']['delivery'][deliv_node['platform_family']] && node['delivery-cluster']['delivery']['version'] != 'latest'
   # We use the provided artifact
-  deliv_version = node['delivery_cluster']['delivery']['version']
+  deliv_version = node['delivery-cluster']['delivery']['version']
 
   delivery_artifact = {
     deliv_node['platform_family'] => {
-      "artifact" => node['delivery_cluster']['delivery'][deliv_node['platform_family']]['artifact'],
-      "checksum" => node['delivery_cluster']['delivery'][deliv_node['platform_family']]['checksum']
+      "artifact" => node['delivery-cluster']['delivery'][deliv_node['platform_family']]['artifact'],
+      "checksum" => node['delivery-cluster']['delivery'][deliv_node['platform_family']]['checksum']
     }
   }
 else
   # We will get it from artifactory
-  artifact = get_delivery_artifact(node['delivery_cluster']['delivery']['version'], deliv_node['platform'], deliv_node['platform_version'], tmp_infra_dir)
+  artifact = get_delivery_artifact(node['delivery-cluster']['delivery']['version'], deliv_node['platform'], deliv_node['platform_version'], tmp_infra_dir)
 
   deliv_version = artifact['version']
 
   # Upload Artifact to Delivery Server
   machine_file "/var/tmp/#{artifact['name']}" do
-    machine node['delivery_cluster']['delivery']['hostname']
+    machine node['delivery-cluster']['delivery']['hostname']
     local_path  artifact['local_path']
     action :upload
   end
@@ -210,13 +210,13 @@ chef_data_bag_item "delivery/#{deliv_version}" do
 end
 
 # Creating Delivery Builder Role
-chef_role node['delivery_cluster']['build_nodes']['role'] do
+chef_role node['delivery-cluster']['build_nodes']['role'] do
   description "Base Role for the Delivery Build Nodes"
   run_list ["recipe[push-jobs]","recipe[delivery_builder]"]
 end
 
 # Install Delivery
-machine node['delivery_cluster']['delivery']['hostname'] do
+machine node['delivery-cluster']['delivery']['hostname'] do
   # chef_environment environment
   recipe "delivery-server"
   converge true
@@ -236,24 +236,24 @@ end
 # Creating Your Enterprise
 machine_execute "Creating Enterprise" do
   command <<-EOM.gsub(/\s+/, " ").strip!
-    delivery-ctl list-enterprises | grep -w ^#{node['delivery_cluster']['delivery']['enterprise']};
-    [ $? -ne 0 ] && delivery-ctl create-enterprise #{node['delivery_cluster']['delivery']['enterprise']} > /tmp/#{node['delivery_cluster']['delivery']['enterprise']}.creds || echo 1
+    delivery-ctl list-enterprises | grep -w ^#{node['delivery-cluster']['delivery']['enterprise']};
+    [ $? -ne 0 ] && delivery-ctl create-enterprise #{node['delivery-cluster']['delivery']['enterprise']} > /tmp/#{node['delivery-cluster']['delivery']['enterprise']}.creds || echo 1
   EOM
-  machine node['delivery_cluster']['delivery']['hostname']
+  machine node['delivery-cluster']['delivery']['hostname']
 end
 
 # Downloading Creds
-machine_file "/tmp/#{node['delivery_cluster']['delivery']['enterprise']}.creds" do
-  machine node['delivery_cluster']['delivery']['hostname']
-  local_path "#{tmp_infra_dir}/#{node['delivery_cluster']['delivery']['enterprise']}.creds"
+machine_file "/tmp/#{node['delivery-cluster']['delivery']['enterprise']}.creds" do
+  machine node['delivery-cluster']['delivery']['hostname']
+  local_path "#{tmp_infra_dir}/#{node['delivery-cluster']['delivery']['enterprise']}.creds"
   action :download
 end
 
 # Preparing Build Nodes with the right run_list
-machine_batch "#{node['delivery_cluster']['build_nodes']['N']}-build-nodes" do
-  1.upto(node['delivery_cluster']['build_nodes']['N']) do |i|
-    machine "#{node['delivery_cluster']['build_nodes']['hostname']}-#{i}" do
-      role node['delivery_cluster']['build_nodes']['role']
+machine_batch "#{node['delivery-cluster']['build_nodes']['N']}-build-nodes" do
+  1.upto(node['delivery-cluster']['build_nodes']['N']) do |i|
+    machine "#{node['delivery-cluster']['build_nodes']['hostname']}-#{i}" do
+      role node['delivery-cluster']['build_nodes']['role']
       add_machine_options convergence_options: { :chef_config_text => "encrypted_data_bag_secret File.join(File.dirname(__FILE__), 'encrypted_data_bag_secret')" }
       files '/etc/chef/encrypted_data_bag_secret' => "#{tmp_infra_dir}/encrypted_data_bag_secret"
       action :converge
@@ -264,6 +264,6 @@ end
 # Might be cool to print the enterprise admin user at the end
 ruby_block "Delayed Print" do
   block do
-    system "cat #{tmp_infra_dir}/#{node['delivery_cluster']['delivery']['enterprise']}.creds"
+    system "cat #{tmp_infra_dir}/#{node['delivery-cluster']['delivery']['enterprise']}.creds"
   end
 end
