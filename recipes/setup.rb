@@ -51,8 +51,8 @@ end.run_action(:converge)
 
 # Kinda feeling this could be an API
 # We extract the ip and then install chef-server using the PublicIP
-chef_node = Chef::Node.load(node['delivery-cluster']['chef-server']['hostname'])
-chef_server_ip = chef_node['ec2']['public_ipv4']
+chef_node      = Chef::Node.load(node['delivery-cluster']['chef-server']['hostname'])
+chef_server_ip = get_aws_ip(chef_node)
 Chef::Log.info("Your Chef Server Public IP is => #{chef_server_ip}")
 
 # Installing Chef Server
@@ -164,7 +164,7 @@ end.run_action(:converge)
 
 # Now it is time to get the PublicIP and use it to install Delivery
 deliv_node = Chef::Node.load(node['delivery-cluster']['delivery']['hostname'])
-deliv_ip   = deliv_node['ec2']['public_ipv4']
+deliv_ip   = get_aws_ip(deliv_node)
 Chef::Log.info("Your Delivery Server Public IP is => #{deliv_ip}")
 
 # If we don't have the artifact, we will get it from artifactory

@@ -21,6 +21,14 @@ module DeliveryCluster
       @dot_chef_dir ||= File.join(current_dir, '.chef')
     end
 
+    def get_aws_ip(n)
+      if node['delivery_cluster']['aws']['use_private_ip_for_ssh']
+        n['ec2']['local_ipv4']
+      else
+        n['ec2']['public_ipv4']
+      end
+    end
+
     # delivery-ctl needs to be executed with elevated privileges
     def delivery_ctl
       if node['delivery-cluster']['aws']['ssh_username'] == 'root'
