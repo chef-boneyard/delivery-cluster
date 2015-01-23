@@ -21,6 +21,9 @@ with_machine_options ({
     :image_id     => node['delivery-cluster']['aws']['image_id']
   })
 
+add_machine_options bootstrap_options: { :subnet_id => node['delivery-cluster']['aws']['subnet_id'] } if node['delivery-cluster']['aws']['subnet_id']
+add_machine_options use_private_ip_for_ssh: node['delivery-cluster']['aws']['use_private_ip_for_ssh'] if node['delivery-cluster']['aws']['use_private_ip_for_ssh']
+
 # Pre-requisits
 # => Builder Keys
 execute "Creating Builder Keys" do

@@ -16,11 +16,12 @@
 # => region = us-east-1
 # => aws_access_key_id = YOUR_ACCESS_KEY_ID
 # => aws_secret_access_key = YOUR_SECRET_KEY
-default['delivery-cluster']['aws']['key_name']            = 'afiune'
-default['delivery-cluster']['aws']['ssh_username']        = 'ubuntu' # CentOS 'root'
-default['delivery-cluster']['aws']['security_group_ids']  = 'sg-4bf8322f'
-default['delivery-cluster']['aws']['image_id']            = 'ami-9eaa1cf6' # CentOS 'ami-3ce05354'
-default['delivery-cluster']['aws']['flavor']              = 't2.micro'
+default['delivery-cluster']['aws']['key_name']                = ENV['USER']
+default['delivery-cluster']['aws']['ssh_username']            = nil
+default['delivery-cluster']['aws']['security_group_ids']      = nil
+default['delivery-cluster']['aws']['image_id']                = nil
+default['delivery_cluster']['aws']['subnet_id']               = nil
+default['delivery-cluster']['aws']['use_private_ip_for_ssh']  = false
 
 # => The Cluste Name which will be use to define all the server names
 default['delivery-cluster']['id'] = 'test'
