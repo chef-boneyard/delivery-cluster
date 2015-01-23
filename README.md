@@ -56,9 +56,9 @@ You can configure the delivery-server with the following attributes:
 
 Delivery Build Nodes Settings
 ----------
-2) `['delivery-cluster']['build_nodes']['hostname']` - Hostname (prefix) of your Delivery Build Nodes.
-3) `['delivery-cluster']['build_nodes']['role']`     - Name of the Delivery Build Nodes Role.
-3) `['delivery-cluster']['build_nodes']['N']`        - Number of Build Nodes to create.
+1) `['delivery-cluster']['builders']['hostname_prefix']` - Hostname (prefix) of your Delivery Build Nodes.
+2) `['delivery-cluster']['builders']['role']`            - Name of the Delivery Build Nodes Role.
+3) `['delivery-cluster']['builders']['N']`               - Number of Build Nodes to create.
 
 Supported Platforms
 ----------------

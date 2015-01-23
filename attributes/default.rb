@@ -14,11 +14,11 @@ default['delivery-cluster']['aws']['image_id']            = 'ami-9eaa1cf6' # Cen
 default['delivery-cluster']['aws']['flavor']              = 't2.micro'
 
 # => The Cluste Name which will be use to define all the server names
-cluster_id = 'test'
+default['delivery-cluster']['id'] = 'test'
 
 # Specific attributes
 # => Delivery Server
-default['delivery-cluster']['delivery']['hostname']    = "delivery-server-#{cluster_id}"
+default['delivery-cluster']['delivery']['hostname']    = "delivery-server-#{node['delivery-cluster']['id']}"
 default['delivery-cluster']['delivery']['flavor']      = 't2.medium'
 default['delivery-cluster']['delivery']['enterprise']  = 'my_enterprise'
 
@@ -44,13 +44,12 @@ default['delivery-cluster']['delivery']['enterprise']  = 'my_enterprise'
 default['delivery-cluster']['delivery']['version'] = 'latest'
 
 # => Chef Server
-default['delivery-cluster']['chef-server']['hostname']     = "chef-server-#{cluster_id}"
+default['delivery-cluster']['chef-server']['hostname']     = "chef-server-#{node['delivery-cluster']['id']}"
 default['delivery-cluster']['chef-server']['organization'] = 'my_enterprise'
 default['delivery-cluster']['chef-server']['flavor']       = 't2.small'
 
 # => Build Nodes
-default['delivery-cluster']['build_nodes']['hostname'] = "build-node-#{cluster_id}"
-default['delivery-cluster']['build_nodes']['role']     = 'delivery_builders'
-default['delivery-cluster']['build_nodes']['N']        = 3
-# default['delivery-cluster']['build_nodes']['flavor']   = 't2.small'
-
+default['delivery-cluster']['builders']['hostname_prefix'] = "build-node-#{node['delivery-cluster']['id']}"
+default['delivery-cluster']['builders']['role']            = 'delivery_builders'
+default['delivery-cluster']['builders']['count']           = 3
+default['delivery-cluster']['builders']['flavor']          = 't2.small'

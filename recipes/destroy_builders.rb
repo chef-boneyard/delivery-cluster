@@ -16,8 +16,8 @@ if File.exist?("#{tmp_infra_dir}/delivery.pem")
 
     # Destroy Build Nodes
     machine_batch "Destroying Build Nodes" do
-      1.upto(node['delivery-cluster']['build_nodes']['N']) do |i|
-        machine "#{node['delivery-cluster']['build_nodes']['hostname']}-#{i}"
+      1.upto(node['delivery-cluster']['builders']['count']) do |i|
+        machine "#{node['delivery-cluster']['builders']['hostname_prefix']}-#{i}"
       end
       action :destroy
     end

@@ -142,9 +142,9 @@ machine_batch "Provisioning Delivery Infrastructure" do
     add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['delivery']['flavor']  } if node['delivery-cluster']['delivery']['flavor']
   end
   # Creating Build Nodes
-  1.upto(node['delivery-cluster']['build_nodes']['N']) do |i|
-    machine "#{node['delivery-cluster']['build_nodes']['hostname']}-#{i}" do
-      add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['build_nodes']['flavor']  } if node['delivery-cluster']['build_nodes']['flavor']
+  1.upto(node['delivery-cluster']['builders']['N']) do |i|
+    machine "#{node['delivery-cluster']['builders']['hostname']}-#{i}" do
+      add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['builders']['flavor']  } if node['delivery-cluster']['builders']['flavor']
     end
   end
   action :nothing
@@ -210,7 +210,7 @@ chef_data_bag_item "delivery/#{deliv_version}" do
 end
 
 # Creating Delivery Builder Role
-chef_role node['delivery-cluster']['build_nodes']['role'] do
+chef_role node['delivery-cluster']['builders']['role'] do
   description "Base Role for the Delivery Build Nodes"
   run_list ["recipe[push-jobs]","recipe[delivery_builder]"]
 end
@@ -250,10 +250,10 @@ machine_file "/tmp/#{node['delivery-cluster']['delivery']['enterprise']}.creds" 
 end
 
 # Preparing Build Nodes with the right run_list
-machine_batch "#{node['delivery-cluster']['build_nodes']['N']}-build-nodes" do
-  1.upto(node['delivery-cluster']['build_nodes']['N']) do |i|
-    machine "#{node['delivery-cluster']['build_nodes']['hostname']}-#{i}" do
-      role node['delivery-cluster']['build_nodes']['role']
+machine_batch "#{node['delivery-cluster']['builders']['count']}-build-nodes" do
+  1.upto(node['delivery-cluster']['builders']['count']) do |i|
+    machine "#{node['delivery-cluster']['builders']['hostname_prefix']}-#{i}" do
+      role node['delivery-cluster']['builders']['role']
       add_machine_options convergence_options: { :chef_config_text => "encrypted_data_bag_secret File.join(File.dirname(__FILE__), 'encrypted_data_bag_secret')" }
       files '/etc/chef/encrypted_data_bag_secret' => "#{tmp_infra_dir}/encrypted_data_bag_secret"
       action :converge
