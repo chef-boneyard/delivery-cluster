@@ -15,9 +15,6 @@ and perform the initial configuration of Delivery Server.
 REQUIREMENTS
 ------------
 
-### ChefDK
-Ensure the latest version of ChefDK is installed on the provisioning machine.
-
 ### AWS Config
 You MUST configure your `~/.aws/config` file like this:
 ```
@@ -73,18 +70,57 @@ So please don't use another AMI type.
 PROVISION
 =========
 
+#### Install your deps
+
+```
+$ bundle install
+```
+
 #### Assemble your cookbooks
 
 ```
-berks vendor cookbooks
+$ bundle exec berks vendor cookbooks
+```
+
+#### Create a basic environment
+
+```
+$ cat environments/test.json
+{
+  "name": "test",
+  "description": "",
+  "json_class": "Chef::Environment",
+  "chef_type": "environment",
+  "override_attributes": {
+    "delivery-cluster": {
+      "aws": {
+        "key_name": "delivery-test",
+        "ssh_username": "ubuntu",
+        "image_id": "ami-3d50120d",
+        "security_group_ids": "sg-cbacf8ae",
+        "use_private_ip_for_ssh": true
+      },
+      "delivery": {
+        "flavor":"c3.xlarge"
+      },
+      "chef-server": {
+        "flavor":"c3.xlarge"
+      },
+      "builders": {
+        "flavor": "c3.large"
+      }
+    }
+  }
+}
 ```
 
 #### Run chef-client on the local system (provisioning node)
 
 ```
-chef-client -z -o delivery-cluster::setup
+$ bundle exec chef-client -z -o delivery-cluster::setup -E test
 ```
 
 LICENSE AND AUTHORS
 ===================
-Author:: Salim Afiune (<afiune@chef.io>)
+- Author: Salim Afiune (<afiune@chef.io>)
+- Author: Seth Chisamore (<schisamo@chef.io>)
