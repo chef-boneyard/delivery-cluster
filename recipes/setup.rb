@@ -227,6 +227,17 @@ chef_role node['delivery-cluster']['builders']['role'] do
   run_list ["recipe[push-jobs]","recipe[delivery_builder]"]
 end
 
+delivery_attributes = {
+  'applications' => { 'delivery' => deliv_version },
+  'delivery'     => {
+    'chef_server' => new_chef_server_url,
+    'fqdn' => deliv_ip
+  }
+}
+
+# Add LDAP config if it exist
+delivery_attributes['delivery']['ldap'] = node['delivery_cluster']['delivery']['ldap'] unless node['delivery_cluster']['delivery']['ldap'].empty?
+
 # Install Delivery
 machine node['delivery-cluster']['delivery']['hostname'] do
   # chef_environment environment
@@ -237,11 +248,7 @@ machine node['delivery-cluster']['delivery']['hostname'] do
     '/etc/delivery/builder_key' => "#{tmp_infra_dir}/builder_key",
     '/etc/delivery/builder_key.pub' => "#{tmp_infra_dir}/builder_key.pub"
   })
-  attributes  'applications' => { 'delivery' => deliv_version },
-              'delivery'     => {
-                'chef-server' => new_chef_server_url,
-                'fqdn' => deliv_ip
-              }
+  attributes delivery_attributes
   action :converge
 end
 

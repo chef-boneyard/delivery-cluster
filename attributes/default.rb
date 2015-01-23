@@ -32,6 +32,20 @@ default['delivery-cluster']['delivery']['hostname']    = "delivery-server-#{node
 default['delivery-cluster']['delivery']['flavor']      = 't2.medium'
 default['delivery-cluster']['delivery']['enterprise']  = 'my_enterprise'
 
+# => LDAP config
+# => Available Attributes
+# => ldap_hosts
+# => ldap_port
+# => ldap_timeout
+# => ldap_base_dn
+# => ldap_bind_dn
+# => ldap_bind_dn_password
+# => ldap_encryption
+# => ldap_attr_login
+# => ldap_attr_mail
+# => ldap_attr_full_name
+default['delivery-cluster']['delivery']['ldap']        = {}
+
 # Delivery Artifacts
 #
 # There are three ways you can specify the Delivery Artifact
