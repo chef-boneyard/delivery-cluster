@@ -1,3 +1,11 @@
+#
+# Cookbook Name:: delivery-cluster
+# Recipe:: _helper
+#
+# Copyright 2015, Chef Software, Inc.
+#
+# All rights reserved - Do Not Redistribute
+#
 
 module DeliveryCluster
   module Helper

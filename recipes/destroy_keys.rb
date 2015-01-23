@@ -1,3 +1,11 @@
+#
+# Cookbook Name:: delivery-cluster
+# Recipe:: destroy_keys
+#
+# Copyright 2015, Chef Software, Inc.
+#
+# All rights reserved - Do Not Redistribute
+#
 
 # Cleaning Keys
 # => Builder Keys

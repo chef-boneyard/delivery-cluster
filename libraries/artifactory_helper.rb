@@ -1,3 +1,12 @@
+#
+# Cookbook Name:: delivery-cluster
+# Recipe:: artifactory_helper
+#
+# Copyright 2015, Chef Software, Inc.
+#
+# All rights reserved - Do Not Redistribute
+#
+
 # Artifact Helper
 #
 # Get the latest artifact:

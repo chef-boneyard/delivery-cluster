@@ -1,4 +1,13 @@
 #
+# Cookbook Name:: delivery-cluster
+# Attributes:: default
+#
+# Copyright 2015, Chef Software, Inc.
+#
+# All rights reserved - Do Not Redistribute
+#
+
+#
 # General AWS Attributes
 #
 # In addition to this set of attributes you MUST have a ~/.aws/config file like this:
