@@ -1,2 +1,6 @@
 .kitchen/
+cookbooks/
+environments/
+nodes/
 vendor/
+.chef/local-mode-cache
