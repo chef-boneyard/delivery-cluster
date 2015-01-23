@@ -9,6 +9,6 @@ describe "delivery-server::default" do
     )
     runner.converge('recipe[delivery-server::default]')
   end
-  
+
   # TODO: Write some tests
 end

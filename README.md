@@ -1,7 +1,7 @@
 delivery_cluster cookbook
 ===========
 
-This cookbook setup a full delivery environment. 
+This cookbook setup a full delivery environment.
 
 That includes:
 
@@ -23,7 +23,7 @@ $ vi ~/.aws/config
 [default]
 region = us-east-1
 aws_access_key_id = YOUR_ACCESS_KEY_ID
-aws_secret_access_key = YOUR_SECRET_KEY 
+aws_secret_access_key = YOUR_SECRET_KEY
 ```
 
 You also need to modify on the attribute section the following ones:
@@ -31,7 +31,7 @@ You also need to modify on the attribute section the following ones:
 2) `['aws']['ssh_username']`        - SSH username to use to connect to machines.
 4) `['aws']['image_id']`            - AWS AMI.
 5) `['aws']['flavor']`              - Size/flavor of your machine.
-3) `['aws']['security_group_ids']`  - Security Group on AWS. 
+3) `['aws']['security_group_ids']`  - Security Group on AWS.
 This need to have the following ports open:
 * 10000 - 10003
 * 8989
@@ -69,7 +69,7 @@ Delivery Server packages are available for the following platforms:
 * Centos 6.5 64-bit
 * Ubuntu 12.04, 12.04 64-bit
 
-So please don't use another AMI type. 
+So please don't use another AMI type.
 
 LICENSE AND AUTHORS
 ===================

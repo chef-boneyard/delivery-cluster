@@ -6,14 +6,14 @@
 # => [default]
 # => region = us-east-1
 # => aws_access_key_id = YOUR_ACCESS_KEY_ID
-# => aws_secret_access_key = YOUR_SECRET_KEY 
+# => aws_secret_access_key = YOUR_SECRET_KEY
 default['aws']['key_name']            = 'afiune'
 default['aws']['ssh_username']        = 'ubuntu' # CentOS 'root'
-default['aws']['security_group_ids']  = 'sg-4bf8322f' 
+default['aws']['security_group_ids']  = 'sg-4bf8322f'
 default['aws']['image_id']            = 'ami-9eaa1cf6' # CentOS 'ami-3ce05354'
 default['aws']['flavor']              = 't2.micro'
 
-# => The Cluste Name which will be use to define all the server names 
+# => The Cluste Name which will be use to define all the server names
 cluster_id = 'test'
 
 # Specific attributes
@@ -46,11 +46,11 @@ default['delivery_cluster']['delivery']['version'] = 'latest'
 # => Chef Server
 default['delivery_cluster']['chef_server']['hostname']     = "chef-server-#{cluster_id}"
 default['delivery_cluster']['chef_server']['organization'] = 'my_enterprise'
-default['delivery_cluster']['chef_server']['flavor']       = 't2.small' 
+default['delivery_cluster']['chef_server']['flavor']       = 't2.small'
 
 # => Build Nodes
 default['delivery_cluster']['build_nodes']['hostname'] = "build-node-#{cluster_id}"
 default['delivery_cluster']['build_nodes']['role']     = 'delivery_builders'
 default['delivery_cluster']['build_nodes']['N']        = 3
-# default['delivery_cluster']['build_nodes']['flavor']   = 't2.small' 
+# default['delivery_cluster']['build_nodes']['flavor']   = 't2.small'
 

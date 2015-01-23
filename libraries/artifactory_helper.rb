@@ -1,9 +1,9 @@
 # Artifact Helper
 #
-# Get the latest artifact: 
+# Get the latest artifact:
 # => artifact = get_delivery_artifact('latest', 'redhat', '6.5')
 #
-# Get specific artifact: 
+# Get specific artifact:
 # => artifact = get_delivery_artifact('0.2.21', 'ubuntu', '12.04', '/var/tmp')
 #
 # Will Return:
@@ -18,7 +18,7 @@ def get_delivery_artifact(version = 'latest', platform = 'ubuntu', platform_vers
 
 	# Yup! We must validate access to Chef VPN
 	validate_vpn
-	
+
 	chef_gem 'artifactory'
 	require 'artifactory'
 
@@ -64,14 +64,14 @@ end
 
 def supported_platforms_format(platform, platform_version)
   case platform
-  when 'centos', 'redhat' 
+  when 'centos', 'redhat'
     case platform_version.to_s
     when "6", "6.1", "6.2", "6.3", "6.4", "6.5"
       {
         'platform' => 'el',
         'version' => '6'
       }
-    else  
+    else
       Chef::Log.fatal("Unsupported Platform Version: #{platform_version}")
     end
   when 'ubuntu'
@@ -88,7 +88,7 @@ def supported_platforms_format(platform, platform_version)
   end
 end
 
-# TODO: 
+# TODO:
 def validate_vpn
   puts "TODO: Validate VPN"
 end

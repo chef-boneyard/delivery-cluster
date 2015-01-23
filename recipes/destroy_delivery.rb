@@ -5,7 +5,7 @@ with_driver 'aws'
 # Only if we have the credentials to destroy it
 if File.exist?("#{tmp_infra_dir}/delivery.pem")
   begin
-    # Only if there is an active chef server 
+    # Only if there is an active chef server
     chef_node = Chef::Node.load(node['delivery_cluster']['chef_server']['hostname'] )
     chef_server_ip = chef_node['ec2']['public_ipv4']
 
@@ -31,7 +31,7 @@ if File.exist?("#{tmp_infra_dir}/delivery.pem")
       command "rm -rf #{tmp_infra_dir}/#{node['delivery_cluster']['delivery']['enterprise']}.creds"
       action :run
     end
-  rescue Exception => e 
+  rescue Exception => e
     Chef::Log.warn("We can't proceed to destroy the Delivery Server.")
     Chef::Log.warn("We couldn't get the chef-server Public IP: #{e.message}")
   end

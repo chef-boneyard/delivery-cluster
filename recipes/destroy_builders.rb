@@ -21,7 +21,7 @@ if File.exist?("#{tmp_infra_dir}/delivery.pem")
       end
       action :destroy
     end
-  rescue Exception => e 
+  rescue Exception => e
     Chef::Log.warn("We can't proceed to destroy the Build Nodes.")
     Chef::Log.warn("We couldn't get the chef-server Public IP: #{e.message}")
   end
