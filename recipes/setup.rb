@@ -32,22 +32,22 @@ end
 
 # First thing we do is create the chef-server EMPTY so
 # we can get the PublicIP that we will use in constantly
-machine node['delivery-cluster']['chef_server']['hostname'] do
-  add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['chef_server']['flavor'] } if node['delivery-cluster']['chef_server']['flavor']
+machine node['delivery-cluster']['chef-server']['hostname'] do
+  add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['chef-server']['flavor'] } if node['delivery-cluster']['chef-server']['flavor']
   action :nothing
 end.run_action(:converge)
 
 # Kinda feeling this could be an API
 # We extract the ip and then install chef-server using the PublicIP
-chef_node = Chef::Node.load(node['delivery-cluster']['chef_server']['hostname'])
+chef_node = Chef::Node.load(node['delivery-cluster']['chef-server']['hostname'])
 chef_server_ip = chef_node['ec2']['public_ipv4']
 Chef::Log.info("Your Chef Server Public IP is => #{chef_server_ip}")
 
 # Installing Chef Server
-machine node['delivery-cluster']['chef_server']['hostname'] do
+machine node['delivery-cluster']['chef-server']['hostname'] do
   recipe "chef-server-12"
   attributes 'chef-server-12' => {
-    'delivery' => { 'organization' => node['delivery-cluster']['chef_server']['organization'] },
+    'delivery' => { 'organization' => node['delivery-cluster']['chef-server']['organization'] },
     'api_fqdn' => chef_server_ip,
     'store_keys_databag' => false
   }
@@ -56,25 +56,25 @@ end.run_action(:converge)
 
 # Getting the keys from chef-server
 machine_file "/tmp/validator.pem" do
-  machine node['delivery-cluster']['chef_server']['hostname']
+  machine node['delivery-cluster']['chef-server']['hostname']
   local_path "#{tmp_infra_dir}/validator.pem"
   action :nothing
 end.run_action(:download)
 
 machine_file "/tmp/delivery.pem" do
-  machine node['delivery-cluster']['chef_server']['hostname']
+  machine node['delivery-cluster']['chef-server']['hostname']
   local_path "#{tmp_infra_dir}/delivery.pem"
   action :nothing
 end.run_action(:download)
 
 machine_file "/var/opt/opscode/nginx/ca/#{chef_server_ip}.crt" do
-  machine node['delivery-cluster']['chef_server']['hostname']
+  machine node['delivery-cluster']['chef-server']['hostname']
   local_path "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt"
   action :nothing
 end.run_action(:download)
 
 # Shortcut
-new_chef_server_url = "https://#{chef_server_ip}/organizations/#{node['delivery-cluster']['chef_server']['organization']}"
+new_chef_server_url = "https://#{chef_server_ip}/organizations/#{node['delivery-cluster']['chef-server']['organization']}"
 
 # Setting the new Chef Server we just created
 with_chef_server new_chef_server_url,
@@ -227,7 +227,7 @@ machine node['delivery-cluster']['delivery']['hostname'] do
   })
   attributes  'applications' => { 'delivery' => deliv_version },
               'delivery'     => {
-                'chef_server' => new_chef_server_url,
+                'chef-server' => new_chef_server_url,
                 'fqdn' => deliv_ip
               }
   action :converge

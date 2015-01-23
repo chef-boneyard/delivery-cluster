@@ -44,9 +44,9 @@ default['delivery-cluster']['delivery']['enterprise']  = 'my_enterprise'
 default['delivery-cluster']['delivery']['version'] = 'latest'
 
 # => Chef Server
-default['delivery-cluster']['chef_server']['hostname']     = "chef-server-#{cluster_id}"
-default['delivery-cluster']['chef_server']['organization'] = 'my_enterprise'
-default['delivery-cluster']['chef_server']['flavor']       = 't2.small'
+default['delivery-cluster']['chef-server']['hostname']     = "chef-server-#{cluster_id}"
+default['delivery-cluster']['chef-server']['organization'] = 'my_enterprise'
+default['delivery-cluster']['chef-server']['flavor']       = 't2.small'
 
 # => Build Nodes
 default['delivery-cluster']['build_nodes']['hostname'] = "build-node-#{cluster_id}"

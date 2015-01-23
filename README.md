@@ -42,9 +42,9 @@ This need to have the following ports open:
 Chef Server Settings
 ----------
 You can configure the chef-server with the following attributes:
-1) `['delivery-cluster']['chef_server']['hostname']`     - Hostname of your Chef Server.
-2) `['delivery-cluster']['chef_server']['organization']` - The organization name we will create for the Delivery Environment.
-3) `['delivery-cluster']['chef_server']['flavor']`       - Flavor of the Chef Server.
+1) `['delivery-cluster']['chef-server']['hostname']`     - Hostname of your Chef Server.
+2) `['delivery-cluster']['chef-server']['organization']` - The organization name we will create for the Delivery Environment.
+3) `['delivery-cluster']['chef-server']['flavor']`       - Flavor of the Chef Server.
 
 Delivery Server Settings
 ----------
