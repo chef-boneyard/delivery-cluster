@@ -255,8 +255,8 @@ end
 # Creating Your Enterprise
 machine_execute "Creating Enterprise" do
   command <<-EOM.gsub(/\s+/, " ").strip!
-    delivery-ctl list-enterprises | grep -w ^#{node['delivery-cluster']['delivery']['enterprise']};
-    [ $? -ne 0 ] && delivery-ctl create-enterprise #{node['delivery-cluster']['delivery']['enterprise']} > /tmp/#{node['delivery-cluster']['delivery']['enterprise']}.creds || echo 1
+    #{delivery_ctl} list-enterprises | grep -w ^#{node['delivery-cluster']['delivery']['enterprise']};
+    [ $? -ne 0 ] && #{delivery_ctl} create-enterprise #{node['delivery-cluster']['delivery']['enterprise']} > /tmp/#{node['delivery-cluster']['delivery']['enterprise']}.creds || echo 1
   EOM
   machine node['delivery-cluster']['delivery']['hostname']
 end
