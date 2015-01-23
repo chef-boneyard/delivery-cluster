@@ -122,27 +122,27 @@ end
 #   action :nothing
 # end.run_action(:upload)
 
-directory dot_chef_dir do
-  action :create
-end
-
-file File.join(dot_chef_dir, '.chef', 'knife.rb') do
+file File.join(tmp_infra_dir, 'knife.rb') do
   content <<-EOH
 current_chef_dir = File.dirname(__FILE__)
 working_dir      = Dir.pwd
 cookbook_paths   = []
+cookbook_paths  << File.join(current_chef_dir, '..','cookbooks')
 cookbook_paths  << File.join(current_chef_dir, '..','vendor/cookbooks')
 
 node_name        'delivery'
 chef_server_url  '#{new_chef_server_url}'
 client_key       '#{tmp_infra_dir}/delivery.pem'
-coobkook_path    cookbook_paths
+cookbook_path    cookbook_paths
   EOH
 end
 
 execute "upload delivery cookbooks" do
   cwd current_dir
   command "berks upload"
+  environment(
+    'BERKSHELF_CHEF_CONFIG' => "#{tmp_infra_dir}/knife.rb"
+  )
 end
 
 # Now that we are ready to Install Delivery and the build nodes
