@@ -25,16 +25,27 @@ with_machine_options(
 add_machine_options bootstrap_options: { subnet_id: node['delivery-cluster']['aws']['subnet_id'] } if node['delivery-cluster']['aws']['subnet_id']
 add_machine_options use_private_ip_for_ssh: node['delivery-cluster']['aws']['use_private_ip_for_ssh'] if node['delivery-cluster']['aws']['use_private_ip_for_ssh']
 
+directory tmp_infra_dir do
+  action :nothing
+end.run_action(:create)
+
 # Pre-requisits
 # => Builder Keys
-execute "Creating Builder Keys" do
-  command <<-EOM.gsub(/\s+/, " ").strip!
-    openssl genrsa -out #{tmp_infra_dir}/builder_key 2048;
-    chmod 600 #{tmp_infra_dir}/builder_key && ssh-keygen -y -f #{tmp_infra_dir}/builder_key > #{tmp_infra_dir}/builder_key.pub
-  EOM
-  creates "#{tmp_infra_dir}/builder_key.pub"
+builder_key = OpenSSL::PKey::RSA.generate(2048) unless File.exists?("#{tmp_infra_dir}/builder_key")
+
+file "#{tmp_infra_dir}/builder_key.pub" do
+  mode    '0644'
+  content builder_key.public_key.to_s unless File.exists?("#{tmp_infra_dir}/builder_key.pub")
+  sensitive true
   action :nothing
-end.run_action(:run)
+end.run_action(:create)
+
+file "#{tmp_infra_dir}/builder_key" do
+  mode    '0600'
+  content builder_key.to_pem.to_s unless File.exists?("#{tmp_infra_dir}/builder_key")
+  sensitive true
+  action :nothing
+end.run_action(:create)
 
 # => Encrypted Secret Key
 execute "Creating Encrypted Secret Key" do
