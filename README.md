@@ -27,11 +27,11 @@ aws_secret_access_key = YOUR_SECRET_KEY
 ```
 
 You also need to modify on the attribute section the following ones:
-1) `['aws']['key_name']`            - Key Pair to configure.
-2) `['aws']['ssh_username']`        - SSH username to use to connect to machines.
-4) `['aws']['image_id']`            - AWS AMI.
-5) `['aws']['flavor']`              - Size/flavor of your machine.
-3) `['aws']['security_group_ids']`  - Security Group on AWS.
+1) `['delivery-cluster']['aws']['key_name']`            - Key Pair to configure.
+2) `['delivery-cluster']['aws']['ssh_username']`        - SSH username to use to connect to machines.
+4) `['delivery-cluster']['aws']['image_id']`            - AWS AMI.
+5) `['delivery-cluster']['aws']['flavor']`              - Size/flavor of your machine.
+3) `['delivery-cluster']['aws']['security_group_ids']`  - Security Group on AWS.
 This need to have the following ports open:
 * 10000 - 10003
 * 8989

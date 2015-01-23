@@ -4,12 +4,12 @@ with_driver 'aws'
 
 with_machine_options ({
     :bootstrap_options => {
-      :instance_type      => node['aws']['flavor'],
-      :key_name           => node['aws']['key_name'],
-      :security_group_ids => node['aws']['security_group_ids']
+      :instance_type      => node['delivery-cluster']['aws']['flavor'],
+      :key_name           => node['delivery-cluster']['aws']['key_name'],
+      :security_group_ids => node['delivery-cluster']['aws']['security_group_ids']
     },
-    :ssh_username => node['aws']['ssh_username'],
-    :image_id     => node['aws']['image_id']
+    :ssh_username => node['delivery-cluster']['aws']['ssh_username'],
+    :image_id     => node['delivery-cluster']['aws']['image_id']
   })
 
 # Pre-requisits
