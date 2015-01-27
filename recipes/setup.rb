@@ -31,18 +31,16 @@ end.run_action(:create)
 
 # Pre-requisits
 # => Builder Keys
-builder_key = OpenSSL::PKey::RSA.generate(2048) unless File.exists?("#{tmp_infra_dir}/builder_key")
-
 file "#{tmp_infra_dir}/builder_key.pub" do
   mode    '0644'
-  content builder_key.public_key.to_s unless File.exists?("#{tmp_infra_dir}/builder_key.pub")
+  content builder_key.public_key.to_s
   sensitive true
   action :nothing
 end.run_action(:create)
 
 file "#{tmp_infra_dir}/builder_key" do
   mode    '0600'
-  content builder_key.to_pem.to_s unless File.exists?("#{tmp_infra_dir}/builder_key")
+  content builder_key.to_pem.to_s
   sensitive true
   action :nothing
 end.run_action(:create)
@@ -117,8 +115,8 @@ end
 chef_data_bag_item "keys/delivery_builder_keys" do
   raw_data(
     'id' => "delivery_builder_keys",
-    'builder_key' => File.read("#{tmp_infra_dir}/builder_key.pub"),
-    'delivery_pem' => File.read("#{tmp_infra_dir}/delivery.pem")
+    'builder_key' => builder_key.public_key.to_s,
+    'delivery_pem' => builder_key.to_pem.to_s
   )
   secret_path "#{tmp_infra_dir}/encrypted_data_bag_secret"
   encryption_version 1

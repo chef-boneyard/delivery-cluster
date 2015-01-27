@@ -33,6 +33,14 @@ module DeliveryCluster
         'sudo -E delivery-ctl'
       end
     end
+
+    def builder_key
+      if File.exists?("#{tmp_infra_dir}/builder_key")
+        OpenSSL::PKey::RSA.new(File.read("#{tmp_infra_dir}/builder_key"))
+      else
+        OpenSSL::PKey::RSA.generate(2048)
+      end
+    end
   end
 end
 
