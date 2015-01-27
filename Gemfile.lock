@@ -8,6 +8,19 @@ GIT
       chef (>= 11.16.4)
       chef-provisioning (~> 0.9)
 
+GIT
+  remote: https://github.com/chef/chef-provisioning.git
+  revision: 87a61444dd97d3b53d0587ab11dee83f23b05555
+  ref: master
+  specs:
+    chef-provisioning (0.17)
+      cheffish (~> 0.8)
+      inifile (~> 2.0)
+      net-scp (~> 1.0)
+      net-ssh (~> 2.0)
+      net-ssh-gateway (~> 1.2.0)
+      winrm (~> 1.2.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -66,13 +79,6 @@ GEM
       ohai (~> 8.0)
       plist (~> 3.1.0)
       pry (~> 0.9)
-    chef-provisioning (0.17)
-      cheffish (~> 0.8)
-      inifile (~> 2.0)
-      net-scp (~> 1.0)
-      net-ssh (~> 2.0)
-      net-ssh-gateway (~> 1.2.0)
-      winrm (~> 1.2.0)
     chef-zero (3.2.1)
       ffi-yajl (~> 1.1)
       hashie (~> 2.0)
@@ -222,4 +228,5 @@ PLATFORMS
 DEPENDENCIES
   berkshelf (~> 3.2)
   chef (~> 12.0)
+  chef-provisioning!
   chef-provisioning-aws!
