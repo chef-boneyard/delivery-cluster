@@ -97,6 +97,7 @@ $ cat environments/test.json
         "key_name": "delivery-test",
         "ssh_username": "ubuntu",
         "image_id": "ami-3d50120d",
+        "subnet_id": "subnet-19ac017c",
         "security_group_ids": "sg-cbacf8ae",
         "use_private_ip_for_ssh": true
       },
