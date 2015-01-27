@@ -41,6 +41,107 @@ module DeliveryCluster
         OpenSSL::PKey::RSA.generate(2048)
       end
     end
+
+    def chef_server_ip
+      chef_server_node = Chef::Node.load(node['delivery-cluster']['chef-server']['hostname'])
+      chef_server_ip   = get_aws_ip(chef_server_node)
+      Chef::Log.info("Your Chef Server Public IP is => #{chef_server_ip}")
+      chef_server_ip
+    end
+
+    def chef_server_url
+      "https://#{chef_server_ip}/organizations/#{node['delivery-cluster']['chef-server']['organization']}"
+    end
+
+    def chef_server_attributes
+      {
+        'chef-server-12' => {
+          'delivery' => { 'organization' => node['delivery-cluster']['chef-server']['organization'] },
+          'api_fqdn' => chef_server_ip,
+          'store_keys_databag' => false
+        }
+      }
+    end
+
+    def delivery_server_ip
+      delivery_server_node = Chef::Node.load(node['delivery-cluster']['delivery']['hostname'])
+      delivery_server_ip   = get_aws_ip(delivery_server_node)
+      Chef::Log.info("Your Delivery Server Public IP is => #{deliv_ip}")
+      delivery_server_ip
+    end
+
+    def delivery_attributes
+      delivery_attributes = {
+        'applications' => {
+          'delivery' => deliv_version
+        },
+        'delivery' => {
+          'chef_server' => chef_server_url,
+          'fqdn'        => deliv_ip
+        }
+      }
+
+      # Add LDAP config if it exist
+      delivery_attributes['delivery']['ldap'] = node['delivery_cluster']['delivery']['ldap'] unless node['delivery_cluster']['delivery']['ldap'].empty?
+
+      delivery_attributes
+    end
+
+    def delivery_artifact
+      delivery_server_node = Chef::Node.load(node['delivery-cluster']['delivery']['hostname'])
+
+      # If we don't have the artifact, we will get it from artifactory
+      # We will need VPN to do so. Or other way could be to upload it
+      # to S3 bucket automatically
+      #
+      # Get the latest artifact:
+      # => artifact = get_delivery_artifact('latest', 'redhat', '6.5')
+      #
+      # Get specific artifact:
+      # => artifact = get_delivery_artifact('0.2.21', 'ubuntu', '12.04', '/var/tmp')
+      #
+      if node['delivery-cluster']['delivery'][delivery_server_node['platform_family']] && node['delivery-cluster']['delivery']['version'] != 'latest'
+        # We use the provided artifact
+        delivery_artifact = {
+          delivery_server_node['platform_family'] => {
+            "artifact" => node['delivery-cluster']['delivery'][delivery_server_node['platform_family']]['artifact'],
+            "checksum" => node['delivery-cluster']['delivery'][delivery_server_node['platform_family']]['checksum']
+          }
+        }
+      else
+        # We will get it from artifactory
+        artifact = get_delivery_artifact(node['delivery-cluster']['delivery']['version'], delivery_server_node['platform'], delivery_server_node['platform_version'], tmp_infra_dir)
+
+        # Upload Artifact to Delivery Server
+        machine_file "/var/tmp/#{artifact['name']}" do
+          machine node['delivery-cluster']['delivery']['hostname']
+          local_path  artifact['local_path']
+          action :upload
+        end
+
+        delivery_artifact = {
+          delivery_server_node['platform_family'] => {
+            "artifact" => "/var/tmp/#{artifact['name']}",
+            "checksum" => artifact['checksum']
+          }
+        }
+      end
+
+      delivery_artifact
+    end
+
+    def delivery_server_version
+      @delivery_server_version ||= begin
+        delivery_server_node = Chef::Node.load(node['delivery-cluster']['delivery']['hostname'])
+
+        if node['delivery-cluster']['delivery'][delivery_server_node['platform_family']] && node['delivery-cluster']['delivery']['version'] != 'latest'
+          node['delivery-cluster']['delivery']['version']
+        else
+          artifact = get_delivery_artifact(node['delivery-cluster']['delivery']['version'], delivery_server_node['platform'], delivery_server_node['platform_version'], tmp_infra_dir)
+          artifact['version']
+        end
+      end
+    end
   end
 end
 
