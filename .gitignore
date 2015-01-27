@@ -1,6 +1,9 @@
 .kitchen/
+clients/
 cookbooks/
+data_bags/
 environments/
 nodes/
 vendor/
 .chef/local-mode-cache
+.chef/trusted_certs
