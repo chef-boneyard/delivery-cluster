@@ -24,7 +24,8 @@ default['delivery_cluster']['aws']['subnet_id']               = nil
 default['delivery-cluster']['aws']['use_private_ip_for_ssh']  = false
 
 # => The Cluste Name which will be use to define all the server names
-default['delivery-cluster']['id'] = 'test'
+require 'securerandom'
+default['delivery-cluster']['id'] = "test-#{SecureRandom.hex(3)}"
 
 # Specific attributes
 # => Delivery Server

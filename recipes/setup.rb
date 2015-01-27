@@ -166,7 +166,7 @@ machine_batch "Provisioning Delivery Infrastructure" do
     add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['delivery']['flavor']  } if node['delivery-cluster']['delivery']['flavor']
   end
   # Creating Build Nodes
-  1.upto(node['delivery-cluster']['builders']['N']) do |i|
+  1.upto(node['delivery-cluster']['builders']['count']) do |i|
     machine "#{node['delivery-cluster']['builders']['hostname']}-#{i}" do
       add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['builders']['flavor']  } if node['delivery-cluster']['builders']['flavor']
     end

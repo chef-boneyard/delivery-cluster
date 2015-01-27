@@ -1,7 +1,7 @@
 DEPENDENCIES
   chef-server-12
     git: git@github.com:opscode-cookbooks/chef-server-12.git
-    revision: c89d21099f92e8a4e4d082e67ba8d908a5e30b18
+    revision: 6d2088e4ddeb241f4c9e60b3fabb743c28641fa4
   delivery-cluster
     path: .
     metadata: true
