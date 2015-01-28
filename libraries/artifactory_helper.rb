@@ -28,7 +28,8 @@ def get_delivery_artifact(version = 'latest', platform = 'ubuntu', platform_vers
 	# Yup! We must validate access to Chef VPN
 	validate_vpn
 
-	chef_gem 'artifactory'
+  artifactory_gem = Chef::Resource::ChefGem.new('artifactory', run_context)
+  artifactory_gem.run_action(:install)
 	require 'artifactory'
 
 	artifactory_endpoint     = 'http://artifactory.chef.co'
@@ -57,9 +58,9 @@ def get_delivery_artifact(version = 'latest', platform = 'ubuntu', platform_vers
 
 	latest_delivery = "#{tmp_dir}/#{File.basename(artifact.uri)}"
 
-	remote_file latest_delivery do
-	  source artifact.download_uri
-	end
+  remote_file = Chef::Resource::RemoteFile.new(latest_delivery, run_context)
+  remote_file.source(artifact.download_uri)
+  remote_file.run_action(:create)
 
   {
     'name' => File.basename(artifact.uri),

@@ -7,7 +7,6 @@
 # All rights reserved - Do Not Redistribute
 #
 
-require 'openssl'
 require 'chef/provisioning/aws_driver'
 
 with_driver 'aws'
@@ -25,15 +24,79 @@ with_machine_options(
 add_machine_options bootstrap_options: { subnet_id: node['delivery-cluster']['aws']['subnet_id'] } if node['delivery-cluster']['aws']['subnet_id']
 add_machine_options use_private_ip_for_ssh: node['delivery-cluster']['aws']['use_private_ip_for_ssh'] if node['delivery-cluster']['aws']['use_private_ip_for_ssh']
 
-# Force a save of node data
-node.save
+################################################################################
+# Phase 1: Bootstrap a Chef Server instance with Chef-Zero
+################################################################################
+
+# It's ugly but this must happen in the compile phase so we can switch out
+# the Chef Server we are talking to for the remainder of the CCR.
+
+# Provision the Chef Server with an empty runlist so we can extract
+# it's primary ipaddress to use as the hostname in the initial
+# `/etc/opscode/chef-server.rb` file
+machine chef_server_hostname do
+  add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['chef-server']['flavor'] } if node['delivery-cluster']['chef-server']['flavor']
+  action :nothing
+end.run_action(:converge)
+
+# Now that we've extracted the Chef Server's ipaddress we can fully
+# converge and complete the install.
+machine chef_server_hostname do
+  recipe "chef-server-12"
+  attributes chef_server_attributes
+  action :nothing
+end.run_action(:converge)
 
 directory tmp_infra_dir do
+  action :nothing
+end.run_action(:create)
+
+directory Chef::Config[:trusted_certs_dir] do
+  action :nothing
+end.run_action(:create)
+
+# Fetch our client and validator pems from the provisioned Chef Server
+machine_file "/tmp/validator.pem" do
+  machine chef_server_hostname
+  local_path "#{tmp_infra_dir}/validator.pem"
+  action :nothing
+end.run_action(:download)
+
+machine_file "/tmp/delivery.pem" do
+  machine chef_server_hostname
+  local_path "#{tmp_infra_dir}/delivery.pem"
+  action :nothing
+end.run_action(:download)
+
+machine_file "/var/opt/opscode/nginx/ca/#{chef_server_ip}.crt" do
+  machine chef_server_hostname
+  local_path "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt"
+  action :nothing
+end.run_action(:download)
+
+# Point the local, in-progress CCR along with all remote CCRs at the freshly
+# provisioned Chef Server
+with_chef_server chef_server_url,
+  client_name: 'delivery',
+  signing_key_filename: "#{tmp_infra_dir}/delivery.pem"
+
+Chef::Config.node_name        = 'delivery'
+Chef::Config.client_key       = "#{tmp_infra_dir}/delivery.pem"
+Chef::Config.chef_server_url  = chef_server_url
+
+################################################################################
+# Phase 2: Bootstrap the rest of our infrastructure with the new Chef Server
+################################################################################
+
+# create an encrypted data bag secret
+file "#{tmp_infra_dir}/encrypted_data_bag_secret" do
+  mode    '0644'
+  content encrypted_data_bag_secret
+  sensitive true
   action :create
 end
 
-# Pre-requisits
-# => Builder Keys
+# create required builder keys
 file "#{tmp_infra_dir}/builder_key.pub" do
   mode    '0644'
   content builder_key.public_key.to_s
@@ -48,42 +111,26 @@ file "#{tmp_infra_dir}/builder_key" do
   action :create
 end
 
-# => Encrypted Secret Key
-execute "Creating Encrypted Secret Key" do
-  command "openssl rand -base64 512 > #{tmp_infra_dir}/encrypted_data_bag_secret"
-  creates "#{tmp_infra_dir}/encrypted_data_bag_secret"
-  action :run
+# create the data bag (and item) to store our builder keys
+chef_data_bag "keys" do
+  action :create
 end
 
-# First thing we do is create the chef-server EMPTY so
-# we can get the PublicIP that we will use in constantly
-machine chef_server_hostname do
-  add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['chef-server']['flavor'] } if node['delivery-cluster']['chef-server']['flavor']
-  action :converge
+chef_data_bag_item "keys/delivery_builder_keys" do
+  raw_data(
+    id: 'delivery_builder_keys',
+    builder_key: builder_key.public_key.to_s,
+    delivery_pem: builder_key.to_pem.to_s
+  )
+  secret_path "#{tmp_infra_dir}/encrypted_data_bag_secret"
+  encryption_version 1
+  encrypt true
+  action :create
 end
 
-# Installing Chef Server
-machine chef_server_hostname do
-  recipe "chef-server-12"
-  attributes lazy { chef_server_attributes }
-  action :converge
-end
-
-# Getting the keys from chef-server
-machine_file "/tmp/validator.pem" do
-  machine chef_server_hostname
-  local_path "#{tmp_infra_dir}/validator.pem"
-  action :download
-end
-
-machine_file "/tmp/delivery.pem" do
-  machine chef_server_hostname
-  local_path "#{tmp_infra_dir}/delivery.pem"
-  action :download
-end
-
+# generate a knife config file that points at the new Chef Server
 file File.join(tmp_infra_dir, 'knife.rb') do
-  content lazy { <<-EOH
+  content <<-EOH
 current_chef_dir = File.dirname(__FILE__)
 working_dir      = Dir.pwd
 cookbook_paths   = []
@@ -95,42 +142,6 @@ chef_server_url  '#{chef_server_url}'
 client_key       '#{tmp_infra_dir}/delivery.pem'
 cookbook_path    cookbook_paths
   EOH
-  }
-end
-
-# Setting the new Chef Server we just created
-ruby_block 'updated Chef config' do
-  block do
-    # TODO: find a better way!
-    run_context.cheffish.with_chef_server(
-      chef_server_url: chef_server_url,
-      options: {
-        client_name: "delivery",
-        signing_key_filename: "#{tmp_infra_dir}/delivery.pem"
-      }
-    )
-
-    Chef::Config.node_name        = 'delivery'
-    Chef::Config.client_key       = "#{tmp_infra_dir}/delivery.pem"
-    Chef::Config.chef_server_url  = chef_server_url
-  end
-end
-
-# Creating the Data Bag that store some Key Dependencies
-chef_data_bag "keys" do
-  action :create # see actions section below
-end
-
-chef_data_bag_item "keys/delivery_builder_keys" do
-  raw_data(
-    'id' => "delivery_builder_keys",
-    'builder_key' => builder_key.public_key.to_s,
-    'delivery_pem' => builder_key.to_pem.to_s
-  )
-  secret_path "#{tmp_infra_dir}/encrypted_data_bag_secret"
-  encryption_version 1
-  encrypt true
-  action :create
 end
 
 execute "upload delivery cookbooks" do
@@ -141,61 +152,51 @@ execute "upload delivery cookbooks" do
   )
 end
 
-# Now that we are ready to Install Delivery and the build nodes
-# we really need to get the PublicIP again to configure `delivery.rb`
-# therefore this batch machines.
-machine_batch "Provisioning Delivery Infrastructure" do
-  # Creating Delivery Server
-  machine delivery_server_hostname do
-    add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['delivery']['flavor']  } if node['delivery-cluster']['delivery']['flavor']
-  end
-  # Creating Build Nodes
-  1.upto(node['delivery-cluster']['builders']['count']) do |i|
-    machine delivery_builder_hostname(i) do
-      add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['builders']['flavor']  } if node['delivery-cluster']['builders']['flavor']
-    end
-  end
+# Provision the Delivery server with an empty runlist so we can extract
+# it's primary ipaddress to use as the hostname in the initial
+# `/etc/opscode/delivery.rb` file
+machine delivery_server_hostname do
+  add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['delivery']['flavor']  } if node['delivery-cluster']['delivery']['flavor']
+  files(
+    "/etc/chef/trusted_certs/#{chef_server_ip}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt"
+  )
   action :converge
 end
 
 # Creating the Data Bag that store the Delivery Artifacts
-ruby_block '' do
+chef_data_bag "delivery" do
+  action :create
+end
+
+# This is ugly but there is no other easy way to set  `chef_data_bag_item`'s
+# name attribute lazily
+ruby_block 'delivery-versions-data-bag-item' do
   block do
-    chef_data_bag "delivery" do
-      action :create # see actions section below
-    end
-    chef_data_bag_item "delivery/#{delivery_server_version}" do
-      raw_data(
-        "id"       => delivery_server_version,
-        "version"  => delivery_server_version,
-        "platforms" => delivery_artifact
-      )
-      action :create
-    end
+    dbi = Chef::Resource::ChefDataBagItem.new("delivery/#{delivery_server_version}", run_context)
+    dbi.raw_data(
+      id: delivery_server_version,
+      version: delivery_server_version,
+      platforms: delivery_artifact
+    )
+    dbi.run_action(:create)
   end
 end
 
-# Creating Delivery Builder Role
-chef_role node['delivery-cluster']['builders']['role'] do
-  description "Base Role for the Delivery Build Nodes"
-  run_list ["recipe[push-jobs]","recipe[delivery_builder]"]
-end
-
-# Install Delivery
+# Now that we've extracted the Delivery Server's ipaddress we can fully
+# converge and complete the install.
 machine delivery_server_hostname do
-  # chef_environment environment
+  add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['delivery']['flavor']  } if node['delivery-cluster']['delivery']['flavor']
   recipe "delivery-server"
-  converge true
   files(
     '/etc/delivery/delivery.pem' => "#{tmp_infra_dir}/delivery.pem",
     '/etc/delivery/builder_key' => "#{tmp_infra_dir}/builder_key",
     '/etc/delivery/builder_key.pub' => "#{tmp_infra_dir}/builder_key.pub"
   )
-  attributes lazy { delivery_attributes }
+  attributes lazy { delivery_server_attributes }
   action :converge
 end
 
-# Creating Your Enterprise
+# Create the default Delivery enterprise
 machine_execute "Creating Enterprise" do
   command <<-EOM.gsub(/\s+/, " ").strip!
     #{delivery_ctl} list-enterprises | grep -w ^#{node['delivery-cluster']['delivery']['enterprise']};
@@ -204,28 +205,45 @@ machine_execute "Creating Enterprise" do
   machine delivery_server_hostname
 end
 
-# Downloading Creds
+# Download the credentials form the Delivery server
 machine_file "/tmp/#{node['delivery-cluster']['delivery']['enterprise']}.creds" do
   machine delivery_server_hostname
   local_path "#{tmp_infra_dir}/#{node['delivery-cluster']['delivery']['enterprise']}.creds"
   action :download
 end
 
-# Preparing Build Nodes with the right run_list
+#########################################################################
+# Create Delivery builders
+#########################################################################
+
+# Create the Delivery builder role
+chef_role node['delivery-cluster']['builders']['role'] do
+  description "Base Role for the Delivery Build Nodes"
+  run_list ["recipe[push-jobs]","recipe[delivery_builder]"]
+end
+
+# Provision our builders in parallel
 machine_batch "#{node['delivery-cluster']['builders']['count']}-build-nodes" do
   1.upto(node['delivery-cluster']['builders']['count']) do |i|
     machine delivery_builder_hostname(i) do
       role node['delivery-cluster']['builders']['role']
-      add_machine_options convergence_options: { :chef_config_text => "encrypted_data_bag_secret File.join(File.dirname(__FILE__), 'encrypted_data_bag_secret')" }
-      files '/etc/chef/encrypted_data_bag_secret' => "#{tmp_infra_dir}/encrypted_data_bag_secret"
+      add_machine_options(
+        bootstrap_options: {image_id: node['delivery-cluster']['aws']['image_id']},
+        convergence_options: { chef_config_text: "encrypted_data_bag_secret File.join(File.dirname(__FILE__), 'encrypted_data_bag_secret')" }
+      )
+      add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['builders']['flavor']  } if node['delivery-cluster']['builders']['flavor']
+      files(
+        "/etc/chef/trusted_certs/#{chef_server_ip}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt",
+        '/etc/chef/encrypted_data_bag_secret' => "#{tmp_infra_dir}/encrypted_data_bag_secret"
+      )
       action :converge
     end
   end
 end
 
-# Might be cool to print the enterprise admin user at the end
-ruby_block "Delayed Print" do
+# Print the generated Delivery server credentials
+ruby_block "print-delivery-credentials" do
   block do
-    system "cat #{tmp_infra_dir}/#{node['delivery-cluster']['delivery']['enterprise']}.creds"
+    puts File.read("#{tmp_infra_dir}/#{node['delivery-cluster']['delivery']['enterprise']}.creds")
   end
 end

@@ -37,6 +37,8 @@ module DeliveryCluster
       end
     end
 
+    # If a cluster ID was not provided (via the attribute) we'll generate
+    # a unique cluster ID and immediately save it in case the CCR fails.
     def delivery_cluster_id
       unless node['delivery-cluster']['id']
         node.set['delivery-cluster']['id'] = "test-#{SecureRandom.hex(3)}"
@@ -49,7 +51,6 @@ module DeliveryCluster
     def chef_server_hostname
       unless node['delivery-cluster']['chef-server']['hostname']
         node.set['delivery-cluster']['chef-server']['hostname'] = "chef-server-#{delivery_cluster_id}"
-        node.save
       end
 
       node['delivery-cluster']['chef-server']['hostname']
@@ -58,7 +59,6 @@ module DeliveryCluster
     def delivery_server_hostname
       unless node['delivery-cluster']['delivery']['hostname']
         node.set['delivery-cluster']['delivery']['hostname'] = "delivery-server-#{delivery_cluster_id}"
-        node.save
       end
 
       node['delivery-cluster']['delivery']['hostname']
@@ -67,7 +67,6 @@ module DeliveryCluster
     def delivery_builder_hostname(index)
       unless node['delivery-cluster']['builders']['hostname_prefix']
         node.set['delivery-cluster']['builders']['hostname_prefix'] = "build-node-#{delivery_cluster_id}"
-        node.save
       end
 
       "#{node['delivery-cluster']['builders']['hostname_prefix']}-#{index}"
@@ -93,10 +92,12 @@ module DeliveryCluster
     end
 
     def chef_server_ip
-      chef_server_node = Chef::Node.load(node['delivery-cluster']['chef-server']['hostname'])
-      chef_server_ip   = get_aws_ip(chef_server_node)
-      Chef::Log.info("Your Chef Server Public IP is => #{chef_server_ip}")
-      chef_server_ip
+      @@chef_server_ip ||= begin
+        chef_server_node = Chef::Node.load(node['delivery-cluster']['chef-server']['hostname'])
+        chef_server_ip   = get_aws_ip(chef_server_node)
+        Chef::Log.info("Your Chef Server Public IP is => #{chef_server_ip}")
+        chef_server_ip
+      end
     end
 
     def chef_server_url
@@ -113,33 +114,38 @@ module DeliveryCluster
       }
     end
 
-    def delivery_server_ip
-      delivery_server_node = Chef::Node.load(node['delivery-cluster']['delivery']['hostname'])
-      delivery_server_ip   = get_aws_ip(delivery_server_node)
-      Chef::Log.info("Your Delivery Server Public IP is => #{deliv_ip}")
-      delivery_server_ip
+    def delivery_server_node
+      @@delivery_server_node ||= begin
+        Chef::Node.load(node['delivery-cluster']['delivery']['hostname'])
+      end
     end
 
-    def delivery_attributes
+    def delivery_server_ip
+      @@delivery_server_ip ||= begin
+        delivery_server_ip   = get_aws_ip(delivery_server_node)
+        Chef::Log.info("Your Delivery Server Public IP is => #{delivery_server_ip}")
+        delivery_server_ip
+      end
+    end
+
+    def delivery_server_attributes
       delivery_attributes = {
         'applications' => {
-          'delivery' => deliv_version
+          'delivery' => delivery_server_version
         },
         'delivery' => {
           'chef_server' => chef_server_url,
-          'fqdn'        => deliv_ip
+          'fqdn'        => delivery_server_ip
         }
       }
 
       # Add LDAP config if it exist
-      delivery_attributes['delivery']['ldap'] = node['delivery_cluster']['delivery']['ldap'] unless node['delivery_cluster']['delivery']['ldap'].empty?
+      delivery_attributes['delivery']['ldap'] = node['delivery-cluster']['delivery']['ldap'] unless node['delivery-cluster']['delivery']['ldap'].empty?
 
       delivery_attributes
     end
 
     def delivery_artifact
-      delivery_server_node = Chef::Node.load(node['delivery-cluster']['delivery']['hostname'])
-
       # If we don't have the artifact, we will get it from artifactory
       # We will need VPN to do so. Or other way could be to upload it
       # to S3 bucket automatically
@@ -163,11 +169,10 @@ module DeliveryCluster
         artifact = get_delivery_artifact(node['delivery-cluster']['delivery']['version'], delivery_server_node['platform'], delivery_server_node['platform_version'], tmp_infra_dir)
 
         # Upload Artifact to Delivery Server
-        machine_file "/var/tmp/#{artifact['name']}" do
-          machine node['delivery-cluster']['delivery']['hostname']
-          local_path  artifact['local_path']
-          action :upload
-        end
+        machine_file = Chef::Resource::MachineFile.new("/var/tmp/#{artifact['name']}", run_context)
+        machine_file.machine(node['delivery-cluster']['delivery']['hostname'])
+        machine_file.local_path(artifact['local_path'])
+        machine_file.run_action(:upload)
 
         delivery_artifact = {
           delivery_server_node['platform_family'] => {
@@ -182,8 +187,6 @@ module DeliveryCluster
 
     def delivery_server_version
       @delivery_server_version ||= begin
-        delivery_server_node = Chef::Node.load(node['delivery-cluster']['delivery']['hostname'])
-
         if node['delivery-cluster']['delivery'][delivery_server_node['platform_family']] && node['delivery-cluster']['delivery']['version'] != 'latest'
           node['delivery-cluster']['delivery']['version']
         else
