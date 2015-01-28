@@ -6,14 +6,14 @@ DEPENDENCIES
     path: .
     metadata: true
   delivery-server
-    git: git@github.com:chef/delivery.git
-    revision: 1e4f3aff88142f2523381a93f3f379dd393a838a
-    branch: master
+    git: ssh://schisamo@Chef@172.31.6.130:8989/Chef/Chef_Delivery/delivery
+    revision: d82994fe7ca3469dff30d634ff31d7c204fa448f
+    branch: _reviews/master/afiune/delivery_cluster_aws/latest
     rel: cookbooks/delivery-server
   delivery_builder
-    git: git@github.com:chef/delivery.git
-    revision: 1e4f3aff88142f2523381a93f3f379dd393a838a
-    branch: master
+    git: ssh://schisamo@Chef@172.31.6.130:8989/Chef/Chef_Delivery/delivery
+    revision: d82994fe7ca3469dff30d634ff31d7c204fa448f
+    branch: _reviews/master/afiune/delivery_cluster_aws/latest
     rel: cookbooks/delivery_builder
 
 GRAPH
@@ -32,8 +32,8 @@ GRAPH
     delivery-server (>= 0.0.0)
     delivery_builder (>= 0.0.0)
     push-jobs (>= 0.0.0)
-  delivery-server (0.2.5)
-  delivery_builder (0.4.3)
+  delivery-server (0.2.6)
+  delivery_builder (0.4.4)
     chef-sugar (>= 0.0.0)
     erlang (>= 0.0.0)
     git (>= 0.0.0)

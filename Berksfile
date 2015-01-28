@@ -6,8 +6,9 @@ metadata
 cookbook 'chef-server-12',
   git: 'git@github.com:opscode-cookbooks/chef-server-12.git'
 
-delivery_ref  = 'master'
-delivery_repo = "git@github.com:chef/delivery.git"
+# TODO: get these cookbook changes merged to master
+delivery_ref  = '_reviews/master/afiune/delivery_cluster_aws/latest'
+delivery_repo = "ssh://#{ENV['USER']}@Chef@172.31.6.130:8989/Chef/Chef_Delivery/delivery"
 
 cookbook 'delivery_builder',
   git: delivery_repo,
