@@ -14,13 +14,9 @@ with_driver 'aws'
 # Only if we have the credentials to destroy it
 if File.exist?("#{tmp_infra_dir}/delivery.pem")
   begin
-    # Only if there is an active chef server
-    chef_node = Chef::Node.load(chef_server_hostname)
-    chef_server_ip = chef_node['ec2']['public_ipv4']
-
     # Setting the new Chef Server we just created
-    with_chef_server "https://#{chef_server_ip}/organizations/#{node['delivery-cluster']['chef-server']['organization']}",
-      client_name: "delivery",
+    with_chef_server chef_server_url,
+      client_name: 'delivery',
       signing_key_filename: "#{tmp_infra_dir}/delivery.pem"
 
     # Destroy Build Nodes

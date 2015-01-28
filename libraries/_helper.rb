@@ -93,7 +93,7 @@ module DeliveryCluster
 
     def chef_server_ip
       @@chef_server_ip ||= begin
-        chef_server_node = Chef::Node.load(node['delivery-cluster']['chef-server']['hostname'])
+        chef_server_node = Chef::Node.load(chef_server_hostname)
         chef_server_ip   = get_aws_ip(chef_server_node)
         Chef::Log.info("Your Chef Server Public IP is => #{chef_server_ip}")
         chef_server_ip
@@ -116,7 +116,7 @@ module DeliveryCluster
 
     def delivery_server_node
       @@delivery_server_node ||= begin
-        Chef::Node.load(node['delivery-cluster']['delivery']['hostname'])
+        Chef::Node.load(delivery_server_hostname)
       end
     end
 
