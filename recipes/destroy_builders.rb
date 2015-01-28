@@ -15,7 +15,7 @@ with_driver 'aws'
 if File.exist?("#{tmp_infra_dir}/delivery.pem")
   begin
     # Only if there is an active chef server
-    chef_node = Chef::Node.load(node['delivery-cluster']['chef-server']['hostname'] )
+    chef_node = Chef::Node.load(chef_server_hostname)
     chef_server_ip = chef_node['ec2']['public_ipv4']
 
     # Setting the new Chef Server we just created
@@ -26,7 +26,7 @@ if File.exist?("#{tmp_infra_dir}/delivery.pem")
     # Destroy Build Nodes
     machine_batch "Destroying Build Nodes" do
       1.upto(node['delivery-cluster']['builders']['count']) do |i|
-        machine "#{node['delivery-cluster']['builders']['hostname_prefix']}-#{i}"
+        machine delivery_builder_hostname(i)
       end
       action :destroy
     end

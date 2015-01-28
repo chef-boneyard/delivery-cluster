@@ -57,13 +57,13 @@ end
 
 # First thing we do is create the chef-server EMPTY so
 # we can get the PublicIP that we will use in constantly
-machine node['delivery-cluster']['chef-server']['hostname'] do
+machine chef_server_hostname do
   add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['chef-server']['flavor'] } if node['delivery-cluster']['chef-server']['flavor']
   action :converge
 end
 
 # Installing Chef Server
-machine node['delivery-cluster']['chef-server']['hostname'] do
+machine chef_server_hostname do
   recipe "chef-server-12"
   attributes lazy { chef_server_attributes }
   action :converge
@@ -71,13 +71,13 @@ end
 
 # Getting the keys from chef-server
 machine_file "/tmp/validator.pem" do
-  machine node['delivery-cluster']['chef-server']['hostname']
+  machine chef_server_hostname
   local_path "#{tmp_infra_dir}/validator.pem"
   action :download
 end
 
 machine_file "/tmp/delivery.pem" do
-  machine node['delivery-cluster']['chef-server']['hostname']
+  machine chef_server_hostname
   local_path "#{tmp_infra_dir}/delivery.pem"
   action :download
 end
@@ -160,12 +160,12 @@ end
 # therefore this batch machines.
 machine_batch "Provisioning Delivery Infrastructure" do
   # Creating Delivery Server
-  machine node['delivery-cluster']['delivery']['hostname'] do
+  machine delivery_server_hostname do
     add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['delivery']['flavor']  } if node['delivery-cluster']['delivery']['flavor']
   end
   # Creating Build Nodes
   1.upto(node['delivery-cluster']['builders']['count']) do |i|
-    machine "#{node['delivery-cluster']['builders']['hostname']}-#{i}" do
+    machine delivery_builder_hostname(i) do
       add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['builders']['flavor']  } if node['delivery-cluster']['builders']['flavor']
     end
   end
@@ -196,7 +196,7 @@ chef_role node['delivery-cluster']['builders']['role'] do
 end
 
 # Install Delivery
-machine node['delivery-cluster']['delivery']['hostname'] do
+machine delivery_server_hostname do
   # chef_environment environment
   recipe "delivery-server"
   converge true
@@ -215,12 +215,12 @@ machine_execute "Creating Enterprise" do
     #{delivery_ctl} list-enterprises | grep -w ^#{node['delivery-cluster']['delivery']['enterprise']};
     [ $? -ne 0 ] && #{delivery_ctl} create-enterprise #{node['delivery-cluster']['delivery']['enterprise']} > /tmp/#{node['delivery-cluster']['delivery']['enterprise']}.creds || echo 1
   EOM
-  machine node['delivery-cluster']['delivery']['hostname']
+  machine delivery_server_hostname
 end
 
 # Downloading Creds
 machine_file "/tmp/#{node['delivery-cluster']['delivery']['enterprise']}.creds" do
-  machine node['delivery-cluster']['delivery']['hostname']
+  machine delivery_server_hostname
   local_path "#{tmp_infra_dir}/#{node['delivery-cluster']['delivery']['enterprise']}.creds"
   action :download
 end
@@ -228,7 +228,7 @@ end
 # Preparing Build Nodes with the right run_list
 machine_batch "#{node['delivery-cluster']['builders']['count']}-build-nodes" do
   1.upto(node['delivery-cluster']['builders']['count']) do |i|
-    machine "#{node['delivery-cluster']['builders']['hostname_prefix']}-#{i}" do
+    machine delivery_builder_hostname(i) do
       role node['delivery-cluster']['builders']['role']
       add_machine_options convergence_options: { :chef_config_text => "encrypted_data_bag_secret File.join(File.dirname(__FILE__), 'encrypted_data_bag_secret')" }
       files '/etc/chef/encrypted_data_bag_secret' => "#{tmp_infra_dir}/encrypted_data_bag_secret"

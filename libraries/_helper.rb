@@ -7,6 +7,9 @@
 # All rights reserved - Do Not Redistribute
 #
 
+require 'openssl'
+require 'securerandom'
+
 module DeliveryCluster
   module Helper
     def current_dir
@@ -32,6 +35,42 @@ module DeliveryCluster
       else
         'sudo -E delivery-ctl'
       end
+    end
+
+    def delivery_cluster_id
+      unless node['delivery-cluster']['id']
+        node.set['delivery-cluster']['id'] = "test-#{SecureRandom.hex(3)}"
+        node.save
+      end
+
+      node['delivery-cluster']['id']
+    end
+
+    def chef_server_hostname
+      unless node['delivery-cluster']['chef-server']['hostname']
+        node.set['delivery-cluster']['chef-server']['hostname'] = "chef-server-#{delivery_cluster_id}"
+        node.save
+      end
+
+      node['delivery-cluster']['chef-server']['hostname']
+    end
+
+    def delivery_server_hostname
+      unless node['delivery-cluster']['delivery']['hostname']
+        node.set['delivery-cluster']['delivery']['hostname'] = "delivery-server-#{delivery_cluster_id}"
+        node.save
+      end
+
+      node['delivery-cluster']['delivery']['hostname']
+    end
+
+    def delivery_builder_hostname(index)
+      unless node['delivery-cluster']['builders']['hostname_prefix']
+        node.set['delivery-cluster']['builders']['hostname_prefix'] = "build-node-#{delivery_cluster_id}"
+        node.save
+      end
+
+      "#{node['delivery-cluster']['builders']['hostname_prefix']}-#{index}"
     end
 
     def builder_key

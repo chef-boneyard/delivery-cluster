@@ -23,13 +23,12 @@ default['delivery-cluster']['aws']['image_id']                = nil
 default['delivery_cluster']['aws']['subnet_id']               = nil
 default['delivery-cluster']['aws']['use_private_ip_for_ssh']  = false
 
-# => The Cluste Name which will be use to define all the server names
-require 'securerandom'
-default['delivery-cluster']['id'] = "test-#{SecureRandom.hex(3)}"
+# => The Cluste Name which will be use to define all default hostnames
+default['delivery-cluster']['id'] = nil
 
 # Specific attributes
 # => Delivery Server
-default['delivery-cluster']['delivery']['hostname']    = "delivery-server-#{node['delivery-cluster']['id']}"
+default['delivery-cluster']['delivery']['hostname']    = nil
 default['delivery-cluster']['delivery']['flavor']      = 't2.medium'
 default['delivery-cluster']['delivery']['enterprise']  = 'my_enterprise'
 
@@ -69,12 +68,12 @@ default['delivery-cluster']['delivery']['ldap']        = {}
 default['delivery-cluster']['delivery']['version'] = 'latest'
 
 # => Chef Server
-default['delivery-cluster']['chef-server']['hostname']     = "chef-server-#{node['delivery-cluster']['id']}"
+default['delivery-cluster']['chef-server']['hostname']     = nil
 default['delivery-cluster']['chef-server']['organization'] = 'my_enterprise'
 default['delivery-cluster']['chef-server']['flavor']       = 't2.small'
 
 # => Build Nodes
-default['delivery-cluster']['builders']['hostname_prefix'] = "build-node-#{node['delivery-cluster']['id']}"
+default['delivery-cluster']['builders']['hostname_prefix'] = nil
 default['delivery-cluster']['builders']['role']            = 'delivery_builders'
 default['delivery-cluster']['builders']['count']           = 3
 default['delivery-cluster']['builders']['flavor']          = 't2.small'

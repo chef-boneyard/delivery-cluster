@@ -15,6 +15,6 @@ with_driver 'aws'
 with_chef_server Chef::Config.chef_server_url
 
 # Destroy Chef Server
-machine node['delivery-cluster']['chef-server']['hostname'] do
+machine chef_server_hostname do
   action :destroy
 end
