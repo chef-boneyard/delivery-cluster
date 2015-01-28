@@ -82,11 +82,21 @@ machine_file "/tmp/delivery.pem" do
   action :download
 end
 
-# machine_file "/var/opt/opscode/nginx/ca/#{chef_server_ip}.crt" do
-#   machine node['delivery-cluster']['chef-server']['hostname']
-#   local_path lazy { "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt" }
-#   action :download
-# end
+file File.join(tmp_infra_dir, 'knife.rb') do
+  content lazy { <<-EOH
+current_chef_dir = File.dirname(__FILE__)
+working_dir      = Dir.pwd
+cookbook_paths   = []
+cookbook_paths  << File.join(current_chef_dir, '..','cookbooks')
+cookbook_paths  << File.join(current_chef_dir, '..','vendor/cookbooks')
+
+node_name        'delivery'
+chef_server_url  '#{chef_server_url}'
+client_key       '#{tmp_infra_dir}/delivery.pem'
+cookbook_path    cookbook_paths
+  EOH
+  }
+end
 
 # Setting the new Chef Server we just created
 ruby_block 'updated Chef config' do
@@ -121,30 +131,6 @@ chef_data_bag_item "keys/delivery_builder_keys" do
   encryption_version 1
   encrypt true
   action :create
-end
-
-# Cheffish to upload cookbook dependencies
-# NOT WORKING!!
-# TODO: Fix it and then implement it
-# chef_mirror 'cookbooks/*' do
-#   chef_repo_path cookbook_path: File.join(current_dir, 'cookbooks')
-#   action :nothing
-# end.run_action(:upload)
-
-file File.join(tmp_infra_dir, 'knife.rb') do
-  content lazy { <<-EOH
-current_chef_dir = File.dirname(__FILE__)
-working_dir      = Dir.pwd
-cookbook_paths   = []
-cookbook_paths  << File.join(current_chef_dir, '..','cookbooks')
-cookbook_paths  << File.join(current_chef_dir, '..','vendor/cookbooks')
-
-node_name        'delivery'
-chef_server_url  '#{chef_server_url}'
-client_key       '#{tmp_infra_dir}/delivery.pem'
-cookbook_path    cookbook_paths
-  EOH
-  }
 end
 
 execute "upload delivery cookbooks" do
