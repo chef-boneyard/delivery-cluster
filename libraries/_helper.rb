@@ -21,7 +21,7 @@ module DeliveryCluster
     end
 
     def get_aws_ip(n)
-      if node['delivery_cluster']['aws']['use_private_ip_for_ssh']
+      if node['delivery-cluster']['aws']['use_private_ip_for_ssh']
         n['ec2']['local_ipv4']
       else
         n['ec2']['public_ipv4']
