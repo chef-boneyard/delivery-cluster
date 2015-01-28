@@ -73,11 +73,22 @@ module DeliveryCluster
       "#{node['delivery-cluster']['builders']['hostname_prefix']}-#{index}"
     end
 
+    # Generate or load an existing RSA keypair
     def builder_key
       if File.exists?("#{tmp_infra_dir}/builder_key")
         OpenSSL::PKey::RSA.new(File.read("#{tmp_infra_dir}/builder_key"))
       else
         OpenSSL::PKey::RSA.generate(2048)
+      end
+    end
+
+    # Generate or load an existing encrypted data bag secret
+    def encrypted_data_bag_secret
+      if File.exists?("#{tmp_infra_dir}/encrypted_data_bag_secret")
+        File.read("#{tmp_infra_dir}/encrypted_data_bag_secret")
+      else
+        # Ruby's `SecureRandom` module uses OpenSSL under the covers
+        SecureRandom.base64(512)
       end
     end
 
