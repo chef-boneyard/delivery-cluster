@@ -196,6 +196,12 @@ machine delivery_server_hostname do
   action :converge
 end
 
+machine_file "/var/opt/delivery/nginx/ca/#{delivery_server_ip}.crt" do
+  machine delivery_server_hostname
+  local_path "#{Chef::Config[:trusted_certs_dir]}/#{delivery_server_ip}.crt"
+  action :download
+end
+
 # Create the default Delivery enterprise
 machine_execute "Creating Enterprise" do
   command <<-EOM.gsub(/\s+/, " ").strip!
@@ -234,6 +240,7 @@ machine_batch "#{node['delivery-cluster']['builders']['count']}-build-nodes" do
       add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['builders']['flavor']  } if node['delivery-cluster']['builders']['flavor']
       files(
         "/etc/chef/trusted_certs/#{chef_server_ip}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt",
+        "/etc/chef/trusted_certs/#{delivery_server_ip}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{delivery_server_ip}.crt",
         '/etc/chef/encrypted_data_bag_secret' => "#{tmp_infra_dir}/encrypted_data_bag_secret"
       )
       action :converge
