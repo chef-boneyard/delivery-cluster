@@ -146,7 +146,7 @@ end
 
 execute "upload delivery cookbooks" do
   cwd current_dir
-  command "berks upload"
+  command "berks upload --no-ssl-verify"
   environment(
     'BERKSHELF_CHEF_CONFIG' => "#{tmp_infra_dir}/knife.rb"
   )
