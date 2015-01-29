@@ -234,7 +234,10 @@ machine_batch "#{node['delivery-cluster']['builders']['count']}-build-nodes" do
       role node['delivery-cluster']['builders']['role']
       add_machine_options(
         bootstrap_options: {image_id: node['delivery-cluster']['aws']['image_id']},
-        convergence_options: { chef_config_text: "encrypted_data_bag_secret File.join(File.dirname(__FILE__), 'encrypted_data_bag_secret')" }
+        convergence_options: {
+          chef_config_text: "encrypted_data_bag_secret File.join(File.dirname(__FILE__), 'encrypted_data_bag_secret')",
+          ssl_verify_mode: false
+        }
       )
       add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['builders']['flavor']  } if node['delivery-cluster']['builders']['flavor']
       files(
