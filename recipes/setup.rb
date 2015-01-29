@@ -118,7 +118,6 @@ end
 
 chef_data_bag_item "keys/delivery_builder_keys" do
   raw_data(
-    id: 'delivery_builder_keys',
     builder_key: builder_key.public_key.to_s,
     delivery_pem: builder_key.to_pem.to_s
   )
