@@ -118,8 +118,8 @@ end
 
 chef_data_bag_item "keys/delivery_builder_keys" do
   raw_data(
-    delivery_pem: builder_key.to_pem.to_s
     builder_key:  builder_key.to_pem.to_s,
+    delivery_pem: "#{tmp_infra_dir}/delivery.pem"
   )
   secret_path "#{tmp_infra_dir}/encrypted_data_bag_secret"
   encryption_version 1
