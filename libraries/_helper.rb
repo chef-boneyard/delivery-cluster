@@ -8,6 +8,7 @@
 #
 
 require 'openssl'
+require 'net/ssh'
 require 'securerandom'
 
 module DeliveryCluster
@@ -73,12 +74,20 @@ module DeliveryCluster
     end
 
     # Generate or load an existing RSA keypair
-    def builder_key
+    def builder_keypair
       if File.exists?("#{tmp_infra_dir}/builder_key")
         OpenSSL::PKey::RSA.new(File.read("#{tmp_infra_dir}/builder_key"))
       else
         OpenSSL::PKey::RSA.generate(2048)
       end
+    end
+
+    def builder_private_key
+      builder_keypair.to_pem.to_s
+    end
+
+    def builder_public_key
+      "#{builder_keypair.ssh_type} #{[builder_keypair.to_blob].pack('m0')}"
     end
 
     # Generate or load an existing encrypted data bag secret

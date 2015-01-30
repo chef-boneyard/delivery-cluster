@@ -99,14 +99,14 @@ end
 # create required builder keys
 file "#{tmp_infra_dir}/builder_key.pub" do
   mode    '0644'
-  content builder_key.public_key.to_s
+  content builder_public_key
   sensitive true
   action :create
 end
 
 file "#{tmp_infra_dir}/builder_key" do
   mode    '0600'
-  content builder_key.to_pem.to_s
+  content builder_private_key
   sensitive true
   action :create
 end
@@ -118,7 +118,7 @@ end
 
 chef_data_bag_item "keys/delivery_builder_keys" do
   raw_data(
-    builder_key:  builder_key.to_pem.to_s,
+    builder_key:  builder_private_key,
     delivery_pem: "#{tmp_infra_dir}/delivery.pem"
   )
   secret_path "#{tmp_infra_dir}/encrypted_data_bag_secret"
