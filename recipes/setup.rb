@@ -96,17 +96,16 @@ file "#{tmp_infra_dir}/encrypted_data_bag_secret" do
   action :create
 end
 
-# create required builder keys
 file "#{tmp_infra_dir}/builder_key.pub" do
   mode    '0644'
-  content builder_key.public_key.to_s
+  content builder_key_pub
   sensitive true
   action :create
 end
 
 file "#{tmp_infra_dir}/builder_key" do
   mode    '0600'
-  content builder_key.to_pem.to_s
+  content builder_key
   sensitive true
   action :create
 end
@@ -118,7 +117,7 @@ end
 
 chef_data_bag_item "keys/delivery_builder_keys" do
   raw_data(
-    builder_key:  builder_key.to_pem.to_s,
+    builder_key:  builder_key,
     delivery_pem: "#{tmp_infra_dir}/delivery.pem"
   )
   secret_path "#{tmp_infra_dir}/encrypted_data_bag_secret"
@@ -202,7 +201,7 @@ machine_file 'delivery-server-cert' do
   action :download
 end
 
-# Create the default Delivery enterprise
+# Create the default Delivery enterprise
 machine_execute "Creating Enterprise" do
   command <<-EOM.gsub(/\s+/, " ").strip!
     #{delivery_ctl} list-enterprises | grep -w ^#{node['delivery-cluster']['delivery']['enterprise']};

@@ -72,13 +72,24 @@ module DeliveryCluster
       "#{node['delivery-cluster']['builders']['hostname_prefix']}-#{index}"
     end
 
-    # Generate or load an existing RSA keypair
+    # Generate or load an existing SSH RSA private key
     def builder_key
-      if File.exists?("#{tmp_infra_dir}/builder_key")
-        OpenSSL::PKey::RSA.new(File.read("#{tmp_infra_dir}/builder_key"))
-      else
-        OpenSSL::PKey::RSA.generate(2048)
+      unless File.exists?("#{tmp_infra_dir}/builder_key")
+        gen_builder_key
       end
+      IO.read("#{tmp_infra_dir}/builder_key")
+    end
+
+    # Generate or load an existing SSH RSA public key
+    def builder_key_pub
+      unless File.exists?("#{tmp_infra_dir}/builder_key.pub")
+        gen_builder_key
+      end
+      IO.read("#{tmp_infra_dir}/builder_key.pub")
+    end
+
+    def gen_builder_key
+      system("ssh-keygen -t rsa -f #{tmp_infra_dir}/builder_key -P ''")
     end
 
     # Generate or load an existing encrypted data bag secret
