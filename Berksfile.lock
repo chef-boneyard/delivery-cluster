@@ -6,14 +6,13 @@ DEPENDENCIES
     path: .
     metadata: true
   delivery-server
-    git: ssh://schisamo@Chef@172.31.6.130:8989/Chef/Chef_Delivery/delivery
-    revision: d82994fe7ca3469dff30d634ff31d7c204fa448f
-    branch: _reviews/master/afiune/delivery_cluster_aws/latest
-    rel: cookbooks/delivery-server
+    git: git@github.com:opscode-cookbooks/delivery-server.git
+    revision: 0bdf51a23a0610f66c4d8e1544b8482c54eef7a4
+    branch: master
   delivery_builder
-    git: ssh://schisamo@Chef@172.31.6.130:8989/Chef/Chef_Delivery/delivery
-    revision: d82994fe7ca3469dff30d634ff31d7c204fa448f
-    branch: _reviews/master/afiune/delivery_cluster_aws/latest
+    git: git@github.com:chef/delivery.git
+    revision: bca3dce0f9480cebce9bac8e8dbae9202eeaf8c6
+    branch: master
     rel: cookbooks/delivery_builder
 
 GRAPH
@@ -53,7 +52,7 @@ GRAPH
     windows (>= 0.0.0)
     yum (~> 3.0)
     yum-epel (>= 0.0.0)
-  homebrew (1.11.0)
+  homebrew (1.12.0)
     build-essential (>= 2.1.2)
   nodejs (2.2.0)
     apt (>= 0.0.0)
