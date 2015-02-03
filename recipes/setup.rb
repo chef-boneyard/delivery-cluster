@@ -130,24 +130,18 @@ end
 # generate a knife config file that points at the new Chef Server
 file File.join(tmp_infra_dir, 'knife.rb') do
   content <<-EOH
-current_chef_dir = File.dirname(__FILE__)
-working_dir      = Dir.pwd
-cookbook_paths   = []
-cookbook_paths  << File.join(current_chef_dir, '..','cookbooks')
-cookbook_paths  << File.join(current_chef_dir, '..','vendor/cookbooks')
-
-node_name        'delivery'
-chef_server_url  '#{chef_server_url}'
-client_key       '#{tmp_infra_dir}/delivery.pem'
-cookbook_path    cookbook_paths
+node_name         'delivery'
+chef_server_url   '#{chef_server_url}'
+client_key        '#{tmp_infra_dir}/delivery.pem'
+cookbook_path     '#{Chef::Config[:cookbook_path]}'
+trusted_certs_dir '#{Chef::Config[:trusted_certs_dir]}'
   EOH
 end
 
 execute "upload delivery cookbooks" do
-  cwd current_dir
-  command "berks upload --no-ssl-verify"
+  command "knife cookbook upload --all --cookbook-path #{Chef::Config[:cookbook_path]}"
   environment(
-    'BERKSHELF_CHEF_CONFIG' => "#{tmp_infra_dir}/knife.rb"
+    'KNIFE_HOME' => tmp_infra_dir
   )
 end
 
