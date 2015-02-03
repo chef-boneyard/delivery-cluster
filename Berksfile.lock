@@ -6,13 +6,12 @@ DEPENDENCIES
     path: .
     metadata: true
   delivery-server
-    git: git@github.com:chef/delivery.git
-    revision: 1e4f3aff88142f2523381a93f3f379dd393a838a
+    git: git@github.com:opscode-cookbooks/delivery-server.git
+    revision: 0bdf51a23a0610f66c4d8e1544b8482c54eef7a4
     branch: master
-    rel: cookbooks/delivery-server
   delivery_builder
     git: git@github.com:chef/delivery.git
-    revision: 1e4f3aff88142f2523381a93f3f379dd393a838a
+    revision: bca3dce0f9480cebce9bac8e8dbae9202eeaf8c6
     branch: master
     rel: cookbooks/delivery_builder
 
@@ -32,8 +31,8 @@ GRAPH
     delivery-server (>= 0.0.0)
     delivery_builder (>= 0.0.0)
     push-jobs (>= 0.0.0)
-  delivery-server (0.2.5)
-  delivery_builder (0.4.3)
+  delivery-server (0.2.6)
+  delivery_builder (0.4.4)
     chef-sugar (>= 0.0.0)
     erlang (>= 0.0.0)
     git (>= 0.0.0)
@@ -53,7 +52,7 @@ GRAPH
     windows (>= 0.0.0)
     yum (~> 3.0)
     yum-epel (>= 0.0.0)
-  homebrew (1.11.0)
+  homebrew (1.12.0)
     build-essential (>= 2.1.2)
   nodejs (2.2.0)
     apt (>= 0.0.0)
