@@ -77,16 +77,6 @@ machine_file 'chef-server-cert' do
   action :download
 end
 
-# Point the local, in-progress CCR along with all remote CCRs at the freshly
-# provisioned Chef Server
-with_chef_server chef_server_url,
-  client_name: 'delivery',
-  signing_key_filename: "#{tmp_infra_dir}/delivery.pem"
-
-Chef::Config.node_name        = 'delivery'
-Chef::Config.client_key       = "#{tmp_infra_dir}/delivery.pem"
-Chef::Config.chef_server_url  = chef_server_url
-
 ################################################################################
 # Phase 2: Bootstrap the rest of our infrastructure with the new Chef Server
 ################################################################################
@@ -116,10 +106,12 @@ end
 
 # create the data bag (and item) to store our builder keys
 chef_data_bag "keys" do
+  chef_server lazy { chef_server_config }
   action :create
 end
 
 chef_data_bag_item "keys/delivery_builder_keys" do
+  chef_server lazy { chef_server_config }
   raw_data(
     builder_key:  builder_private_key,
     delivery_pem: "#{tmp_infra_dir}/delivery.pem"
@@ -154,23 +146,26 @@ end
 # it's primary ipaddress to use as the hostname in the initial
 # `/etc/opscode/delivery.rb` file
 machine delivery_server_hostname do
+  chef_server lazy { chef_server_config }
   add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['delivery']['flavor']  } if node['delivery-cluster']['delivery']['flavor']
   files lazy {{
-      "/etc/chef/trusted_certs/#{chef_server_ip}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt"
+    "/etc/chef/trusted_certs/#{chef_server_ip}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt"
   }}
   action :converge
 end
 
 # Creating the Data Bag that store the Delivery Artifacts
 chef_data_bag "delivery" do
+  chef_server lazy { chef_server_config }
   action :create
 end
 
-# This is ugly but there is no other easy way to set  `chef_data_bag_item`'s
+# This is ugly but there is no other easy way to set `chef_data_bag_item`'s
 # name attribute lazily
 ruby_block 'delivery-versions-data-bag-item' do
   block do
     dbi = Chef::Resource::ChefDataBagItem.new("delivery/#{delivery_server_version}", run_context)
+    dbi.chef_server(chef_server_config)
     dbi.raw_data(
       id: delivery_server_version,
       version: delivery_server_version,
@@ -183,6 +178,7 @@ end
 # Now that we've extracted the Delivery Server's ipaddress we can fully
 # converge and complete the install.
 machine delivery_server_hostname do
+  chef_server lazy { chef_server_config }
   add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['delivery']['flavor']  } if node['delivery-cluster']['delivery']['flavor']
   recipe "delivery-server"
   files(
@@ -195,6 +191,7 @@ machine delivery_server_hostname do
 end
 
 machine_file 'delivery-server-cert' do
+  chef_server lazy { chef_server_config }
   path lazy { "/var/opt/delivery/nginx/ca/#{delivery_server_ip}.crt" }
   machine delivery_server_hostname
   local_path lazy { "#{Chef::Config[:trusted_certs_dir]}/#{delivery_server_ip}.crt" }
@@ -203,12 +200,14 @@ end
 
 # Create the default Delivery enterprise
 machine_execute "Creating Enterprise" do
+  chef_server lazy { chef_server_config }
   command delivery_enterprise_cmd
   machine delivery_server_hostname
 end
 
 # Download the credentials form the Delivery server
 machine_file "/tmp/#{node['delivery-cluster']['delivery']['enterprise']}.creds" do
+  chef_server lazy { chef_server_config }
   machine delivery_server_hostname
   local_path "#{tmp_infra_dir}/#{node['delivery-cluster']['delivery']['enterprise']}.creds"
   action :download
@@ -220,6 +219,7 @@ end
 
 # Create the Delivery builder role
 chef_role node['delivery-cluster']['builders']['role'] do
+  chef_server lazy { chef_server_config }
   description "Base Role for the Delivery Build Nodes"
   run_list ["recipe[push-jobs]","recipe[delivery_builder]"]
 end
@@ -228,6 +228,7 @@ end
 machine_batch "#{node['delivery-cluster']['builders']['count']}-build-nodes" do
   1.upto(node['delivery-cluster']['builders']['count']) do |i|
     machine delivery_builder_hostname(i) do
+      chef_server lazy { chef_server_config }
       role node['delivery-cluster']['builders']['role']
       add_machine_options(
         bootstrap_options: {image_id: node['delivery-cluster']['aws']['image_id']},
