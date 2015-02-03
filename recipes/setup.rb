@@ -38,43 +38,44 @@ add_machine_options use_private_ip_for_ssh: node['delivery-cluster']['aws']['use
 # `/etc/opscode/chef-server.rb` file
 machine chef_server_hostname do
   add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['chef-server']['flavor'] } if node['delivery-cluster']['chef-server']['flavor']
-  action :nothing
-end.run_action(:converge)
+  action :converge
+end
 
 # Now that we've extracted the Chef Server's ipaddress we can fully
 # converge and complete the install.
 machine chef_server_hostname do
   recipe "chef-server-12"
-  attributes chef_server_attributes
-  action :nothing
-end.run_action(:converge)
+  attributes lazy { chef_server_attributes }
+  action :converge
+end
 
 directory tmp_infra_dir do
-  action :nothing
-end.run_action(:create)
+  action :create
+end
 
 directory Chef::Config[:trusted_certs_dir] do
-  action :nothing
-end.run_action(:create)
+  action :create
+end
 
 # Fetch our client and validator pems from the provisioned Chef Server
 machine_file "/tmp/validator.pem" do
   machine chef_server_hostname
   local_path "#{tmp_infra_dir}/validator.pem"
-  action :nothing
-end.run_action(:download)
+  action :download
+end
 
 machine_file "/tmp/delivery.pem" do
   machine chef_server_hostname
   local_path "#{tmp_infra_dir}/delivery.pem"
-  action :nothing
-end.run_action(:download)
+  action :download
+end
 
-machine_file "/var/opt/opscode/nginx/ca/#{chef_server_ip}.crt" do
+machine_file 'chef-server-cert' do
+  path lazy { "/var/opt/opscode/nginx/ca/#{chef_server_ip}.crt" }
   machine chef_server_hostname
-  local_path "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt"
-  action :nothing
-end.run_action(:download)
+  local_path lazy { "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt" }
+  action :download
+end
 
 # Point the local, in-progress CCR along with all remote CCRs at the freshly
 # provisioned Chef Server
@@ -131,13 +132,15 @@ end
 
 # generate a knife config file that points at the new Chef Server
 file File.join(tmp_infra_dir, 'knife.rb') do
-  content <<-EOH
+  content lazy {
+    <<-EOH
 node_name         'delivery'
 chef_server_url   '#{chef_server_url}'
 client_key        '#{tmp_infra_dir}/delivery.pem'
 cookbook_path     '#{Chef::Config[:cookbook_path]}'
 trusted_certs_dir '#{Chef::Config[:trusted_certs_dir]}'
-  EOH
+    EOH
+  }
 end
 
 execute "upload delivery cookbooks" do
@@ -152,9 +155,9 @@ end
 # `/etc/opscode/delivery.rb` file
 machine delivery_server_hostname do
   add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['delivery']['flavor']  } if node['delivery-cluster']['delivery']['flavor']
-  files(
-    "/etc/chef/trusted_certs/#{chef_server_ip}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt"
-  )
+  files lazy {{
+      "/etc/chef/trusted_certs/#{chef_server_ip}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt"
+  }}
   action :converge
 end
 
