@@ -158,6 +158,18 @@ module DeliveryCluster
       delivery_attributes
     end
 
+    def delivery_enterprise_cmd
+      # We have introduced an additional constrain to the enterprise_ctl
+      # command that require to specify --ssh-pub-key-file param starting
+      # from the Delivery Version 0.2.52
+      cmd = <<-CMD.gsub(/\s+/, " ").strip!
+        #{delivery_ctl} list-enterprises | grep -w ^#{node['delivery-cluster']['delivery']['enterprise']};
+        [ $? -ne 0 ] && #{delivery_ctl} create-enterprise #{node['delivery-cluster']['delivery']['enterprise']}
+      CMD
+      cmd << ' --ssh-pub-key-file=/etc/delivery/builder_key.pub' if Gem::Version.new(delivery_server_version) < Gem::Version.new('0.2.52')
+      cmd << " > /tmp/#{node['delivery-cluster']['delivery']['enterprise']}.creds || echo 1"
+    end
+
     def delivery_artifact
       # If we don't have the artifact, we will get it from artifactory
       # We will need VPN to do so. Or other way could be to upload it
