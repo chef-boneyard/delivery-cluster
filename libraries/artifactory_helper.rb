@@ -25,38 +25,38 @@
 # }
 def get_delivery_artifact(version = 'latest', platform = 'ubuntu', platform_version = '14.04', tmp_dir = '/tmp')
 
-	# Yup! We must validate access to Chef VPN
-	validate_vpn
+  # Yup! We must validate access to Chef VPN
+  validate_vpn
 
   artifactory_gem = Chef::Resource::ChefGem.new('artifactory', run_context)
   artifactory_gem.run_action(:install)
-	require 'artifactory'
+  require 'artifactory'
 
-	artifactory_endpoint     = 'http://artifactory.chef.co'
-	artifactory_omnibus_repo = 'omnibus-current-local'
+  artifactory_endpoint     = 'http://artifactory.chef.co'
+  artifactory_omnibus_repo = 'omnibus-current-local'
 
-	# Create an anonymous client
-	client = Artifactory::Client.new(
-	  endpoint: artifactory_endpoint
-	)
+  # Create an anonymous client
+  client = Artifactory::Client.new(
+    endpoint: artifactory_endpoint
+  )
 
-	deliv_version = client.artifact_latest_version(
-	  repos: artifactory_omnibus_repo,
-	  group: 'com.getchef',
-	  name: 'delivery',
-	  version: version == 'latest' ? '*' : version
-	)
+  deliv_version = client.artifact_latest_version(
+    repos: artifactory_omnibus_repo,
+    group: 'com.getchef',
+    name: 'delivery',
+    version: version == 'latest' ? '*' : version
+  )
 
   supported = supported_platforms_format(platform, platform_version)
 
-	artifact = client.artifact_property_search(
-	  'omnibus.platform' => supported['platform'],
-	  'omnibus.platform_version' => supported['version'],
-	  'omnibus.project' => 'delivery',
-	  'omnibus.version' => deliv_version
-	).first
+  artifact = client.artifact_property_search(
+    'omnibus.platform' => supported['platform'],
+    'omnibus.platform_version' => supported['version'],
+    'omnibus.project' => 'delivery',
+    'omnibus.version' => deliv_version
+  ).first
 
-	latest_delivery = "#{tmp_dir}/#{File.basename(artifact.uri)}"
+  latest_delivery = "#{tmp_dir}/#{File.basename(artifact.uri)}"
 
   remote_file = Chef::Resource::RemoteFile.new(latest_delivery, run_context)
   remote_file.source(artifact.download_uri)

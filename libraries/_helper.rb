@@ -127,9 +127,23 @@ module DeliveryCluster
       }
     end
 
+    def chef_server_config
+      {
+        chef_server_url: chef_server_url,
+        options: {
+          client_name: 'delivery',
+          signing_key_filename: "#{tmp_infra_dir}/delivery.pem"
+        }
+      }
+    end
+
     def delivery_server_node
       @@delivery_server_node ||= begin
-        Chef::Node.load(delivery_server_hostname)
+        Chef::REST.new(
+          chef_server_config[:chef_server_url],
+          chef_server_config[:options][:client_name],
+          chef_server_config[:options][:signing_key_filename]
+        ).get_rest("nodes/#{delivery_server_hostname}")
       end
     end
 
@@ -195,6 +209,7 @@ module DeliveryCluster
 
         # Upload Artifact to Delivery Server
         machine_file = Chef::Resource::MachineFile.new("/var/tmp/#{artifact['name']}", run_context)
+        machine_file.chef_server(chef_server_config)
         machine_file.machine(node['delivery-cluster']['delivery']['hostname'])
         machine_file.local_path(artifact['local_path'])
         machine_file.run_action(:upload)
