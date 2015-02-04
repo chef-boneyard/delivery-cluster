@@ -2,10 +2,14 @@
 # Cookbook Name:: delivery-cluster
 # Recipe:: artifactory_helper
 #
+# Author:: Salim Afiune (<afiune@chef.io>)
+#
 # Copyright 2015, Chef Software, Inc.
 #
 # All rights reserved - Do Not Redistribute
 #
+
+require 'net/http'
 
 # Artifact Helper
 #
@@ -98,7 +102,18 @@ def supported_platforms_format(platform, platform_version)
   end
 end
 
-# TODO:
+# When we need to reach out Chef Artifactory we must ensure that we are
+# connected to the Chef VPN. Otherwise we don't go any further.
 def validate_vpn
-  puts "TODO: Validate VPN"
+  npm_host = '172.31.6.68'
+  npm_port = 4873
+
+  http = ::Net::HTTP.new npm_host, npm_port
+  http.open_timeout = 5
+
+  begin
+    http.get '/index'
+  rescue ::Timeout::Error
+    Chef::Application.fatal! 'You need to connect to the VPN to build your delivery-cluster!'
+  end
 end
