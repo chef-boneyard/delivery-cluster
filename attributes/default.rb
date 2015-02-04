@@ -2,6 +2,8 @@
 # Cookbook Name:: delivery-cluster
 # Attributes:: default
 #
+# Author:: Salim Afiune (<afiune@chef.io>)
+#
 # Copyright 2015, Chef Software, Inc.
 #
 # All rights reserved - Do Not Redistribute
@@ -34,16 +36,16 @@ default['delivery-cluster']['delivery']['enterprise']  = 'my_enterprise'
 
 # => LDAP config
 # => Available Attributes
-# => ldap_hosts
-# => ldap_port
-# => ldap_timeout
-# => ldap_base_dn
-# => ldap_bind_dn
-# => ldap_bind_dn_password
-# => ldap_encryption
-# => ldap_attr_login
-# => ldap_attr_mail
-# => ldap_attr_full_name
+#   => ldap_hosts
+#   => ldap_port
+#   => ldap_timeout
+#   => ldap_base_dn
+#   => ldap_bind_dn
+#   => ldap_bind_dn_password
+#   => ldap_encryption
+#   => ldap_attr_login
+#   => ldap_attr_mail
+#   => ldap_attr_full_name
 default['delivery-cluster']['delivery']['ldap']        = {}
 
 # Delivery Artifacts

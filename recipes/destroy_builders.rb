@@ -2,6 +2,8 @@
 # Cookbook Name:: delivery-cluster
 # Recipe:: destroy_builders
 #
+# Author:: Salim Afiune (<afiune@chef.io>)
+#
 # Copyright 2015, Chef Software, Inc.
 #
 # All rights reserved - Do Not Redistribute
@@ -20,7 +22,7 @@ if File.exist?("#{tmp_infra_dir}/delivery.pem")
       signing_key_filename: "#{tmp_infra_dir}/delivery.pem"
 
     # Destroy Build Nodes
-    machine_batch "Destroying Build Nodes" do
+    machine_batch 'Destroying Build Nodes' do
       1.upto(node['delivery-cluster']['builders']['count']) do |i|
         machine delivery_builder_hostname(i)
       end
@@ -31,5 +33,5 @@ if File.exist?("#{tmp_infra_dir}/delivery.pem")
     Chef::Log.warn("We couldn't get the chef-server Public IP: #{e.message}")
   end
 else
-  log "Skipping Build Nodes deletion because missing delivery.pem key"
+  log 'Skipping Build Nodes deletion because missing delivery.pem key'
 end
