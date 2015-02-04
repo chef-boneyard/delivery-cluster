@@ -105,14 +105,11 @@ end
 # When we need to reach out Chef Artifactory we must ensure that we are
 # connected to the Chef VPN. Otherwise we don't go any further.
 def validate_vpn
-  npm_host = '172.31.6.68'
-  npm_port = 4873
-
-  http = ::Net::HTTP.new npm_host, npm_port
+  http = ::Net::HTTP.new 'artifactory.chef.co'
   http.open_timeout = 5
 
   begin
-    http.get '/index'
+    http.get '/'
   rescue ::Timeout::Error
     Chef::Application.fatal! 'You need to connect to the VPN to build your delivery-cluster!'
   end
