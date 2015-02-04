@@ -201,7 +201,7 @@ end
 # Create the default Delivery enterprise
 machine_execute "Creating Enterprise" do
   chef_server lazy { chef_server_config }
-  command delivery_enterprise_cmd
+  command lazy { delivery_enterprise_cmd }
   machine delivery_server_hostname
 end
 
