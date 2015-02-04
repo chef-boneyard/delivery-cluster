@@ -2,6 +2,8 @@
 # Cookbook Name:: delivery-cluster
 # Recipe:: setup
 #
+# Author:: Salim Afiune (<afiune@chef.io>)
+#
 # Copyright 2015, Chef Software, Inc.
 #
 # All rights reserved - Do Not Redistribute
@@ -198,10 +200,7 @@ end
 
 # Create the default Delivery enterprise
 machine_execute "Creating Enterprise" do
-  command <<-EOM.gsub(/\s+/, " ").strip!
-    #{delivery_ctl} list-enterprises | grep -w ^#{node['delivery-cluster']['delivery']['enterprise']};
-    [ $? -ne 0 ] && #{delivery_ctl} create-enterprise #{node['delivery-cluster']['delivery']['enterprise']} > /tmp/#{node['delivery-cluster']['delivery']['enterprise']}.creds || echo 1
-  EOM
+  command delivery_enterprise_cmd
   machine delivery_server_hostname
 end
 
