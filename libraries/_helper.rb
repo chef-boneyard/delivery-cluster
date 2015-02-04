@@ -2,6 +2,8 @@
 # Cookbook Name:: delivery-cluster
 # Recipe:: _helper
 #
+# Author:: Salim Afiune (<afiune@chef.io>)
+#
 # Copyright 2015, Chef Software, Inc.
 #
 # All rights reserved - Do Not Redistribute
@@ -21,6 +23,8 @@ module DeliveryCluster
       File.join(Chef::Config[:file_cache_path], 'infra')
     end
 
+    # We will return the right IP to use depending wheter we need to
+    # use the Private IP or the Public IP
     def get_aws_ip(n)
       if node['delivery-cluster']['aws']['use_private_ip_for_ssh']
         n['ec2']['local_ipv4']
@@ -104,7 +108,7 @@ module DeliveryCluster
       @@chef_server_ip ||= begin
         chef_server_node = Chef::Node.load(chef_server_hostname)
         chef_server_ip   = get_aws_ip(chef_server_node)
-        Chef::Log.info("Your Chef Server Public IP is => #{chef_server_ip}")
+        Chef::Log.info("Your Chef Server Public/Private IP is => #{chef_server_ip}")
         chef_server_ip
       end
     end
@@ -132,7 +136,7 @@ module DeliveryCluster
     def delivery_server_ip
       @@delivery_server_ip ||= begin
         delivery_server_ip   = get_aws_ip(delivery_server_node)
-        Chef::Log.info("Your Delivery Server Public IP is => #{delivery_server_ip}")
+        Chef::Log.info("Your Delivery Server Public/Private IP is => #{delivery_server_ip}")
         delivery_server_ip
       end
     end
