@@ -112,10 +112,10 @@ end
 
 chef_data_bag_item "keys/delivery_builder_keys" do
   chef_server lazy { chef_server_config }
-  raw_data(
+  raw_data lazy {{
     builder_key:  builder_private_key,
     delivery_pem: File.read("#{tmp_infra_dir}/delivery.pem")
-  )
+  }}
   secret_path "#{tmp_infra_dir}/encrypted_data_bag_secret"
   encryption_version 1
   encrypt true
