@@ -103,7 +103,7 @@ def supported_platforms_format(platform, platform_version)
 end
 
 # When we need to reach out Chef Artifactory we must ensure that we are
-# connected to the Chef VPN. Otherwise we don't go any further.
+# connected to the Chef VPN. Otherwise we don't go any further.
 def validate_vpn
   http = ::Net::HTTP.new 'artifactory.chef.co'
   http.open_timeout = 5

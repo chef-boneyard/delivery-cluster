@@ -112,7 +112,7 @@ end
 
 chef_data_bag_item "keys/delivery_builder_keys" do
   chef_server lazy { chef_server_config }
-  raw_data lazy {{
+  raw_data lazy {{
     builder_key:  builder_private_key,
     delivery_pem: File.read("#{tmp_infra_dir}/delivery.pem")
   }}
@@ -198,7 +198,7 @@ machine_file 'delivery-server-cert' do
   action :download
 end
 
-# Create the default Delivery enterprise
+# Create the default Delivery enterprise
 machine_execute "Creating Enterprise" do
   chef_server lazy { chef_server_config }
   command lazy { delivery_enterprise_cmd }
