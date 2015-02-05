@@ -174,7 +174,7 @@ module DeliveryCluster
 
     def delivery_enterprise_cmd
       # We have introduced an additional constrain to the enterprise_ctl
-      # command that require to specify --ssh-pub-key-file param starting
+      # command that require to specify --ssh-pub-key-file param starting
       # from the Delivery Version 0.2.52
       cmd = <<-CMD.gsub(/\s+/, " ").strip!
         #{delivery_ctl} list-enterprises | grep -w ^#{node['delivery-cluster']['delivery']['enterprise']};
