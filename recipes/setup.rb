@@ -38,6 +38,10 @@ add_machine_options use_private_ip_for_ssh: node['delivery-cluster']['aws']['use
 # `/etc/opscode/chef-server.rb` file
 machine chef_server_hostname do
   add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['chef-server']['flavor'] } if node['delivery-cluster']['chef-server']['flavor']
+  # Transfer any trusted certs from the current CCR
+  Dir.glob("#{Chef::Config[:trusted_certs_dir]}/*.{crt,pem}").each do |cert_path|
+    file cert_path, cert_path
+  end
   action :converge
 end
 
