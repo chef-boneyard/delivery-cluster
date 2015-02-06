@@ -31,6 +31,7 @@ default['delivery-cluster']['id'] = nil
 # Specific attributes
 # => Delivery Server
 default['delivery-cluster']['delivery']['hostname']    = nil
+default['delivery-cluster']['delivery']['fqdn']        = nil
 default['delivery-cluster']['delivery']['flavor']      = 't2.medium'
 default['delivery-cluster']['delivery']['enterprise']  = 'my_enterprise'
 
