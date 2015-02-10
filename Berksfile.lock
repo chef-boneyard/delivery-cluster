@@ -6,9 +6,10 @@ DEPENDENCIES
     path: .
     metadata: true
   delivery-server
-    git: git@github.com:opscode-cookbooks/delivery-server.git
-    revision: 0bdf51a23a0610f66c4d8e1544b8482c54eef7a4
+    git: git@github.com:chef/delivery.git
+    revision: bca3dce0f9480cebce9bac8e8dbae9202eeaf8c6
     branch: master
+    rel: cookbooks/delivery-server
   delivery_builder
     git: git@github.com:chef/delivery.git
     revision: bca3dce0f9480cebce9bac8e8dbae9202eeaf8c6
