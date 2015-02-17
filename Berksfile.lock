@@ -2,24 +2,20 @@ DEPENDENCIES
   chef-server-12
     git: git@github.com:opscode-cookbooks/chef-server-12.git
     revision: 6d2088e4ddeb241f4c9e60b3fabb743c28641fa4
+    branch: master
   delivery-cluster
     path: .
     metadata: true
   delivery-server
     git: git@github.com:chef/delivery.git
-    revision: 04c30652d79e772f144d3fac304a06d85d25cbb5
+    revision: ce7fd598e2ac351656d133dfd4e6e2e658a3281f
     branch: master
     rel: cookbooks/delivery-server
   delivery_builder
     git: git@github.com:chef/delivery.git
-    revision: 04c30652d79e772f144d3fac304a06d85d25cbb5
+    revision: ce7fd598e2ac351656d133dfd4e6e2e658a3281f
     branch: master
     rel: cookbooks/delivery_builder
-  delivery_truck
-    git: git@github.com:chef/delivery.git
-    revision: 04c30652d79e772f144d3fac304a06d85d25cbb5
-    branch: master
-    rel: cookbooks/delivery_truck
 
 GRAPH
   7-zip (1.0.2)
@@ -36,16 +32,14 @@ GRAPH
     chef-server-12 (>= 0.0.0)
     delivery-server (>= 0.0.0)
     delivery_builder (>= 0.0.0)
-    delivery_truck (>= 0.0.0)
     push-jobs (>= 0.0.0)
-  delivery-server (0.2.7)
-  delivery_builder (0.4.4)
+  delivery-server (0.2.11)
+  delivery_builder (0.4.7)
     chef-sugar (>= 0.0.0)
     erlang (>= 0.0.0)
     git (>= 0.0.0)
     nodejs (>= 0.0.0)
     omnibus (>= 0.0.0)
-  delivery_truck (0.2.0)
   dmg (2.2.2)
   erlang (1.5.6)
     apt (>= 1.7.0)
@@ -67,7 +61,7 @@ GRAPH
     ark (>= 0.0.0)
     build-essential (>= 0.0.0)
     yum-epel (>= 0.0.0)
-  omnibus (2.5.1)
+  omnibus (2.5.2)
     7-zip (~> 1.0)
     build-essential (~> 2.0)
     chef-sugar (~> 2.0)
@@ -77,7 +71,7 @@ GRAPH
   push-jobs (2.2.0)
     runit (>= 0.0.0)
     windows (>= 0.0.0)
-  runit (1.5.14)
+  runit (1.5.16)
     build-essential (>= 0.0.0)
     yum (~> 3.0)
     yum-epel (>= 0.0.0)

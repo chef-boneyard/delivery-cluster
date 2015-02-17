@@ -16,7 +16,3 @@ cookbook 'delivery_builder',
   rel: 'cookbooks/delivery_builder',
   branch: 'master'
 
-cookbook 'delivery_truck',
-  git: 'git@github.com:chef/delivery.git',
-  rel: 'cookbooks/delivery_truck',
-  branch: 'master'
