@@ -94,6 +94,13 @@ module DeliveryCluster
       "#{builder_keypair.ssh_type} #{[builder_keypair.to_blob].pack('m0')}"
     end
 
+    def builder_run_list
+      @builder_run_list ||= begin
+        base_builder_run_list = %w( recipe[push-jobs] recipe[delivery_builder] )
+        base_builder_run_list + node['delivery-cluster']['builders']['additional_run_list']
+      end
+    end
+
     # Generate or load an existing encrypted data bag secret
     def encrypted_data_bag_secret
       if File.exists?("#{tmp_infra_dir}/encrypted_data_bag_secret")

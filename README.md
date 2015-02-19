@@ -67,11 +67,12 @@ ATTRIBUTES
 
 ### Delivery Build Nodes Settings
 
-| Attribute                                              | Description                       |
-| ------------------------------------------------------ | --------------------------------- |
-| `['delivery-cluster']['builders']['hostname_prefix']`  | Hostname (prefix) of your Delivery Build Nodes. |
-| `['delivery-cluster']['builders']['role']`             | Name of the Delivery Build Nodes Role. |
-| `['delivery-cluster']['builders']['count']`            | Number of Build Nodes to create. |
+| Attribute                                                 | Description                       |
+| --------------------------------------------------------- | --------------------------------- |
+| `['delivery-cluster']['builders']['hostname_prefix']`     | Hostname (prefix) of your Delivery Build Nodes. |
+| `['delivery-cluster']['builders']['role']`                | Name of the Delivery Build Nodes Role. |
+| `['delivery-cluster']['builders']['count']`               | Number of Build Nodes to create. |
+| `['delivery-cluster']['builders']['additional_run_list']` | Additional run list items to apply to build nodes. |
 
 Supported Platforms
 -------------------

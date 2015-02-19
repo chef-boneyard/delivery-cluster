@@ -76,7 +76,7 @@ default['delivery-cluster']['chef-server']['organization'] = 'my_enterprise'
 default['delivery-cluster']['chef-server']['flavor']       = 't2.small'
 
 # => Build Nodes
-default['delivery-cluster']['builders']['hostname_prefix'] = nil
-default['delivery-cluster']['builders']['role']            = 'delivery_builders'
-default['delivery-cluster']['builders']['count']           = 3
-default['delivery-cluster']['builders']['flavor']          = 't2.small'
+default['delivery-cluster']['builders']['hostname_prefix']     = nil
+default['delivery-cluster']['builders']['count']               = 3
+default['delivery-cluster']['builders']['flavor']              = 't2.small'
+default['delivery-cluster']['builders']['additional_run_list'] = []

@@ -222,10 +222,10 @@ end
 #########################################################################
 
 # Create the Delivery builder role
-chef_role node['delivery-cluster']['builders']['role'] do
+chef_role 'delivery_builders' do
   chef_server lazy { chef_server_config }
   description "Base Role for the Delivery Build Nodes"
-  run_list ["recipe[push-jobs]","recipe[delivery_builder]"]
+  run_list builder_run_list
 end
 
 # Provision our builders in parallel
@@ -233,7 +233,7 @@ machine_batch "#{node['delivery-cluster']['builders']['count']}-build-nodes" do
   1.upto(node['delivery-cluster']['builders']['count']) do |i|
     machine delivery_builder_hostname(i) do
       chef_server lazy { chef_server_config }
-      role node['delivery-cluster']['builders']['role']
+      role 'delivery_builders'
       add_machine_options(
         bootstrap_options: {image_id: node['delivery-cluster']['aws']['image_id']},
         convergence_options: {
