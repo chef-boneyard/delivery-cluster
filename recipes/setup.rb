@@ -225,7 +225,7 @@ end
 chef_role 'delivery_builders' do
   chef_server lazy { chef_server_config }
   description "Base Role for the Delivery Build Nodes"
-  run_list ["recipe[push-jobs]","recipe[delivery_builder]"]
+  run_list builder_run_list
 end
 
 # Provision our builders in parallel
