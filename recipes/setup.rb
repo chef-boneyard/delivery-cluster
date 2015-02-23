@@ -183,7 +183,6 @@ end
 # converge and complete the install.
 machine delivery_server_hostname do
   chef_server lazy { chef_server_config }
-  add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['delivery']['flavor']  } if node['delivery-cluster']['delivery']['flavor']
   recipe "delivery-server"
   files(
     '/etc/delivery/delivery.pem' => "#{tmp_infra_dir}/delivery.pem",
@@ -235,7 +234,6 @@ machine_batch "#{node['delivery-cluster']['builders']['count']}-build-nodes" do
       chef_server lazy { chef_server_config }
       role 'delivery_builders'
       add_machine_options(
-        bootstrap_options: {image_id: node['delivery-cluster']['aws']['image_id']},
         convergence_options: {
           chef_config_text: "encrypted_data_bag_secret File.join(File.dirname(__FILE__), 'encrypted_data_bag_secret')",
           ssl_verify_mode: :verify_none
