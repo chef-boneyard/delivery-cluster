@@ -7,6 +7,6 @@ file_cache_path   File.join(current_dir, 'local-mode-cache', 'cache')
 # Berkshelf no longer depedends on Chef so we avoid using the
 # delivery_knife when running under a `berks` command.
 if defined? ::Chef::Config
-  delivery_knife    = File.join(Chef::Config[:file_cache_path], 'infra', 'knife.rb')
+  delivery_knife    = File.join(current_dir, 'delivery-cluster-data', 'knife.rb')
   Chef::Config.from_file(delivery_knife) if File.exist?(delivery_knife)
 end

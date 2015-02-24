@@ -19,8 +19,8 @@ module DeliveryCluster
       Chef::Config.chef_repo_path
     end
 
-    def tmp_infra_dir
-      File.join(Chef::Config[:file_cache_path], 'infra')
+    def cluster_data_dir
+      File.join(current_dir, '.chef', 'delivery-cluster-data')
     end
 
     # We will return the right IP to use depending wheter we need to
@@ -79,8 +79,8 @@ module DeliveryCluster
 
     # Generate or load an existing RSA keypair
     def builder_keypair
-      if File.exists?("#{tmp_infra_dir}/builder_key")
-        OpenSSL::PKey::RSA.new(File.read("#{tmp_infra_dir}/builder_key"))
+      if File.exists?("#{cluster_data_dir}/builder_key")
+        OpenSSL::PKey::RSA.new(File.read("#{cluster_data_dir}/builder_key"))
       else
         OpenSSL::PKey::RSA.generate(2048)
       end
@@ -103,8 +103,8 @@ module DeliveryCluster
 
     # Generate or load an existing encrypted data bag secret
     def encrypted_data_bag_secret
-      if File.exists?("#{tmp_infra_dir}/encrypted_data_bag_secret")
-        File.read("#{tmp_infra_dir}/encrypted_data_bag_secret")
+      if File.exists?("#{cluster_data_dir}/encrypted_data_bag_secret")
+        File.read("#{cluster_data_dir}/encrypted_data_bag_secret")
       else
         # Ruby's `SecureRandom` module uses OpenSSL under the covers
         SecureRandom.base64(512)
@@ -139,7 +139,7 @@ module DeliveryCluster
         chef_server_url: chef_server_url,
         options: {
           client_name: 'delivery',
-          signing_key_filename: "#{tmp_infra_dir}/delivery.pem"
+          signing_key_filename: "#{cluster_data_dir}/delivery.pem"
         }
       }
     end
@@ -212,7 +212,7 @@ module DeliveryCluster
         }
       else
         # We will get it from artifactory
-        artifact = get_delivery_artifact(node['delivery-cluster']['delivery']['version'], delivery_server_node['platform'], delivery_server_node['platform_version'], tmp_infra_dir)
+        artifact = get_delivery_artifact(node['delivery-cluster']['delivery']['version'], delivery_server_node['platform'], delivery_server_node['platform_version'], cluster_data_dir)
 
         # Upload Artifact to Delivery Server
         machine_file = Chef::Resource::MachineFile.new("/var/tmp/#{artifact['name']}", run_context)
@@ -237,7 +237,7 @@ module DeliveryCluster
         if node['delivery-cluster']['delivery'][delivery_server_node['platform_family']] && node['delivery-cluster']['delivery']['version'] != 'latest'
           node['delivery-cluster']['delivery']['version']
         else
-          artifact = get_delivery_artifact(node['delivery-cluster']['delivery']['version'], delivery_server_node['platform'], delivery_server_node['platform_version'], tmp_infra_dir)
+          artifact = get_delivery_artifact(node['delivery-cluster']['delivery']['version'], delivery_server_node['platform'], delivery_server_node['platform_version'], cluster_data_dir)
           artifact['version']
         end
       end

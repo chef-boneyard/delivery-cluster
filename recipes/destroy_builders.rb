@@ -14,12 +14,12 @@ require 'chef/provisioning/aws_driver'
 with_driver 'aws'
 
 # Only if we have the credentials to destroy it
-if File.exist?("#{tmp_infra_dir}/delivery.pem")
+if File.exist?("#{cluster_data_dir}/delivery.pem")
   begin
     # Setting the new Chef Server we just created
     with_chef_server chef_server_url,
       client_name: 'delivery',
-      signing_key_filename: "#{tmp_infra_dir}/delivery.pem"
+      signing_key_filename: "#{cluster_data_dir}/delivery.pem"
 
     # Destroy Build Nodes
     machine_batch 'Destroying Build Nodes' do

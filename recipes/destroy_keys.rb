@@ -17,7 +17,7 @@
    delivery.pem
    #{node['delivery-cluster']['delivery']['enterprise']}.creds
 ).each do |file|
-  file File.join(tmp_infra_dir, file) do
+  file File.join(cluster_data_dir, file) do
     action :delete
   end
 end
