@@ -53,7 +53,7 @@ machine chef_server_hostname do
   action :converge
 end
 
-directory tmp_infra_dir do
+directory cluster_data_dir do
   action :create
 end
 
@@ -64,13 +64,13 @@ end
 # Fetch our client and validator pems from the provisioned Chef Server
 machine_file "/tmp/validator.pem" do
   machine chef_server_hostname
-  local_path "#{tmp_infra_dir}/validator.pem"
+  local_path "#{cluster_data_dir}/validator.pem"
   action :download
 end
 
 machine_file "/tmp/delivery.pem" do
   machine chef_server_hostname
-  local_path "#{tmp_infra_dir}/delivery.pem"
+  local_path "#{cluster_data_dir}/delivery.pem"
   action :download
 end
 
@@ -86,7 +86,7 @@ end
 ################################################################################
 
 # create an encrypted data bag secret
-file "#{tmp_infra_dir}/encrypted_data_bag_secret" do
+file "#{cluster_data_dir}/encrypted_data_bag_secret" do
   mode    '0644'
   content encrypted_data_bag_secret
   sensitive true
@@ -94,14 +94,14 @@ file "#{tmp_infra_dir}/encrypted_data_bag_secret" do
 end
 
 # create required builder keys
-file "#{tmp_infra_dir}/builder_key.pub" do
+file "#{cluster_data_dir}/builder_key.pub" do
   mode    '0644'
   content builder_public_key
   sensitive true
   action :create
 end
 
-file "#{tmp_infra_dir}/builder_key" do
+file "#{cluster_data_dir}/builder_key" do
   mode    '0600'
   content builder_private_key
   sensitive true
@@ -118,21 +118,21 @@ chef_data_bag_item "keys/delivery_builder_keys" do
   chef_server lazy { chef_server_config }
   raw_data lazy {{
     builder_key:  builder_private_key,
-    delivery_pem: File.read("#{tmp_infra_dir}/delivery.pem")
+    delivery_pem: File.read("#{cluster_data_dir}/delivery.pem")
   }}
-  secret_path "#{tmp_infra_dir}/encrypted_data_bag_secret"
+  secret_path "#{cluster_data_dir}/encrypted_data_bag_secret"
   encryption_version 1
   encrypt true
   action :create
 end
 
 # generate a knife config file that points at the new Chef Server
-file File.join(tmp_infra_dir, 'knife.rb') do
+file File.join(cluster_data_dir, 'knife.rb') do
   content lazy {
     <<-EOH
 node_name         'delivery'
 chef_server_url   '#{chef_server_url}'
-client_key        '#{tmp_infra_dir}/delivery.pem'
+client_key        '#{cluster_data_dir}/delivery.pem'
 cookbook_path     '#{Chef::Config[:cookbook_path]}'
 trusted_certs_dir '#{Chef::Config[:trusted_certs_dir]}'
     EOH
@@ -142,7 +142,7 @@ end
 execute "upload delivery cookbooks" do
   command "knife cookbook upload --all --cookbook-path #{Chef::Config[:cookbook_path]}"
   environment(
-    'KNIFE_HOME' => tmp_infra_dir
+    'KNIFE_HOME' => cluster_data_dir
   )
 end
 
@@ -185,9 +185,9 @@ machine delivery_server_hostname do
   chef_server lazy { chef_server_config }
   recipe "delivery-server"
   files(
-    '/etc/delivery/delivery.pem' => "#{tmp_infra_dir}/delivery.pem",
-    '/etc/delivery/builder_key' => "#{tmp_infra_dir}/builder_key",
-    '/etc/delivery/builder_key.pub' => "#{tmp_infra_dir}/builder_key.pub"
+    '/etc/delivery/delivery.pem' => "#{cluster_data_dir}/delivery.pem",
+    '/etc/delivery/builder_key' => "#{cluster_data_dir}/builder_key",
+    '/etc/delivery/builder_key.pub' => "#{cluster_data_dir}/builder_key.pub"
   )
   attributes lazy { delivery_server_attributes }
   action :converge
@@ -212,7 +212,7 @@ end
 machine_file "/tmp/#{node['delivery-cluster']['delivery']['enterprise']}.creds" do
   chef_server lazy { chef_server_config }
   machine delivery_server_hostname
-  local_path "#{tmp_infra_dir}/#{node['delivery-cluster']['delivery']['enterprise']}.creds"
+  local_path "#{cluster_data_dir}/#{node['delivery-cluster']['delivery']['enterprise']}.creds"
   action :download
 end
 
@@ -243,7 +243,7 @@ machine_batch "#{node['delivery-cluster']['builders']['count']}-build-nodes" do
       files lazy {{
         "/etc/chef/trusted_certs/#{chef_server_ip}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt",
         "/etc/chef/trusted_certs/#{delivery_server_ip}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{delivery_server_ip}.crt",
-        '/etc/chef/encrypted_data_bag_secret' => "#{tmp_infra_dir}/encrypted_data_bag_secret"
+        '/etc/chef/encrypted_data_bag_secret' => "#{cluster_data_dir}/encrypted_data_bag_secret"
       }}
       action :converge
     end
@@ -253,6 +253,6 @@ end
 # Print the generated Delivery server credentials
 ruby_block "print-delivery-credentials" do
   block do
-    puts File.read("#{tmp_infra_dir}/#{node['delivery-cluster']['delivery']['enterprise']}.creds")
+    puts File.read("#{cluster_data_dir}/#{node['delivery-cluster']['delivery']['enterprise']}.creds")
   end
 end
