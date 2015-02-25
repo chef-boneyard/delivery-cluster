@@ -54,6 +54,7 @@ machine chef_server_hostname do
 end
 
 directory cluster_data_dir do
+  recursive true
   action :create
 end
 
