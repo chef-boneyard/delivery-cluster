@@ -50,6 +50,7 @@ end
 machine chef_server_hostname do
   recipe "chef-server-12"
   attributes lazy { chef_server_attributes }
+  converge true
   action :converge
 end
 
@@ -191,6 +192,7 @@ machine delivery_server_hostname do
     '/etc/delivery/builder_key.pub' => "#{cluster_data_dir}/builder_key.pub"
   )
   attributes lazy { delivery_server_attributes }
+  converge true
   action :converge
 end
 
@@ -246,6 +248,7 @@ machine_batch "#{node['delivery-cluster']['builders']['count']}-build-nodes" do
         "/etc/chef/trusted_certs/#{delivery_server_ip}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{delivery_server_ip}.crt",
         '/etc/chef/encrypted_data_bag_secret' => "#{cluster_data_dir}/encrypted_data_bag_secret"
       }}
+      converge true
       action :converge
     end
   end
