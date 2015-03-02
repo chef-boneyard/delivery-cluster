@@ -140,6 +140,26 @@ $ cat environments/test.json
 $ bundle exec chef-client -z -o delivery-cluster::setup -E test
 ```
 
+UPGRADE
+========
+In order to upgrade the existing infrastructure and cookbook dependencies you need to run the following steps:
+
+#### Update your cookbook dependencies
+```
+$ bundle exec berks update
+```
+#### Assemble your cookbooks again
+
+```
+$ bundle exec berks vendor cookbooks
+```
+
+#### Run chef-client on the local system (provisioning node)
+
+```
+$ bundle exec chef-client -z -o delivery-cluster::setup -E test
+```
+
 LICENSE AND AUTHORS
 ===================
 - Author: Salim Afiune (<afiune@chef.io>)
