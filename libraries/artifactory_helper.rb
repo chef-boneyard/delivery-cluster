@@ -13,10 +13,10 @@ require 'net/http'
 
 # Artifact Helper
 #
-# Get the latest artifact:
+# Get the latest artifact without downloading the artifact:
 # => artifact = get_delivery_artifact('latest', 'redhat', '6.5')
 #
-# Get specific artifact:
+# Get specific artifact and also download the artifact locally:
 # => artifact = get_delivery_artifact('0.2.21', 'ubuntu', '12.04', '/var/tmp')
 #
 # Will Return:
@@ -27,7 +27,10 @@ require 'net/http'
 #   'uri' => "http://artifactory.chef.co/omnibus-current-local/com/getchef/delivery/0.1.0-alpha.132+20141126080809/el/6/delivery-0.1.0_alpha.132+20141126080809-1.x86_64.rpm",
 #   'local_path' => "/tmp/delivery-0.1.0-alpha.132+20141126080809-1.x86_64.rpm"
 # }
-def get_delivery_artifact(version = 'latest', platform = 'ubuntu', platform_version = '14.04', tmp_dir = '/tmp')
+#
+# NOTE: If you do not specify a `tmp_dir` it will not download the artifact
+#       so there will be no `local_path` in the returned value
+def get_delivery_artifact(version = 'latest', platform = 'ubuntu', platform_version = '14.04', tmp_dir = nil)
 
   # Yup! We must validate access to Chef VPN
   validate_vpn
@@ -60,19 +63,25 @@ def get_delivery_artifact(version = 'latest', platform = 'ubuntu', platform_vers
     'omnibus.version' => deliv_version
   ).first
 
-  latest_delivery = "#{tmp_dir}/#{File.basename(artifact.uri)}"
+  # If we specify a temporal directoy we will download the artifact
+  # otherwise we will return NO `local_path` attribute
+  local_path = {}
+  if tmp_dir
+    latest_delivery = "#{tmp_dir}/#{File.basename(artifact.uri)}"
 
-  remote_file = Chef::Resource::RemoteFile.new(latest_delivery, run_context)
-  remote_file.source(artifact.download_uri)
-  remote_file.run_action(:create)
+    remote_file = Chef::Resource::RemoteFile.new(latest_delivery, run_context)
+    remote_file.source(artifact.download_uri)
+    remote_file.run_action(:create)
+
+    local_path = { 'local_path' => "#{tmp_dir}/#{File.basename(artifact.uri)}" }
+  end
 
   {
     'name' => File.basename(artifact.uri),
     'version' => deliv_version.split('+')[0],
-    'checksum' => artifact.checksums['md5'],
-    'uri' => artifact.download_uri,
-    'local_path' => "#{tmp_dir}/#{File.basename(artifact.uri)}"
-  }
+    'checksum' => artifact.properties['omnibus.sha256'].first,
+    'uri' => artifact.download_uri
+  }.merge(local_path)
 
 end
 

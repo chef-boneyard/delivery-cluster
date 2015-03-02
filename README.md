@@ -60,6 +60,7 @@ ATTRIBUTES
 | Attribute                                         | Description                       |
 | ------------------------------------------------- | --------------------------------- |
 | `['delivery-cluster']['delivery']['version']`     | Delivery Version. See `attributes/default.rb` |
+| `['delivery-cluster']['delivery']['pass-through']` | Allow the Artifact pass-through the delivery server. Set this parameter to `false` if your delivery server does not have VPN Access. With that, the artifact will be downloaded locally and uploaded to the server.|
 | `['delivery-cluster']['delivery']['hostname']`    | Hostname of your Delivery Server. |
 | `['delivery-cluster']['delivery']['enterprise']`  | A Delivery Enterprise that it will create. |
 | `['delivery-cluster']['delivery']['fqdn']`        | The Delivery FQDN to substitute the IP Address. |
