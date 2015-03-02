@@ -212,21 +212,30 @@ module DeliveryCluster
         }
       else
         # We will get it from artifactory
-        artifact = get_delivery_artifact(node['delivery-cluster']['delivery']['version'], delivery_server_node['platform'], delivery_server_node['platform_version'], cluster_data_dir)
-
-        # Upload Artifact to Delivery Server
-        machine_file = Chef::Resource::MachineFile.new("/var/tmp/#{artifact['name']}", run_context)
-        machine_file.chef_server(chef_server_config)
-        machine_file.machine(node['delivery-cluster']['delivery']['hostname'])
-        machine_file.local_path(artifact['local_path'])
-        machine_file.run_action(:upload)
+        artifact = get_delivery_artifact(
+                      node['delivery-cluster']['delivery']['version'],
+                      delivery_server_node['platform'],
+                      delivery_server_node['platform_version'],
+                      node['delivery-cluster']['delivery']['pass-through'] ? nil : cluster_data_dir
+                    )
 
         delivery_artifact = {
           delivery_server_node['platform_family'] => {
-            "artifact" => "/var/tmp/#{artifact['name']}",
             "checksum" => artifact['checksum']
           }
         }
+        # Upload Artifact to Delivery Server only if we have donwloaded the artifact
+        if artifact['local_path']
+          machine_file = Chef::Resource::MachineFile.new("/var/tmp/#{artifact['name']}", run_context)
+          machine_file.chef_server(chef_server_config)
+          machine_file.machine(node['delivery-cluster']['delivery']['hostname'])
+          machine_file.local_path(artifact['local_path'])
+          machine_file.run_action(:upload)
+
+          delivery_artifact[delivery_server_node['platform_family']]['artifact'] = "/var/tmp/#{artifact['name']}"
+        else
+          delivery_artifact[delivery_server_node['platform_family']]['artifact'] = artifact['uri']
+        end
       end
 
       delivery_artifact
@@ -237,7 +246,12 @@ module DeliveryCluster
         if node['delivery-cluster']['delivery'][delivery_server_node['platform_family']] && node['delivery-cluster']['delivery']['version'] != 'latest'
           node['delivery-cluster']['delivery']['version']
         else
-          artifact = get_delivery_artifact(node['delivery-cluster']['delivery']['version'], delivery_server_node['platform'], delivery_server_node['platform_version'], cluster_data_dir)
+          artifact = get_delivery_artifact(
+                        node['delivery-cluster']['delivery']['version'],
+                        delivery_server_node['platform'],
+                        delivery_server_node['platform_version'],
+                        node['delivery-cluster']['delivery']['pass-through'] ? nil : cluster_data_dir
+                      )
           artifact['version']
         end
       end

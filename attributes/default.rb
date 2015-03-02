@@ -35,6 +35,15 @@ default['delivery-cluster']['delivery']['fqdn']        = nil
 default['delivery-cluster']['delivery']['flavor']      = 't2.medium'
 default['delivery-cluster']['delivery']['enterprise']  = 'my_enterprise'
 
+# => pass-through
+# This attribute will allow the Artifact pass-through the delivery server.
+# This feature requires that the delivery server has VPN Access.
+#
+# NOTE: If your delivery server does NOT have access to Chef VPN you have to
+# set this to `false` so it can download the artifact locally and then
+# upload it to the delivery server.
+default['delivery-cluster']['delivery']['pass-through'] = true
+
 # => LDAP config
 # => Available Attributes
 #   => ldap_hosts
