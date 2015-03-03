@@ -72,9 +72,15 @@ end
 
 machine_file "/tmp/delivery.pem" do
   machine chef_server_hostname
-  mode "0644"
+  mode "0644"                                     # This is not working.
   local_path "#{cluster_data_dir}/delivery.pem"
   action :download
+end
+
+# Workaround: Ensure that the `delivery.pem` has the right permissions.
+# PR: https://github.com/chef/chef-provisioning/issues/174
+file "#{cluster_data_dir}/delivery.pem" do
+  mode '0644'
 end
 
 machine_file 'chef-server-cert' do
