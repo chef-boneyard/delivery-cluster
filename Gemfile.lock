@@ -107,7 +107,7 @@ GEM
     gyoku (1.2.2)
       builder (>= 2.1.2)
     hashie (2.1.2)
-    highline (1.7.0)
+    highline (1.7.1)
     hitimes (1.2.2)
     httpclient (2.6.0.1)
     httpi (0.9.7)
