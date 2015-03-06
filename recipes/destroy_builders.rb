@@ -9,9 +9,8 @@
 # All rights reserved - Do Not Redistribute
 #
 
-require 'chef/provisioning/aws_driver'
-
-with_driver 'aws'
+# Starting to abstract the specific configurations by providers
+include_recipe 'delivery-cluster::_aws_settings'
 
 # Only if we have the credentials to destroy it
 if File.exist?("#{cluster_data_dir}/delivery.pem")
