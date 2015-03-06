@@ -9,9 +9,8 @@
 # All rights reserved - Do Not Redistribute
 #
 
-require 'chef/provisioning/aws_driver'
-
-with_driver 'aws'
+# Starting to abstract the specific configurations by providers
+include_recipe 'delivery-cluster::_aws_settings'
 
 # Setting the chef-zero process
 with_chef_server Chef::Config.chef_server_url
