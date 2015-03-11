@@ -10,3 +10,4 @@ if defined? ::Chef::Config
   delivery_knife    = File.join(current_dir, 'delivery-cluster-data', 'knife.rb')
   Chef::Config.from_file(delivery_knife) if File.exist?(delivery_knife)
 end
+cookbook_path "#{current_dir}/../cookbooks"

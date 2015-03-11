@@ -7,6 +7,7 @@ long_description 'Installs/Configures the components of Hosted Chef Delivery'
 version          '0.1.0'
 
 depends 'chef-server-12'
+depends 'chef-server-ingredient'
 depends 'delivery_builder'
 depends 'delivery-server'
 depends 'push-jobs'
