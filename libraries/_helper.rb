@@ -11,6 +11,7 @@
 
 require 'openssl'
 require 'net/ssh'
+require 'fileutils'
 require 'securerandom'
 
 module DeliveryCluster
@@ -69,6 +70,14 @@ module DeliveryCluster
       node['delivery-cluster']['delivery']['hostname']
     end
 
+    def analytics_server_hostname
+      unless node['delivery-cluster']['analytics']['hostname']
+        node.set['delivery-cluster']['analytics']['hostname'] = "analytics-server-#{delivery_cluster_id}"
+      end
+
+      node['delivery-cluster']['analytics']['hostname']
+    end
+
     def delivery_builder_hostname(index)
       unless node['delivery-cluster']['builders']['hostname_prefix']
         node.set['delivery-cluster']['builders']['hostname_prefix'] = "build-node-#{delivery_cluster_id}"
@@ -120,8 +129,47 @@ module DeliveryCluster
       end
     end
 
+    def analytics_lock_file
+      "#{cluster_data_dir}/analytics"
+    end
+
+    def analytics_server_node
+      @@analytics_server_node ||= begin
+        Chef::REST.new(
+          chef_server_config[:chef_server_url],
+          chef_server_config[:options][:client_name],
+          chef_server_config[:options][:signing_key_filename]
+        ).get_rest("nodes/#{analytics_server_hostname}")
+      end
+    end
+
+    def analytics_server_ip
+      @@analytics_server_ip ||= begin
+        analytics_server_ip   = get_aws_ip(analytics_server_node)
+        Chef::Log.info("Your Analytics Server Public/Private IP is => #{analytics_server_ip}")
+        analytics_server_ip
+      end
+    end
+
     def chef_server_url
       "https://#{chef_server_ip}/organizations/#{node['delivery-cluster']['chef-server']['organization']}"
+    end
+
+    def activate_analytics
+      FileUtils.touch(analytics_lock_file)
+    end
+
+    def is_analytics_enabled?
+      File.exist?(analytics_lock_file)
+    end
+
+    def analytics_server_attributes
+      return {} unless is_analytics_enabled?
+      {
+        'analytics' => {
+          'fqdn' => analytics_server_ip
+        }
+      }
     end
 
     def chef_server_attributes
@@ -130,7 +178,7 @@ module DeliveryCluster
           'delivery' => { 'organization' => node['delivery-cluster']['chef-server']['organization'] },
           'api_fqdn' => chef_server_ip,
           'store_keys_databag' => false
-        }
+        }.merge(analytics_server_attributes)
       }
     end
 

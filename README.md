@@ -33,6 +33,8 @@ You also need to create a `security_group` with the following ports open
 | 443            | TCP | HTTP Secure
 | 22             | TCP | SSH
 | 80             | TCP | HTTP
+| 5672           | TCP | Analytics MQ
+| 10012 - 10013  | TCP | Analytics Messages/Notifier
 
 ATTRIBUTES
 ------------
@@ -54,6 +56,14 @@ ATTRIBUTES
 | `['delivery-cluster']['chef-server']['hostname']`      | Hostname of your Chef Server.     |
 | `['delivery-cluster']['chef-server']['organization']`  | The organization name we will create for the Delivery Environment. |
 | `['delivery-cluster']['chef-server']['flavor']`        | AWS Flavor of the Chef Server.   |
+
+### Analytics Settings (Not required)
+
+| Attribute                                              | Description                       |
+| ------------------------------------------------------ | --------------------------------- |
+| `['delivery-cluster']['analytics']['hostname']`      | Hostname of your Analytics Server.     |
+| `['delivery-cluster']['analytics']['fqdn']`          | The Analytics FQDN to use for the `/etc/opscode-analytics/opscode-analytics.rb`. |
+| `['delivery-cluster']['analytics']['flavor']`        | AWS Flavor of the Analytics Server.   |
 
 ### Delivery Server Settings
 
@@ -112,6 +122,7 @@ $ cat environments/test.json
   "chef_type": "environment",
   "override_attributes": {
     "delivery-cluster": {
+      "id": "my_uniq_id",
       "aws": {
         "key_name": "delivery-test",
         "ssh_username": "ubuntu",
@@ -121,13 +132,20 @@ $ cat environments/test.json
         "use_private_ip_for_ssh": true
       },
       "delivery": {
-        "flavor":"c3.xlarge"
+        "flavor": "c3.xlarge",
+        "enterprise": "my_enterprise",
+        "version": "latest"
       },
       "chef-server": {
-        "flavor":"c3.xlarge"
+        "flavor": "c3.xlarge",
+        "organization": "my_organization"
+      },
+      "analytics": {
+        "flavor": "c3.xlarge"
       },
       "builders": {
-        "flavor": "c3.large"
+        "flavor": "c3.large",
+        "count": 3
       }
     }
   }
@@ -139,6 +157,15 @@ $ cat environments/test.json
 ```
 $ bundle exec chef-client -z -o delivery-cluster::setup -E test
 ```
+
+Activate Analytics Server
+========
+In order to activate Analytics you MUST provision the entire `delivery-cluster::setup` first. After you are done completely you can execute a second `chef-zero` like:
+```
+$ bundle exec chef-client -z -o delivery-cluster::setup_analytics -E test
+```
+
+That will provision and activate Analytics on your entire cluster.
 
 UPGRADE
 ========

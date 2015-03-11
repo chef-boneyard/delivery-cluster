@@ -82,7 +82,16 @@ default['delivery-cluster']['delivery']['version'] = 'latest'
 # => Chef Server
 default['delivery-cluster']['chef-server']['hostname']     = nil
 default['delivery-cluster']['chef-server']['organization'] = 'my_enterprise'
-default['delivery-cluster']['chef-server']['flavor']       = 't2.small'
+default['delivery-cluster']['chef-server']['flavor']       = 't2.medium'
+
+# => Analytics Server (Not Required)
+#
+# In order to provision an Analytics Server you have to first provision the entire
+# `delivery-cluster::setup` after that, you are ready to run `delivery-cluster::setup_analytics`
+# that will activate analytics.
+default['delivery-cluster']['analytics']['hostname']  = nil
+default['delivery-cluster']['analytics']['fqdn']      = nil
+default['delivery-cluster']['analytics']['flavor']    = 't2.medium'
 
 # => Build Nodes
 default['delivery-cluster']['builders']['hostname_prefix']     = nil
