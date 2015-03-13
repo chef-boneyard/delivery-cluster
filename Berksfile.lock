@@ -1,7 +1,7 @@
 DEPENDENCIES
   chef-server-12
     git: git@github.com:opscode-cookbooks/chef-server-12.git
-    revision: c6704284b8b3ce4cbe1e521447ddbb4192e3b4c3
+    revision: 47efcb18234db759123f328b737e30cb749a85b3
     branch: master
   chef-server-ingredient
     git: git@github.com:opscode-cookbooks/chef-server-ingredient.git
@@ -30,6 +30,7 @@ GRAPH
     windows (>= 0.0.0)
   build-essential (2.1.3)
   chef-server-12 (0.1.3)
+    chef-server-ingredient (>= 0.0.0)
   chef-server-ingredient (0.2.0)
     packagecloud (>= 0.0.0)
   chef-sugar (2.5.0)

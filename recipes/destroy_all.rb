@@ -14,6 +14,9 @@
 # => Build Nodes
 include_recipe "delivery-cluster::destroy_builders"
 
+# => Analytics Server
+include_recipe "delivery-cluster::destroy_analytics"
+
 # => Delivery Server
 include_recipe "delivery-cluster::destroy_delivery"
 
