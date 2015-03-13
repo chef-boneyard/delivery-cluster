@@ -8,9 +8,12 @@ That includes:
 *  1 -  Chef Server 12
 *  1 -  Delivery Server
 *  N -  Build Nodes
+*  1 -  Analytics Server (Not Required)
 
 It will install the appropriate platform-specific delivery package
 and perform the initial configuration of Delivery Server.
+
+Additionally you could Activate an Analytics Server. [Optional]
 
 REQUIREMENTS
 ------------

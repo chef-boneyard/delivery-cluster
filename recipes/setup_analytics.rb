@@ -11,8 +11,14 @@
 
 include_recipe 'delivery-cluster::_aws_settings'
 
-# This recipe assumes that you have already provisioned the
-# entire `delivery-cluster` before running it.
+# There are two ways to provision the Analytics Server
+#
+# 1) Provisioning the entire `delivery-cluster::setup` or
+# 2) Just the Chef Server `delivery-cluster::setup_chef_server`
+#
+# After that you are good to provision Analytics running:
+# => # bundle exec chef-client -z -o delivery-cluster::setup_analytics -E test
+
 machine analytics_server_hostname do
   chef_server lazy { chef_server_config }
   add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['analytics']['flavor']  } if node['delivery-cluster']['analytics']['flavor']

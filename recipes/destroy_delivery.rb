@@ -25,17 +25,9 @@ if File.exist?("#{cluster_data_dir}/delivery.pem")
       action :destroy
     end
 
-    # Delivery is gone. Why do we need the keys?
-    # => Org & Delivery User Keys
-    execute 'Deleting Delivery User Keys' do
-      command "rm -rf #{cluster_data_dir}/delivery.pem"
-      action :run
-    end
-
-    # => Enterprise Creds
-    execute 'Deleting Validator & Delivery User Keys' do
-      command "rm -rf #{cluster_data_dir}/#{node['delivery-cluster']['delivery']['enterprise']}.creds"
-      action :run
+    # Delete Enterprise Creds
+    file File.join(cluster_data_dir, "#{node['delivery-cluster']['delivery']['enterprise']}.creds") do
+      action :delete
     end
   rescue Exception => e
     Chef::Log.warn("We can't proceed to destroy the Delivery Server.")
