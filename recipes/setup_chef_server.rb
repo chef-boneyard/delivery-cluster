@@ -85,7 +85,7 @@ trusted_certs_dir '#{Chef::Config[:trusted_certs_dir]}'
 end
 
 execute "upload delivery cookbooks" do
-  command "knife cookbook upload --all --cookbook-path #{Chef::Config[:cookbook_path]}"
+  command "knife cookbook upload --all --cookbook-path #{Chef::Config[:cookbook_path]} --force"
   environment(
     'KNIFE_HOME' => cluster_data_dir
   )
