@@ -10,7 +10,6 @@
 #
 
 require 'openssl'
-require 'net/ssh'
 require 'fileutils'
 require 'securerandom'
 
@@ -86,26 +85,13 @@ module DeliveryCluster
       "#{node['delivery-cluster']['builders']['hostname_prefix']}-#{index}"
     end
 
-    # Generate or load an existing RSA keypair
-    def builder_keypair
-      if File.exists?("#{cluster_data_dir}/builder_key")
-        OpenSSL::PKey::RSA.new(File.read("#{cluster_data_dir}/builder_key"))
-      else
-        OpenSSL::PKey::RSA.generate(2048)
-      end
-    end
-
     def builder_private_key
-      builder_keypair.to_pem.to_s
-    end
-
-    def builder_public_key
-      "#{builder_keypair.ssh_type} #{[builder_keypair.to_blob].pack('m0')}"
+      File.read(File.join(cluster_data_dir, "builder_key"))
     end
 
     def builder_run_list
       @builder_run_list ||= begin
-        base_builder_run_list = %w( recipe[push-jobs] recipe[delivery_builder] )
+        base_builder_run_list = %w( recipe[push-jobs] recipe[delivery_build] )
         base_builder_run_list + node['delivery-cluster']['builders']['additional_run_list']
       end
     end

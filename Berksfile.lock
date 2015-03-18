@@ -5,56 +5,40 @@ DEPENDENCIES
     branch: master
   chef-server-ingredient
     git: git@github.com:opscode-cookbooks/chef-server-ingredient.git
-    revision: 4e47b1192399a7fb3762e5f8f29d08a8dd051118
+    revision: 5a066b51e8a82bd4451eb77a4038d54e959b0261
     branch: master
   delivery-cluster
     path: .
     metadata: true
   delivery-server
     git: git@github.com:chef/delivery.git
-    revision: ce7fd598e2ac351656d133dfd4e6e2e658a3281f
+    revision: 9b1988b4260f3b2fcd5de72d10cf6491aafd42c1
     branch: master
     rel: cookbooks/delivery-server
-  delivery_builder
+  delivery_build
     git: git@github.com:chef/delivery.git
-    revision: f95229f8240b92a968c70c6ef7d5955f2eb2a5b2
+    revision: 9b1988b4260f3b2fcd5de72d10cf6491aafd42c1
     branch: master
-    rel: cookbooks/delivery_builder
+    rel: cookbooks/delivery_build
 
 GRAPH
-  7-zip (1.0.2)
-    windows (>= 1.2.2)
-  apt (2.6.1)
-  ark (0.9.0)
-    7-zip (>= 0.0.0)
-    windows (>= 0.0.0)
   build-essential (2.1.3)
   chef-server-12 (0.1.3)
     chef-server-ingredient (>= 0.0.0)
-  chef-server-ingredient (0.2.0)
+  chef-server-ingredient (0.3.0)
     packagecloud (>= 0.0.0)
-  chef-sugar (2.5.0)
   chef_handler (1.1.6)
   delivery-cluster (0.1.0)
     chef-server-12 (>= 0.0.0)
     chef-server-ingredient (>= 0.0.0)
     delivery-server (>= 0.0.0)
-    delivery_builder (>= 0.0.0)
+    delivery_build (>= 0.0.0)
     push-jobs (>= 0.0.0)
-  delivery-server (0.2.11)
-  delivery_builder (0.4.14)
-    chef-sugar (>= 0.0.0)
-    erlang (>= 0.0.0)
+  delivery-server (0.2.14)
+  delivery_build (0.1.2)
     git (>= 0.0.0)
-    nodejs (>= 0.0.0)
-    omnibus (>= 0.0.0)
+    packagecloud (>= 0.0.0)
   dmg (2.2.2)
-  erlang (1.5.7)
-    apt (>= 1.7.0)
-    build-essential (>= 0.0.0)
-    yum (~> 3.0)
-    yum-epel (>= 0.0.0)
-    yum-erlang_solutions (>= 0.0.0)
   git (4.1.0)
     build-essential (>= 0.0.0)
     dmg (>= 0.0.0)
@@ -62,34 +46,16 @@ GRAPH
     windows (>= 0.0.0)
     yum (~> 3.0)
     yum-epel (>= 0.0.0)
-  homebrew (1.12.0)
-    build-essential (>= 2.1.2)
-  nodejs (2.2.0)
-    apt (>= 0.0.0)
-    ark (>= 0.0.0)
-    build-essential (>= 0.0.0)
-    yum-epel (>= 0.0.0)
-  omnibus (2.5.5)
-    7-zip (~> 1.0)
-    build-essential (~> 2.0)
-    chef-sugar (~> 2.0)
-    homebrew (~> 1.9)
-    windows (~> 1.30)
-    wix (~> 1.1)
   packagecloud (0.0.17)
   push-jobs (2.2.0)
     runit (>= 0.0.0)
     windows (>= 0.0.0)
-  runit (1.5.16)
+  runit (1.5.18)
     build-essential (>= 0.0.0)
     yum (~> 3.0)
     yum-epel (>= 0.0.0)
-  windows (1.36.1)
+  windows (1.36.6)
     chef_handler (>= 0.0.0)
-  wix (1.1.0)
-    windows (>= 1.2.2)
-  yum (3.5.2)
+  yum (3.5.3)
   yum-epel (0.6.0)
-    yum (~> 3.0)
-  yum-erlang_solutions (0.2.0)
     yum (~> 3.0)
