@@ -8,6 +8,6 @@ version          '0.1.0'
 
 depends 'chef-server-12'
 depends 'chef-server-ingredient'
-depends 'delivery_builder'
+depends 'delivery_build'
 depends 'delivery-server'
 depends 'push-jobs'

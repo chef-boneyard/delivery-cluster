@@ -29,18 +29,9 @@ file "#{cluster_data_dir}/encrypted_data_bag_secret" do
 end
 
 # create required builder keys
-file "#{cluster_data_dir}/builder_key.pub" do
-  mode    '0644'
-  content builder_public_key
-  sensitive true
-  action :create
-end
-
-file "#{cluster_data_dir}/builder_key" do
-  mode    '0600'
-  content builder_private_key
-  sensitive true
-  action :create
+execute 'builder ssh key' do
+  command "ssh-keygen -t rsa -N '' -b 2048 -f #{cluster_data_dir}/builder_key"
+  not_if { File.exists?("#{cluster_data_dir}/builder_key") }
 end
 
 # create the data bag (and item) to store our builder keys
