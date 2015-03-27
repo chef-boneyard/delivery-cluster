@@ -104,6 +104,10 @@ end
 
 upload_cookbook("chef-splunk")
 
+chef_environment "delivered" do
+  chef_server lazy { chef_server_config }
+end
+
 # Installing splunk
 machine splunk_server_hostname do
   chef_server lazy { chef_server_config }
@@ -132,18 +136,22 @@ end
 
 # Uploading Analytics Splunk App to Splunk Server
 machine_file "/opt/splunk/etc/apps/#{splunk_pkg}.tar.gz" do
-  machine lazy { splunk_server_hostname }
+  chef_server lazy { chef_server_config }
+  machine splunk_server_hostname
   local_path "#{cluster_data_dir}/#{splunk_pkg}.tar.gz"
   action :upload
 end
 
 machine_execute "Unpackage Analytics Splunk App" do
   chef_server lazy { chef_server_config }
-  machine lazy { splunk_server_hostname }
+  machine splunk_server_hostname
   command <<-EOF
     if [ ! -d /opt/splunk/etc/apps/#{splunk_pkg} ]; then
       cd /opt/splunk/etc/apps
-      tar -xvf #{splunk_pkg}.tar.gz
+      sudo tar -xvf #{splunk_pkg}.tar.gz
+      sudo chown -R splunk:splunk #{splunk_pkg}
+      sudo service splunk restart
     fi
   EOF
 end
+

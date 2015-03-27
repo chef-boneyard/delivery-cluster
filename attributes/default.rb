@@ -91,7 +91,7 @@ default['delivery-cluster']['chef-server']['flavor']       = 't2.medium'
 # that will activate analytics.
 default['delivery-cluster']['analytics']['hostname']  = nil
 default['delivery-cluster']['analytics']['fqdn']      = nil
-default['delivery-cluster']['analytics']['feature']   = 'false'
+default['delivery-cluster']['analytics']['features']  = 'false'
 default['delivery-cluster']['analytics']['flavor']    = 't2.medium'
 
 # Splunk Server
