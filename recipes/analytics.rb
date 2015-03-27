@@ -14,7 +14,11 @@ directory '/etc/opscode-analytics' do
 end
 
 file '/etc/opscode-analytics/opscode-analytics.rb' do
-  content "topology 'standalone'\nanalytics_fqdn '#{node['delivery-cluster']['analytics']['fqdn']}'"
+  content <<-EOF
+topology 'standalone'
+analytics_fqdn '#{node['delivery-cluster']['analytics']['fqdn']}'
+features['integration'] = #{node['delivery-cluster']['analytics']['features']}
+  EOF
   notifies :reconfigure, 'chef_server_ingredient[opscode-analytics]'
 end
 

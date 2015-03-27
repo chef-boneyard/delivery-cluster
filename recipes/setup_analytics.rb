@@ -58,10 +58,28 @@ machine analytics_server_hostname do
   attributes lazy {{
     'delivery-cluster' => {
       'analytics' => {
-        'fqdn' => analytics_server_ip
+        'fqdn' => analytics_server_ip,
+        'integration' => is_splunk_enabled? ? 'true' : 'false'
       }
     }
   }}
   converge true
   action :converge
+end
+
+machine_file 'analytics-server-cert' do
+  path lazy { "/var/opt/opscode-analytics/ssl/ca/#{analytics_server_ip}.crt" }
+  machine chef_server_hostname
+  local_path lazy { "#{Chef::Config[:trusted_certs_dir]}/#{analytics_server_ip}.crt" }
+  action :download
+end
+
+# Add Analytics Server to the knife.rb config file
+file File.join(cluster_data_dir, 'knife.rb') do
+  content lazy {
+    <<-EOH
+#{IO.read(File.join(cluster_data_dir, 'knife.rb'))}
+analytics_server_url "https://#{analytics_server_ip}/organizations/#{node['delivery-cluster']['chef-server']['organization']}"
+    EOH
+  }
 end

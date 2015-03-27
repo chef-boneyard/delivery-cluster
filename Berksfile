@@ -20,3 +20,5 @@ cookbook 'delivery_build',
   rel: 'cookbooks/delivery_build',
   branch: 'master'
 
+cookbook 'chef-splunk',
+  git: 'git@github.com:chef-cookbooks/chef-splunk.git'
