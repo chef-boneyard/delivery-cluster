@@ -143,15 +143,17 @@ machine_file "/opt/splunk/etc/apps/#{splunk_pkg}.tar.gz" do
 end
 
 machine_execute "Unpackage Analytics Splunk App" do
-  chef_server lazy { chef_server_config }
+  chef_server lazy {chef_server_config}
   machine splunk_server_hostname
   command <<-EOF
-    if [ ! -d /opt/splunk/etc/apps/#{splunk_pkg} ]; then
-      cd /opt/splunk/etc/apps
-      sudo tar -xvf #{splunk_pkg}.tar.gz
-      sudo chown -R splunk:splunk #{splunk_pkg}
-      sudo service splunk restart
-    fi
+    sh -c "
+      if [ ! -d /opt/splunk/etc/apps/#{splunk_pkg} ]
+      then
+        cd /opt/splunk/etc/apps
+        tar -xvf #{splunk_pkg}.tar.gz
+        chown -R splunk:splunk #{splunk_pkg}
+        service splunk restart
+      fi
+    "
   EOF
 end
-
