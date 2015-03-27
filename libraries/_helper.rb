@@ -53,6 +53,14 @@ module DeliveryCluster
       node['delivery-cluster']['id']
     end
 
+    def splunk_server_hostname
+      unless node['delivery-cluster']['splunk']['hostname']
+        node.set['delivery-cluster']['splunk']['hostname'] = "splunk-server-#{delivery_cluster_id}"
+      end
+
+      node['delivery-cluster']['splunk']['hostname']
+    end
+
     def chef_server_hostname
       unless node['delivery-cluster']['chef-server']['hostname']
         node.set['delivery-cluster']['chef-server']['hostname'] = "chef-server-#{delivery_cluster_id}"
@@ -119,6 +127,10 @@ module DeliveryCluster
       "#{cluster_data_dir}/analytics"
     end
 
+    def splunk_lock_file
+      "#{cluster_data_dir}/splunk"
+    end
+
     def analytics_server_node
       @@analytics_server_node ||= begin
         Chef::REST.new(
@@ -139,6 +151,14 @@ module DeliveryCluster
 
     def chef_server_url
       "https://#{chef_server_ip}/organizations/#{node['delivery-cluster']['chef-server']['organization']}"
+    end
+
+    def activate_splunk
+      FileUtils.touch(splunk_lock_file)
+    end
+
+    def is_splunk_enabled?
+      File.exist?(splunk_lock_file)
     end
 
     def activate_analytics

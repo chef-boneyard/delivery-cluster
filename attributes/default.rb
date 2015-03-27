@@ -91,7 +91,14 @@ default['delivery-cluster']['chef-server']['flavor']       = 't2.medium'
 # that will activate analytics.
 default['delivery-cluster']['analytics']['hostname']  = nil
 default['delivery-cluster']['analytics']['fqdn']      = nil
+default['delivery-cluster']['analytics']['feature']   = 'false'
 default['delivery-cluster']['analytics']['flavor']    = 't2.medium'
+
+# Splunk Server
+default['delivery-cluster']['splunk']['hostname_prefix'] = nil
+default['delivery-cluster']['splunk']['username']        = 'admin'
+default['delivery-cluster']['splunk']['password']        = nil
+default['delivery-cluster']['splunk']['flavor']          = 'c3.large'
 
 # => Build Nodes
 default['delivery-cluster']['builders']['hostname_prefix']     = nil

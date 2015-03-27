@@ -80,6 +80,7 @@ GEM
       ohai (~> 8.0)
       plist (~> 3.1.0)
       pry (~> 0.9)
+    chef-vault (2.4.0)
     chef-zero (3.2.1)
       ffi-yajl (~> 1.1)
       hashie (~> 2.0)
@@ -232,3 +233,4 @@ DEPENDENCIES
   chef (~> 12.0)
   chef-provisioning!
   chef-provisioning-aws!
+  chef-vault

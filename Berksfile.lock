@@ -7,6 +7,9 @@ DEPENDENCIES
     git: git@github.com:opscode-cookbooks/chef-server-ingredient.git
     revision: 5a066b51e8a82bd4451eb77a4038d54e959b0261
     branch: master
+  chef-splunk
+    git: git@github.com:chef-cookbooks/chef-splunk.git
+    revision: 2508ccdb130b9fa50e5e7d5fdbf5655b645eac82
   delivery-cluster
     path: .
     metadata: true
@@ -27,10 +30,14 @@ GRAPH
     chef-server-ingredient (>= 0.0.0)
   chef-server-ingredient (0.3.0)
     packagecloud (>= 0.0.0)
+  chef-splunk (1.3.1)
+    chef-vault (>= 1.0.4)
+  chef-vault (1.2.5)
   chef_handler (1.1.6)
   delivery-cluster (0.1.0)
     chef-server-12 (>= 0.0.0)
     chef-server-ingredient (>= 0.0.0)
+    chef-splunk (>= 0.0.0)
     delivery-server (>= 0.0.0)
     delivery_build (>= 0.0.0)
     push-jobs (>= 0.0.0)
