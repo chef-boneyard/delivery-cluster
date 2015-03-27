@@ -18,6 +18,7 @@ begin
     signing_key_filename: "#{cluster_data_dir}/delivery.pem"
 
   directory "#{current_dir}/data_bags/vault" do
+    recursive true
     action :delete
   end
 
