@@ -10,7 +10,7 @@
 #
 
 # Starting to abstract the specific configurations by providers
-include_recipe 'delivery-cluster::_aws_settings'
+include_recipe "delivery-cluster::_#{node['delivery-cluster']['cloud']}_settings"
 
 # Setting the chef-zero process
 with_chef_server Chef::Config.chef_server_url

@@ -28,7 +28,7 @@ GRAPH
   chef-server-ingredient (0.3.0)
     packagecloud (>= 0.0.0)
   chef_handler (1.1.6)
-  delivery-cluster (0.1.0)
+  delivery-cluster (0.1.1)
     chef-server-12 (>= 0.0.0)
     chef-server-ingredient (>= 0.0.0)
     delivery-server (>= 0.0.0)

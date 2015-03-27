@@ -9,7 +9,8 @@
 # All rights reserved - Do Not Redistribute
 #
 
-include_recipe 'delivery-cluster::_aws_settings'
+# include_recipe 'delivery-cluster::_aws_settings'
+include_recipe "delivery-cluster::_#{node['delivery-cluster']['cloud']}_settings"
 
 # If Analytics is enabled
 if is_analytics_enabled?
