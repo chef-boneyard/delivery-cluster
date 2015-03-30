@@ -13,7 +13,7 @@
 #
 # This is also useful when other cookbooks depend on `delivery-cluster`
 # and they need to configure the same set of settings. e.g. (delivery-demo)
-include_recipe 'delivery-cluster::_aws_settings'
+include_recipe "delivery-cluster::_#{node['delivery-cluster']['cloud']}_settings"
 
 # Phase 1: Bootstrap a Chef Server instance with Chef-Zero
 include_recipe 'delivery-cluster::setup_chef_server'

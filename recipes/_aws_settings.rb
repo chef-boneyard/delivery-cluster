@@ -1,5 +1,4 @@
 require 'chef/provisioning/aws_driver'
-
 with_driver 'aws'
 
 with_machine_options(

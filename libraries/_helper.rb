@@ -33,6 +33,11 @@ module DeliveryCluster
       end
     end
 
+    def get_azure_ip(n)
+      # require 'pry';binding.pry
+      n['chef_provisioning']['location']['azure_public_ip']
+    end
+
     # delivery-ctl needs to be executed with elevated privileges
     def delivery_ctl
       if node['delivery-cluster']['aws']['ssh_username'] == 'root'
@@ -117,8 +122,15 @@ module DeliveryCluster
     def chef_server_ip
       @@chef_server_ip ||= begin
         chef_server_node = Chef::Node.load(chef_server_hostname)
-        chef_server_ip   = get_aws_ip(chef_server_node)
-        Chef::Log.info("Your Chef Server Public/Private IP is => #{chef_server_ip}")
+# require 'pry';binding.pry
+        case node['delivery-cluster']['cloud']
+        when 'azure'
+          chef_server_ip   = get_azure_ip(chef_server_node)
+          Chef::Log.info("Your Chef Server Public/Private IP is => #{chef_server_ip}")
+        when 'aws'
+          chef_server_ip   = get_aws_ip(chef_server_node)
+          Chef::Log.info("Your Chef Server Public/Private IP is => #{chef_server_ip}")
+        end
         chef_server_ip
       end
     end
