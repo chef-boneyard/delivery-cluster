@@ -18,7 +18,9 @@ include_recipe 'delivery-cluster::_settings'
 # it's primary ipaddress to use as the hostname in the initial
 # `/etc/opscode/chef-server.rb` file
 machine chef_server_hostname do
-  add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['chef-server']['flavor'] } if node['delivery-cluster']['chef-server']['flavor']
+  provisioning.specific_machine_options('chef-server').each do |option|
+    add_machine_options (option)
+  end
   # Transfer any trusted certs from the current CCR
   Dir.glob("#{Chef::Config[:trusted_certs_dir]}/*.{crt,pem}").each do |cert_path|
     file cert_path, cert_path

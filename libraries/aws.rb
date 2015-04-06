@@ -20,6 +20,7 @@ module DeliveryCluster
 
       require 'chef/provisioning/aws_driver'
 
+      attr_accessor :node
       attr_accessor :flavor
       attr_accessor :key_name
       attr_accessor :image_id
@@ -32,15 +33,16 @@ module DeliveryCluster
       #
       # @param node [Chef::Node]
       def initialize(node)
-        raise "Aws Attributes not implemented (node['delivery-cluster']['aws'])" unless node['delivery-cluster']['aws']
-        @flavor                 = node['delivery-cluster']['aws']['flavor'] if node['delivery-cluster']['aws']['flavor']
-        @key_name               = node['delivery-cluster']['aws']['key_name'] if node['delivery-cluster']['aws']['key_name']
-        @image_id               = node['delivery-cluster']['aws']['image_id'] if node['delivery-cluster']['aws']['image_id']
-        @subnet_id              = node['delivery-cluster']['aws']['subnet_id'] if node['delivery-cluster']['aws']['subnet_id']
-        @ssh_username           = node['delivery-cluster']['aws']['ssh_username'] if node['delivery-cluster']['aws']['ssh_username']
-        @security_group_ids     = node['delivery-cluster']['aws']['security_group_ids'] if node['delivery-cluster']['aws']['security_group_ids']
+        raise "[#{driver}] Attributes not implemented (node['delivery-cluster'][#{driver}])" unless node['delivery-cluster'][driver]
+        @node                   = node
+        @flavor                 = @node['delivery-cluster'][driver]['flavor'] if @node['delivery-cluster'][driver]['flavor']
+        @key_name               = @node['delivery-cluster'][driver]['key_name'] if @node['delivery-cluster'][driver]['key_name']
+        @image_id               = @node['delivery-cluster'][driver]['image_id'] if @node['delivery-cluster'][driver]['image_id']
+        @subnet_id              = @node['delivery-cluster'][driver]['subnet_id'] if @node['delivery-cluster'][driver]['subnet_id']
+        @ssh_username           = @node['delivery-cluster'][driver]['ssh_username'] if @node['delivery-cluster'][driver]['ssh_username']
+        @security_group_ids     = @node['delivery-cluster'][driver]['security_group_ids'] if @node['delivery-cluster'][driver]['security_group_ids']
         @use_private_ip_for_ssh = false
-        @use_private_ip_for_ssh = node['delivery-cluster']['aws']['use_private_ip_for_ssh'] if node['delivery-cluster']['aws']['use_private_ip_for_ssh']
+        @use_private_ip_for_ssh = @node['delivery-cluster'][driver]['use_private_ip_for_ssh'] if @node['delivery-cluster'][driver]['use_private_ip_for_ssh']
       end
 
       # Return the machine options to use.
@@ -60,18 +62,31 @@ module DeliveryCluster
         }
       end
 
+      # Create a array of machine_options specifics to a component
+      #
+      # @param component [String] component name
+      # @param count [Integer] component number
+      # @return [Array] specific machine_options for the specific component
+      def specific_machine_options(component, count = nil)
+        return [] unless @node['delivery-cluster'][component]
+        options = []
+        options << { bootstrap_options: { instance_type: @node['delivery-cluster'][component]['flavor'] }} if @node['delivery-cluster'][component]['flavor']
+        # Specify more specific machine_options to add
+      end
+
       # Return the Provisioning Driver Name.
       #
       # @return [String] the provisioning driver name
       def driver
         'aws'
       end
+
       # Return the ipaddress from the machine.
       #
       # @param node [Chef::Node]
       # @return [String] an ipaddress
-      def ipaddress(node, use_private_ip_for_ssh = false)
-        use_private_ip_for_ssh ? node['ec2']['local_ipv4'] : node['ec2']['public_ipv4']
+      def ipaddress(node)
+        @use_private_ip_for_ssh ? node['ec2']['local_ipv4'] : node['ec2']['public_ipv4']
       end
 
     end

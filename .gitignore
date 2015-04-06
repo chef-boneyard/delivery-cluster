@@ -9,3 +9,4 @@ vendor/
 .chef/trusted_certs
 .chef/delivery-cluster-*
 .chef/keys
+.chef/provisioning/

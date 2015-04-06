@@ -50,7 +50,9 @@ end
 # `/etc/opscode/delivery.rb` file
 machine delivery_server_hostname do
   chef_server lazy { chef_server_config }
-  add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['delivery']['flavor']  } if node['delivery-cluster']['delivery']['flavor']
+  provisioning.specific_machine_options('delivery').each do |option|
+    add_machine_options option
+  end
   files lazy {{
     "/etc/chef/trusted_certs/#{chef_server_ip}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt"
   }}
@@ -139,7 +141,9 @@ machine_batch "#{node['delivery-cluster']['builders']['count']}-build-nodes" do
           ssl_verify_mode: :verify_none
         }
       )
-      add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['builders']['flavor']  } if node['delivery-cluster']['builders']['flavor']
+      provisioning.specific_machine_options('builders', i).each do |option|
+        add_machine_options option
+      end
       files lazy {{
         "/etc/chef/trusted_certs/#{chef_server_ip}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt",
         "/etc/chef/trusted_certs/#{delivery_server_ip}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{delivery_server_ip}.crt",

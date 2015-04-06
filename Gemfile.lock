@@ -21,14 +21,6 @@ GIT
       net-ssh-gateway (~> 1.2.0)
       winrm (~> 1.2.0)
 
-GIT
-  remote: https://github.com/jonsmorrow/chef-provisioning-ssh.git
-  revision: 218ed8325c7daab2b4aa50c4bd61c25d6890b479
-  ref: simplify
-  specs:
-    chef-provisioning-ssh (0.0.7)
-      chef-provisioning
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -88,6 +80,8 @@ GEM
       ohai (~> 8.0)
       plist (~> 3.1.0)
       pry (~> 0.9)
+    chef-provisioning-ssh (0.0.7)
+      chef-provisioning
     chef-vault (2.4.0)
     chef-zero (3.2.1)
       ffi-yajl (~> 1.1)
@@ -241,6 +235,6 @@ DEPENDENCIES
   chef (~> 12.0)
   chef-provisioning!
   chef-provisioning-aws!
-  chef-provisioning-ssh!
+  chef-provisioning-ssh
   chef-vault
   thor

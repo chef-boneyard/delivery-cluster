@@ -13,16 +13,11 @@ require "thor/util"
 module DeliveryCluster
   module Provisioning
 
-    # Default driver to use
-    DEFAULT_DRIVER = "aws".freeze
-
     # Returns an instance of a driver given a driver type string.
     #
     # @param driver [String] a driver type, to be constantized
     # @return [Provisioning::Base] a driver instance
     def self.for_driver(driver, node)
-      require(driver)
-
       str_const = Thor::Util.camel_case(driver)
       klass = const_get(str_const)
       klass.new(node)

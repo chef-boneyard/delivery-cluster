@@ -21,7 +21,9 @@ include_recipe 'delivery-cluster::_settings'
 
 machine analytics_server_hostname do
   chef_server lazy { chef_server_config }
-  add_machine_options bootstrap_options: { instance_type: node['delivery-cluster']['analytics']['flavor']  } if node['delivery-cluster']['analytics']['flavor']
+  provisioning.specific_machine_options('analytics').each do |option|
+    add_machine_options option
+  end
   files lazy {{
     "/etc/chef/trusted_certs/#{chef_server_ip}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt"
   }}

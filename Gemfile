@@ -9,5 +9,4 @@ gem 'chef-provisioning',     git: 'https://github.com/chef/chef-provisioning.git
                              ref: 'master'
 gem 'chef-provisioning-aws', git: 'https://github.com/chef/chef-provisioning-aws.git',
                              ref: 'master'
-gem 'chef-provisioning-ssh', git: 'https://github.com/jonsmorrow/chef-provisioning-ssh.git',
-                             ref: 'simplify'
+gem 'chef-provisioning-ssh'

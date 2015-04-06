@@ -39,7 +39,7 @@ module DeliveryCluster
     # We will return the right IP to use depending wheter we need to
     # use the Private IP or the Public IP
     def get_ip(node)
-      provisioning.ipaddress(node, use_private_ip_for_ssh)
+      provisioning.ipaddress(node)
     end
 
     # delivery-ctl needs to be executed with elevated privileges

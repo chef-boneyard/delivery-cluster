@@ -32,6 +32,15 @@ module DeliveryCluster
         raise "#{self.class}#machine_options must be implemented"
       end
 
+      # Create a array of machine_options specifics to a component
+      #
+      # @param component [String] component name
+      # @param count [Integer] component number
+      # @return [Array] specific machine_options for the specific component
+      def specific_machine_options(component, count = nil) # rubocop:disable Lint/UnusedMethodArgument
+        raise "#{self.class}#specific_machine_options must be implemented"
+      end
+
       # Return the Provisioning Driver Name.
       #
       # @return [String] the provisioning driver name
