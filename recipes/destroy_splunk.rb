@@ -9,7 +9,7 @@
 # All rights reserved - Do Not Redistribute
 #
 
-include_recipe 'delivery-cluster::_aws_settings'
+include_recipe 'delivery-cluster::_settings'
 
 # TODO: This should be moved out
 begin

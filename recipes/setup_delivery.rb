@@ -9,7 +9,7 @@
 # All rights reserved - Do Not Redistribute
 #
 
-include_recipe 'delivery-cluster::_aws_settings'
+include_recipe 'delivery-cluster::_settings'
 
 # create an encrypted data bag secret
 file "#{cluster_data_dir}/encrypted_data_bag_secret" do

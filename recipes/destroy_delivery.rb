@@ -10,7 +10,7 @@
 #
 
 # Starting to abstract the specific configurations by providers
-include_recipe 'delivery-cluster::_aws_settings'
+include_recipe 'delivery-cluster::_settings'
 
 # Only if we have the credentials to destroy it
 if File.exist?("#{cluster_data_dir}/delivery.pem")

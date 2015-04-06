@@ -9,7 +9,7 @@
 # All rights reserved - Do Not Redistribute
 #
 
-include_recipe 'delivery-cluster::_aws_settings'
+include_recipe 'delivery-cluster::_settings'
 
 # It's ugly but this must happen in the compile phase so we can switch out
 # the Chef Server we are talking to for the remainder of the CCR.

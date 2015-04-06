@@ -9,7 +9,7 @@
 # All rights reserved - Do Not Redistribute
 #
 
-include_recipe 'delivery-cluster::_aws_settings'
+include_recipe 'delivery-cluster::_settings'
 
 # There are two ways to provision the Analytics Server
 #

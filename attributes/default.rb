@@ -9,8 +9,10 @@
 # All rights reserved - Do Not Redistribute
 #
 
-#
-# General AWS Attributes
+# Provisioning Driver
+default['delivery-cluster']['driver'] = 'aws'
+
+# AWS Driver Attributes
 #
 # In addition to this set of attributes you MUST have a ~/.aws/config file like this:
 # => $ vi ~/.aws/config
@@ -24,6 +26,20 @@ default['delivery-cluster']['aws']['security_group_ids']      = nil
 default['delivery-cluster']['aws']['image_id']                = nil
 default['delivery_cluster']['aws']['subnet_id']               = nil
 default['delivery-cluster']['aws']['use_private_ip_for_ssh']  = false
+
+# SSH Driver Attributes
+default['delivery-cluster']['ssh']['key_file']                = nil
+default['delivery-cluster']['ssh']['ssh_username']            = nil
+default['delivery-cluster']['ssh']['use_private_ip_for_ssh']  = false
+
+# Vagrant Driver Attributes
+default['delivery-cluster']['vagrant']['key_file']                = nil
+default['delivery-cluster']['vagrant']['ssh_username']            = nil
+default['delivery-cluster']['vagrant']['use_private_ip_for_ssh']  = false
+
+# Azure Driver Attributes
+default['delivery-cluster']['azure']['ssh_username']            = nil
+default['delivery-cluster']['azure']['use_private_ip_for_ssh']  = false
 
 # => The Cluste Name which will be use to define all default hostnames
 default['delivery-cluster']['id'] = nil
