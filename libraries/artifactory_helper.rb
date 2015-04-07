@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: delivery-cluster
-# Recipe:: artifactory_helper
+# Library:: artifactory_helper
 #
 # Author:: Salim Afiune (<afiune@chef.io>)
 #

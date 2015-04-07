@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: delivery-cluster
-# Recipe:: _helper
+# Library:: _helper
 #
 # Author:: Salim Afiune (<afiune@chef.io>)
 #
@@ -15,6 +15,15 @@ require 'securerandom'
 
 module DeliveryCluster
   module Helper
+
+    def provisioning
+      @@provisioning
+    end
+
+    def create_provisioning(current)
+      @@provisioning = current
+    end
+
     def current_dir
       Chef::Config.chef_repo_path
     end
@@ -23,14 +32,14 @@ module DeliveryCluster
       File.join(current_dir, '.chef', 'delivery-cluster-data')
     end
 
+    def use_private_ip_for_ssh
+      node['delivery-cluster'][node['delivery-cluster']['driver']]['use_private_ip_for_ssh']
+    end
+
     # We will return the right IP to use depending wheter we need to
     # use the Private IP or the Public IP
-    def get_aws_ip(n)
-      if node['delivery-cluster']['aws']['use_private_ip_for_ssh']
-        n['ec2']['local_ipv4']
-      else
-        n['ec2']['public_ipv4']
-      end
+    def get_ip(node)
+      provisioning.ipaddress(node)
     end
 
     # delivery-ctl needs to be executed with elevated privileges
@@ -117,7 +126,7 @@ module DeliveryCluster
     def chef_server_ip
       @@chef_server_ip ||= begin
         chef_server_node = Chef::Node.load(chef_server_hostname)
-        chef_server_ip   = get_aws_ip(chef_server_node)
+        chef_server_ip   = get_ip(chef_server_node)
         Chef::Log.info("Your Chef Server Public/Private IP is => #{chef_server_ip}")
         chef_server_ip
       end
@@ -143,7 +152,7 @@ module DeliveryCluster
 
     def analytics_server_ip
       @@analytics_server_ip ||= begin
-        analytics_server_ip   = get_aws_ip(analytics_server_node)
+        analytics_server_ip   = get_ip(analytics_server_node)
         Chef::Log.info("Your Analytics Server Public/Private IP is => #{analytics_server_ip}")
         analytics_server_ip
       end
@@ -210,7 +219,7 @@ module DeliveryCluster
 
     def delivery_server_ip
       @@delivery_server_ip ||= begin
-        delivery_server_ip   = get_aws_ip(delivery_server_node)
+        delivery_server_ip   = get_ip(delivery_server_node)
         Chef::Log.info("Your Delivery Server Public/Private IP is => #{delivery_server_ip}")
         delivery_server_ip
       end
