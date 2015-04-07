@@ -29,7 +29,7 @@ module DeliveryCluster
     end
 
     def cluster_data_dir
-      File.join(current_dir, '.chef', 'delivery-cluster-data')
+      File.join(current_dir, '.chef', "delivery-cluster-data-#{delivery_cluster_id}")
     end
 
     def use_private_ip_for_ssh
