@@ -13,3 +13,9 @@ create_provisioning(DeliveryCluster::Provisioning.for_driver(node['delivery-clus
 with_driver provisioning.driver
 
 with_machine_options(provisioning.machine_options)
+
+# Link the actual `cluster_data_dir` to `delivery-cluster-data`
+# so that `.chef/knife.rb` knows which one is our working cluster
+link File.join(current_dir, '.chef', "delivery-cluster-data") do
+  to cluster_data_dir
+end
