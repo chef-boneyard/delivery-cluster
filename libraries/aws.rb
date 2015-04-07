@@ -25,6 +25,7 @@ module DeliveryCluster
       attr_accessor :key_name
       attr_accessor :image_id
       attr_accessor :subnet_id
+      attr_accessor :bootstrap_proxy
       attr_accessor :ssh_username
       attr_accessor :security_group_ids
       attr_accessor :use_private_ip_for_ssh
@@ -39,6 +40,7 @@ module DeliveryCluster
         @key_name               = @node['delivery-cluster'][driver]['key_name'] if @node['delivery-cluster'][driver]['key_name']
         @image_id               = @node['delivery-cluster'][driver]['image_id'] if @node['delivery-cluster'][driver]['image_id']
         @subnet_id              = @node['delivery-cluster'][driver]['subnet_id'] if @node['delivery-cluster'][driver]['subnet_id']
+        @bootstrap_proxy        = @node['delivery-cluster'][driver]['bootstrap_proxy'] if @node['delivery-cluster'][driver]['bootstrap_proxy']
         @ssh_username           = @node['delivery-cluster'][driver]['ssh_username'] if @node['delivery-cluster'][driver]['ssh_username']
         @security_group_ids     = @node['delivery-cluster'][driver]['security_group_ids'] if @node['delivery-cluster'][driver]['security_group_ids']
         @use_private_ip_for_ssh = false
@@ -50,6 +52,9 @@ module DeliveryCluster
       # @return [Hash] the machine_options for the specific driver
       def machine_options
         {
+          convergence_options: {
+            bootstrap_proxy: @bootstrap_proxy
+          },
           bootstrap_options: {
             instance_type:      @flavor,
             key_name:           @key_name,
