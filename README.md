@@ -83,7 +83,7 @@ Here is an example of how you specify them
         "organization": "aws-example"
       },
       "analytics": {
-        "flavor": "c3.xlarge",
+        "flavor": "c3.xlarge"
       },
       "splunk": {
         "flavor": "c3.xlarge",
