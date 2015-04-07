@@ -1,25 +1,25 @@
 DEPENDENCIES
   chef-server-12
-    git: git@github.com:opscode-cookbooks/chef-server-12.git
+    git: https://github.com/opscode-cookbooks/chef-server-12.git
     revision: 47efcb18234db759123f328b737e30cb749a85b3
     branch: master
   chef-server-ingredient
-    git: git@github.com:opscode-cookbooks/chef-server-ingredient.git
+    git: https://github.com/opscode-cookbooks/chef-server-ingredient.git
     revision: 5a066b51e8a82bd4451eb77a4038d54e959b0261
     branch: master
   chef-splunk
-    git: git@github.com:chef-cookbooks/chef-splunk.git
+    git: https://github.com/chef-cookbooks/chef-splunk.git
     revision: 2508ccdb130b9fa50e5e7d5fdbf5655b645eac82
   delivery-cluster
     path: .
     metadata: true
   delivery-server
-    git: git@github.com:chef/delivery.git
+    git: https://github.com/chef/delivery.git
     revision: 9b1988b4260f3b2fcd5de72d10cf6491aafd42c1
     branch: master
     rel: cookbooks/delivery-server
   delivery_build
-    git: git@github.com:chef/delivery.git
+    git: https://github.com/chef/delivery.git
     revision: 9b1988b4260f3b2fcd5de72d10cf6491aafd42c1
     branch: master
     rel: cookbooks/delivery_build
