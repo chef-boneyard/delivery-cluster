@@ -307,6 +307,24 @@ $ bundle exec berks vendor cookbooks
 $ bundle exec chef-client -z -o delivery-cluster::setup -E test
 ```
 
+SSH provisioning
+================
+Included in this cookbook is a .kitchen.ssh.yml file that can build test nodes for ssh provisioning.
+
+`KITCHEN_YAML=.kitchen.ssh.yml kitchen list`
+
+Use the vagrant insecure_private_key in your environment file for ssh.
+
+```
+      "ssh": {
+        "ssh_username": "vagrant",
+        "key_file": "~/.vagrant.d/insecure_private_key",
+        "use_private_ip_for_ssh": false
+      }
+```
+
+
+
 LICENSE AND AUTHORS
 ===================
 - Author: Salim Afiune (<afiune@chef.io>)

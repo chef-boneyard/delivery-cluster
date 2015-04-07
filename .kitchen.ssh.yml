@@ -1,0 +1,26 @@
+---
+driver:
+  name: vagrant
+  ssh:
+    insert_key: false
+
+provisioner:
+  name: chef_zero
+
+platforms:
+  - name: centos-6.6
+
+suites:
+<%  10.upto(16) do |n| %>
+- name: delivery-<%= n %>
+  run_list:
+  - recipe[delivery-cluster::default]
+  driver:
+    vm_hostname: delivery-<%= n %>.example.com
+    network:
+      - ['private_network', {ip: '33.33.33.<%= n %>'}]
+    customize:
+      memory: 2048
+      cpus: 2
+  attributes:
+<% end %>
