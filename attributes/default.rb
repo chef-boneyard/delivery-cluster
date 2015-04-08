@@ -25,6 +25,7 @@ default['delivery-cluster']['aws']['ssh_username']            = nil
 default['delivery-cluster']['aws']['security_group_ids']      = nil
 default['delivery-cluster']['aws']['image_id']                = nil
 default['delivery_cluster']['aws']['subnet_id']               = nil
+default['delivery-cluster']['aws']['bootstrap_proxy']         = ENV['HTTP_PROXY']
 default['delivery-cluster']['aws']['use_private_ip_for_ssh']  = false
 
 # SSH Driver Attributes

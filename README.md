@@ -21,7 +21,7 @@ This cookbook uses [chef-provisioning](https://github.com/chef/chef-provisioning
 The available drivers that you can use are:
 
 ### AWS Driver [Default]
-This driver will provision the infrastructure in Amazon Ec2. 
+This driver will provision the infrastructure in Amazon Ec2.
 
 You MUST configure your `~/.aws/config` file like this:
 ```
@@ -52,6 +52,7 @@ The list of attributes that you need to specify are:
 | `image_id`               | AWS AMI.                                    |
 | `flavor`                 | Size/flavor of your machine.                |
 | `security_group_ids`     | Security Group on AWS.                      |
+| `bootstrap_proxy`        | Automatically configure HTTPS proxy. |
 | `use_private_ip_for_ssh` | Set to `true` if you want to use the private ipaddress. |
 
 Here is an example of how you specify them
@@ -71,6 +72,7 @@ Here is an example of how you specify them
         "image_id": "ami-3d50120d",
         "subnet_id": "subnet-19ac017c",
         "security_group_ids": "sg-cbacf8ae",
+        "bootstrap_proxy": "MY_PROXY_URL",
         "use_private_ip_for_ssh": true
       },
       "delivery": {
@@ -105,7 +107,7 @@ You have to provide:
 
 1. Ip address for all your machine resources
 2. Username
-3. Either `key_file` or `password` 
+3. Either `key_file` or `password`
 
 This is an example of how to specify this information
 ```json
@@ -214,7 +216,7 @@ $ bundle install
 $ bundle exec berks vendor cookbooks
 ```
 
-#### Create an environment 
+#### Create an environment
 
 This example includes every single functionality
 ```
@@ -234,6 +236,7 @@ $ cat environments/test.json
         "image_id": "ami-3d50120d",
         "subnet_id": "subnet-19ac017c",
         "security_group_ids": "sg-cbacf8ae",
+        "bootstrap_proxy": "MY_PROXY_URL",
         "use_private_ip_for_ssh": true
       },
       "ssh": {
