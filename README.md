@@ -49,6 +49,7 @@ The list of attributes that you need to specify are:
 | ------------------------ | ------------------------------------------- |
 | `key_name`               | Key Pair to configure.                      |
 | `ssh_username`           | SSH username to use to connect to machines. |
+| `chef_config`            | Anything you want dumped in `/etc/chef/client.rb` |
 | `image_id`               | AWS AMI.                                    |
 | `flavor`                 | Size/flavor of your machine.                |
 | `security_group_ids`     | Security Group on AWS.                      |

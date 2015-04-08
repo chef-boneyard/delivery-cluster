@@ -26,6 +26,7 @@ module DeliveryCluster
       attr_accessor :image_id
       attr_accessor :subnet_id
       attr_accessor :bootstrap_proxy
+      attr_accessor :chef_config
       attr_accessor :ssh_username
       attr_accessor :security_group_ids
       attr_accessor :use_private_ip_for_ssh
@@ -41,6 +42,7 @@ module DeliveryCluster
         @image_id               = @node['delivery-cluster'][driver]['image_id'] if @node['delivery-cluster'][driver]['image_id']
         @subnet_id              = @node['delivery-cluster'][driver]['subnet_id'] if @node['delivery-cluster'][driver]['subnet_id']
         @bootstrap_proxy        = @node['delivery-cluster'][driver]['bootstrap_proxy'] if @node['delivery-cluster'][driver]['bootstrap_proxy']
+        @chef_config            = @node['delivery-cluster'][driver]['chef_config'] if @node['delivery-cluster'][driver]['chef_config']
         @ssh_username           = @node['delivery-cluster'][driver]['ssh_username'] if @node['delivery-cluster'][driver]['ssh_username']
         @security_group_ids     = @node['delivery-cluster'][driver]['security_group_ids'] if @node['delivery-cluster'][driver]['security_group_ids']
         @use_private_ip_for_ssh = false
@@ -53,7 +55,8 @@ module DeliveryCluster
       def machine_options
         {
           convergence_options: {
-            bootstrap_proxy: @bootstrap_proxy
+            bootstrap_proxy: @bootstrap_proxy,
+            chef_config: @chef_config
           },
           bootstrap_options: {
             instance_type:      @flavor,
