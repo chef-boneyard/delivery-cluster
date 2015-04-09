@@ -1,7 +1,7 @@
 DEPENDENCIES
   chef-server-12
     git: https://github.com/opscode-cookbooks/chef-server-12.git
-    revision: 47efcb18234db759123f328b737e30cb749a85b3
+    revision: e46a55bc2c56fc12b68a0bc258f894a3f7456728
     branch: master
   chef-server-ingredient
     git: https://github.com/opscode-cookbooks/chef-server-ingredient.git
