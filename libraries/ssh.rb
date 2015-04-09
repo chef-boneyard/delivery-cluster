@@ -23,15 +23,19 @@ module DeliveryCluster
       attr_accessor :node
       attr_accessor :key_file
       attr_accessor :ssh_username
+      attr_accessor :bootstrap_proxy
+      attr_accessor :chef_config
 
       # Create a new Provisioning Driver Abstraction
       #
       # @param node [Chef::Node]
       def initialize(node)
         raise "[#{driver}] Attributes not implemented (node['delivery-cluster'][#{driver}])" unless node['delivery-cluster'][driver]
-        @node          = node
-        @ssh_username  = @node['delivery-cluster'][driver]['ssh_username'] if @node['delivery-cluster'][driver]['ssh_username']
-        @key_file      = @node['delivery-cluster'][driver]['key_file'] if @node['delivery-cluster'][driver]['key_file']
+        @node            = node
+        @ssh_username    = @node['delivery-cluster'][driver]['ssh_username'] if @node['delivery-cluster'][driver]['ssh_username']
+        @key_file        = @node['delivery-cluster'][driver]['key_file'] if @node['delivery-cluster'][driver]['key_file']
+        @bootstrap_proxy = @node['delivery-cluster'][driver]['bootstrap_proxy'] if @node['delivery-cluster'][driver]['bootstrap_proxy']
+        @chef_config     = @node['delivery-cluster'][driver]['chef_config'] if @node['delivery-cluster'][driver]['chef_config']
       end
 
       # Return the machine options to use.
@@ -39,6 +43,10 @@ module DeliveryCluster
       # @return [Hash] the machine_options for the specific driver
       def machine_options
         {
+          convergence_options: {
+            bootstrap_proxy: @bootstrap_proxy,
+            chef_config: @chef_config
+          },
           transport_options: {
             username: @ssh_username,
             ssh_options: {

@@ -123,7 +123,9 @@ This is an example of how to specify this information
     "driver": "ssh",
       "ssh": {
         "ssh_username": "ubuntu",
-        "key_file": "~/.ssh/id_rsa.pem"
+        "key_file": "~/.ssh/id_rsa.pem",
+        "bootstrap_proxy": "MY_PROXY_URL",
+        "chef_config": "http_proxy 'proxy'\nno_proxy localhost"
       },
       "chef-server": {
         "ip": "33.33.33.10",
