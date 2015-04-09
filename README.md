@@ -163,6 +163,7 @@ Specific Attributes per Machine
 | `hostname`      | Hostname of your Chef Server.     |
 | `organization`  | The organization name we will create for the Delivery Environment. |
 | `flavor`        | AWS Flavor of the Chef Server.   |
+| `existing`      | Set this to `true` if you want to use an existing chef-server. |
 
 ### Delivery Server Settings
 

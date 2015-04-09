@@ -101,6 +101,7 @@ default['delivery-cluster']['delivery']['version'] = 'latest'
 default['delivery-cluster']['chef-server']['hostname']     = nil
 default['delivery-cluster']['chef-server']['organization'] = 'my_enterprise'
 default['delivery-cluster']['chef-server']['flavor']       = 't2.medium'
+default['delivery-cluster']['chef-server']['existing']     = false
 
 # => Analytics Server (Not Required)
 #
