@@ -21,6 +21,7 @@ module DeliveryCluster
       require 'chef/provisioning/ssh_driver'
 
       attr_accessor :node
+      attr_accessor :prefix
       attr_accessor :key_file
       attr_accessor :ssh_username
       attr_accessor :bootstrap_proxy
@@ -32,7 +33,9 @@ module DeliveryCluster
       def initialize(node)
         raise "[#{driver}] Attributes not implemented (node['delivery-cluster'][#{driver}])" unless node['delivery-cluster'][driver]
         @node            = node
+        @prefix          = "sudo "
         @ssh_username    = @node['delivery-cluster'][driver]['ssh_username'] if @node['delivery-cluster'][driver]['ssh_username']
+        @prefix          = @node['delivery-cluster'][driver]['prefix'] if @node['delivery-cluster'][driver]['prefix']
         @key_file        = @node['delivery-cluster'][driver]['key_file'] if @node['delivery-cluster'][driver]['key_file']
         @bootstrap_proxy = @node['delivery-cluster'][driver]['bootstrap_proxy'] if @node['delivery-cluster'][driver]['bootstrap_proxy']
         @chef_config     = @node['delivery-cluster'][driver]['chef_config'] if @node['delivery-cluster'][driver]['chef_config']
@@ -54,7 +57,7 @@ module DeliveryCluster
               keys: [@key_file]
             },
             options: {
-              prefix: "sudo "
+              prefix: @prefix
             }
           }
         }
