@@ -31,6 +31,7 @@ default['delivery-cluster']['aws']['use_private_ip_for_ssh']  = false
 
 # SSH Driver Attributes
 default['delivery-cluster']['ssh']['key_file']                = nil
+default['delivery-cluster']['ssh']['prefix']                  = nil
 default['delivery-cluster']['ssh']['ssh_username']            = nil
 default['delivery-cluster']['ssh']['bootstrap_proxy']         = ENV['HTTPS_PROXY'] || ENV['HTTP_PROXY']
 default['delivery_cluster']['ssh']['chef_config']             = nil
