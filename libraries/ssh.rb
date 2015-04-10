@@ -69,9 +69,17 @@ module DeliveryCluster
         return [] unless @node['delivery-cluster'][component]
         options = []
         if count
-          options << { transport_options: { ip_address: @node['delivery-cluster'][component][count.to_s]['ip'] } } if @node['delivery-cluster'][component][count.to_s]['ip']
+          if @node['delivery-cluster'][component][count.to_s]['host']
+            options << { transport_options: { host: @node['delivery-cluster'][component][count.to_s]['host'] } }
+          elsif @node['delivery-cluster'][component][count.to_s]['ip']
+            options << { transport_options: { ip_address: @node['delivery-cluster'][component][count.to_s]['ip'] } }
+          end
         else
-          options << { transport_options: { ip_address: @node['delivery-cluster'][component]['ip'] } } if @node['delivery-cluster'][component]['ip']
+          if @node['delivery-cluster'][component]['host']
+            options << { transport_options: { host: @node['delivery-cluster'][component]['host'] } }
+          elsif @node['delivery-cluster'][component]['ip']
+            options << { transport_options: { ip_address: @node['delivery-cluster'][component]['ip'] } }
+          end
         end
         # Specify more specific machine_options to add
       end
