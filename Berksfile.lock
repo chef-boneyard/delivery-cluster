@@ -15,12 +15,12 @@ DEPENDENCIES
     metadata: true
   delivery-server
     git: https://github.com/chef/delivery.git
-    revision: 9b1988b4260f3b2fcd5de72d10cf6491aafd42c1
+    revision: a13bd6d49487a72624619d6ec74331762e86f2af
     branch: master
     rel: cookbooks/delivery-server
   delivery_build
     git: https://github.com/chef/delivery.git
-    revision: 9b1988b4260f3b2fcd5de72d10cf6491aafd42c1
+    revision: a13bd6d49487a72624619d6ec74331762e86f2af
     branch: master
     rel: cookbooks/delivery_build
 
@@ -42,7 +42,7 @@ GRAPH
     delivery_build (>= 0.0.0)
     push-jobs (>= 0.0.0)
   delivery-server (0.2.14)
-  delivery_build (0.1.2)
+  delivery_build (0.1.5)
     git (>= 0.0.0)
     packagecloud (>= 0.0.0)
   dmg (2.2.2)
