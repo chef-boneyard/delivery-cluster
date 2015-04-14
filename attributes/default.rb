@@ -102,6 +102,7 @@ default['delivery-cluster']['delivery']['version'] = 'latest'
 
 # => Chef Server
 default['delivery-cluster']['chef-server']['hostname']     = nil
+default['delivery-cluster']['chef-server']['fqdn']         = nil
 default['delivery-cluster']['chef-server']['organization'] = 'my_enterprise'
 default['delivery-cluster']['chef-server']['flavor']       = 't2.medium'
 default['delivery-cluster']['chef-server']['existing']     = false
