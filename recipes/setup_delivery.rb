@@ -96,11 +96,9 @@ machine delivery_server_hostname do
 end
 
 # Set right permissions to delivery files
-machine_execute "Set delivery files to 'delivery' user" do
+machine_execute "Chown '/etc/delivery' to 'delivery' user" do
   chef_server lazy { chef_server_config }
-  command <<-EOF
-    chown -R delivery /etc/delivery
-  EOF
+  command 'chown -R delivery /etc/delivery'
   machine delivery_server_hostname
 end
 
