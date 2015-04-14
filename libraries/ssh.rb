@@ -23,6 +23,7 @@ module DeliveryCluster
       attr_accessor :node
       attr_accessor :prefix
       attr_accessor :key_file
+      attr_accessor :password
       attr_accessor :ssh_username
       attr_accessor :bootstrap_proxy
       attr_accessor :chef_config
@@ -35,10 +36,12 @@ module DeliveryCluster
         @node            = node
         @prefix          = "sudo "
         @ssh_username    = @node['delivery-cluster'][driver]['ssh_username'] if @node['delivery-cluster'][driver]['ssh_username']
+        @password        = @node['delivery-cluster'][driver]['password'] if @node['delivery-cluster'][driver]['password']
         @prefix          = @node['delivery-cluster'][driver]['prefix'] if @node['delivery-cluster'][driver]['prefix']
         @key_file        = @node['delivery-cluster'][driver]['key_file'] if @node['delivery-cluster'][driver]['key_file']
         @bootstrap_proxy = @node['delivery-cluster'][driver]['bootstrap_proxy'] if @node['delivery-cluster'][driver]['bootstrap_proxy']
         @chef_config     = @node['delivery-cluster'][driver]['chef_config'] if @node['delivery-cluster'][driver]['chef_config']
+        raise '[#{driver}] You should not specify both key_file and password.' if @password && @key_file
       end
 
       # Return the machine options to use.
@@ -54,6 +57,7 @@ module DeliveryCluster
             username: @ssh_username,
             ssh_options: {
               user: @ssh_username,
+              password: @password,
               keys: [@key_file]
             },
             options: {
