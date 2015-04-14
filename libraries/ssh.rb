@@ -58,7 +58,7 @@ module DeliveryCluster
             ssh_options: {
               user: @ssh_username,
               password: @password,
-              keys: [@key_file]
+              keys: @key_file.nil? ? [] : [@key_file]
             },
             options: {
               prefix: @prefix
