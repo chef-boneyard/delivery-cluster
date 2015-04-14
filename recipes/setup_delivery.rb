@@ -95,6 +95,15 @@ machine delivery_server_hostname do
   action :converge
 end
 
+# Set right permissions to delivery files
+machine_execute "Set delivery files to 'delivery' user" do
+  chef_server lazy { chef_server_config }
+  command <<-EOF
+    chown -R delivery /etc/delivery
+  EOF
+  machine delivery_server_hostname
+end
+
 machine_file 'delivery-server-cert' do
   chef_server lazy { chef_server_config }
   path lazy { "/var/opt/delivery/nginx/ca/#{delivery_server_ip}.crt" }
