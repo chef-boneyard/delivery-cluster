@@ -21,8 +21,8 @@ module DeliveryCluster
       str_const = Thor::Util.camel_case(driver)
       klass = const_get(str_const)
       klass.new(node)
-    rescue
-      raise "Could not load the '#{driver}' driver from the load path."
+    rescue => e
+      raise "Could not load the '#{driver}' driver: #{e.message}"
     end
   end
 end

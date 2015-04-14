@@ -182,7 +182,7 @@ module DeliveryCluster
       return {} unless is_analytics_enabled?
       {
         'analytics' => {
-          'fqdn' => analytics_server_ip
+          'fqdn' => node['delivery-cluster']['analytics']['fqdn'] || analytics_server_ip
         }
       }
     end
@@ -191,7 +191,7 @@ module DeliveryCluster
       {
         'chef-server-12' => {
           'delivery' => { 'organization' => node['delivery-cluster']['chef-server']['organization'] },
-          'api_fqdn' => chef_server_ip,
+          'api_fqdn' => node['delivery-cluster']['chef-server']['fqdn'] || chef_server_ip,
           'store_keys_databag' => false
         }.merge(analytics_server_attributes)
       }
