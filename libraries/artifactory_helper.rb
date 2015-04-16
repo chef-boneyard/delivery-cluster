@@ -89,7 +89,7 @@ def supported_platforms_format(platform, platform_version)
   case platform
   when 'centos', 'redhat'
     case platform_version.to_s
-    when "6", "6.1", "6.2", "6.3", "6.4", "6.5"
+    when "6", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6"
       {
         'platform' => 'el',
         'version' => '6'

@@ -128,7 +128,7 @@ module DeliveryCluster
         chef_server_node = Chef::Node.load(chef_server_hostname)
         chef_server_ip   = get_ip(chef_server_node)
         Chef::Log.info("Your Chef Server Public/Private IP is => #{chef_server_ip}")
-        chef_server_ip
+        node['delivery-cluster']['chef-server']['fqdn'] || chef_server_ip
       end
     end
 
@@ -191,7 +191,7 @@ module DeliveryCluster
       {
         'chef-server-12' => {
           'delivery' => { 'organization' => node['delivery-cluster']['chef-server']['organization'] },
-          'api_fqdn' => node['delivery-cluster']['chef-server']['fqdn'] || chef_server_ip,
+          'api_fqdn' => chef_server_ip,
           'store_keys_databag' => false
         }.merge(analytics_server_attributes)
       }
