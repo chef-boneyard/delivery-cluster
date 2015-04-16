@@ -5,7 +5,7 @@ DEPENDENCIES
     branch: master
   chef-server-ingredient
     git: https://github.com/opscode-cookbooks/chef-server-ingredient.git
-    revision: 5a066b51e8a82bd4451eb77a4038d54e959b0261
+    revision: 1ce6c44406dc6c1cd844ea4086cfcf52ee831e14
     branch: master
   chef-splunk
     git: https://github.com/chef-cookbooks/chef-splunk.git
@@ -15,24 +15,24 @@ DEPENDENCIES
     metadata: true
   delivery-server
     git: https://github.com/chef/delivery.git
-    revision: a13bd6d49487a72624619d6ec74331762e86f2af
+    revision: d2cd562794fb132937278525e314e85f78ba1e03
     branch: master
     rel: cookbooks/delivery-server
   delivery_build
     git: https://github.com/chef/delivery.git
-    revision: a13bd6d49487a72624619d6ec74331762e86f2af
+    revision: d2cd562794fb132937278525e314e85f78ba1e03
     branch: master
     rel: cookbooks/delivery_build
 
 GRAPH
-  build-essential (2.1.3)
+  build-essential (2.2.3)
   chef-server-12 (0.1.3)
     chef-server-ingredient (>= 0.0.0)
-  chef-server-ingredient (0.3.0)
+  chef-server-ingredient (0.3.2)
     packagecloud (>= 0.0.0)
   chef-splunk (1.3.1)
     chef-vault (>= 1.0.4)
-  chef-vault (1.2.5)
+  chef-vault (1.3.0)
   chef_handler (1.1.6)
   delivery-cluster (0.1.0)
     chef-server-12 (>= 0.0.0)
@@ -42,16 +42,14 @@ GRAPH
     delivery_build (>= 0.0.0)
     push-jobs (>= 0.0.0)
   delivery-server (0.2.14)
-  delivery_build (0.1.5)
+  delivery_build (0.1.8)
     git (>= 0.0.0)
     packagecloud (>= 0.0.0)
   dmg (2.2.2)
-  git (4.1.0)
+  git (4.2.0)
     build-essential (>= 0.0.0)
     dmg (>= 0.0.0)
-    runit (>= 1.0)
     windows (>= 0.0.0)
-    yum (~> 3.0)
     yum-epel (>= 0.0.0)
   packagecloud (0.0.17)
   push-jobs (2.2.0)
@@ -63,6 +61,6 @@ GRAPH
     yum-epel (>= 0.0.0)
   windows (1.36.6)
     chef_handler (>= 0.0.0)
-  yum (3.5.3)
+  yum (3.5.4)
   yum-epel (0.6.0)
     yum (~> 3.0)
