@@ -126,7 +126,7 @@ This is an example of how to specify this information
         "prefix": "echo myPassword | sudo -S ",
         "key_file": "~/.ssh/id_rsa.pem",
         "bootstrap_proxy": "MY_PROXY_URL",
-        "chef_config": "http_proxy 'proxy'\nno_proxy localhost"
+        "chef_config": "http_proxy 'MY_PROXY_URL'\nno_proxy 'localhost'"
       },
       "chef-server": {
         "ip": "33.33.33.10",
@@ -166,6 +166,7 @@ Specific Attributes per Machine
 | `hostname`      | Hostname of your Chef Server.     |
 | `organization`  | The organization name we will create for the Delivery Environment. |
 | `flavor`        | AWS Flavor of the Chef Server.   |
+| `fqdn`          | The Chef Server FQDN to substitute the IP Address. |
 | `existing`      | Set this to `true` if you want to use an existing chef-server. |
 
 ### Delivery Server Settings
@@ -223,9 +224,9 @@ $ bundle exec berks vendor cookbooks
 
 #### Create an environment
 
-This example includes every single functionality
+This example includes every single functionality, please modify it as your needs require.
 ```
-$ cat environments/test.json
+$ vi environments/test.json
 {
 "name": "test",
   "description": "",
@@ -315,9 +316,9 @@ $ bundle exec berks vendor cookbooks
 $ bundle exec chef-client -z -o delivery-cluster::setup -E test
 ```
 
-SSH provisioning
+SSH/Kitchen Local Provisioning
 ================
-Included in this cookbook is a `.kitchen.ssh.yml` file that can build test nodes for ssh provisioning.
+Included in this cookbook is a `.kitchen.ssh.yml` file that can build test nodes with test-kitchen for ssh provisioning.
 
 `KITCHEN_YAML=.kitchen.ssh.yml kitchen list`
 
@@ -329,6 +330,69 @@ Use the vagrant `insecure_private_key` in your environment file for ssh.
         "key_file": "~/.vagrant.d/insecure_private_key"
       }
 ```
+
+Try using this `kitchen.json` environment:
+
+```
+$ vi environments/kitchen.json
+{
+  "name": "kitchen",
+  "description": "Kitchen Test over SSH",
+  "json_class": "Chef::Environment",
+  "chef_type": "environment",
+  "override_attributes": {
+    "delivery-cluster": {
+      "id": "kitchen",
+      "driver": "ssh",
+      "ssh": {
+        "ssh_username": "vagrant",
+        "key_file": "/Users/salimafiune/.vagrant.d/insecure_private_key"
+      },
+      "chef-server": {
+        "fqdn":"33.33.33.10",
+        "ip":"33.33.33.10",
+        "organization": "kitchen"
+      },
+      "delivery": {
+        "fqdn": "33.33.33.11",
+        "ip": "33.33.33.11",
+        "enterprise": "kitchen",
+        "version": "latest"
+      },
+      "builders": {
+        "1": { "ip": "33.33.33.12" },
+        "2": { "ip": "33.33.33.13" },
+        "3": { "ip": "33.33.33.14" },
+        "count": 3
+      },
+      "analytics": {
+        "fqdn": "33.33.33.15",
+        "ip": "33.33.33.15"
+      },
+      "splunk": {
+        "fqdn": "33.33.33.16",
+        "ip": "33.33.33.16",
+        "username": "admin",
+        "password": "salim"
+      }
+    }
+  }
+}
+```
+
+Create your instances:
+
+```
+KITCHEN_YAML=.kitchen.ssh.yml kitchen create
+```
+
+Setup your cluster:
+
+```
+$ bundle exec chef-client -z -o delivery-cluster::setup -E kitchen
+```
+
+Watch out your local resources! :smile:
 
 LICENSE AND AUTHORS
 ===================
