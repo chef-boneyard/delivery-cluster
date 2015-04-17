@@ -54,8 +54,8 @@ default['delivery-cluster']['id'] = nil
 # => Delivery requires a license in able to install properly. This license needs to
 #    be put on the server prior to installation of Delivery otherwise
 #    `delivery-ctl reconfigure` will fail. Specify the path to a local copy of the
-#    license key.
-default['delivery-cluster']['license_key_file'] = nil
+#    delivery.license file to have it synced to your Delivery Server.
+default['delivery-cluster']['delivery']['license_file'] = nil   # delivery.license
 
 # Specific attributes
 # => Delivery Server

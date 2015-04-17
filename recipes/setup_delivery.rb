@@ -80,20 +80,8 @@ ruby_block 'delivery-versions-data-bag-item' do
   end
 end
 
-# Fail early if license file cannot be found
-validate_local_license_key
-
-# Local setup necessary for the Delivery license
-file "#{cluster_data_dir}/delivery-license" do
-  content "nil"
-end
-
-execute 'Generate the license signature file from local license key' do
-  command "openssl dgst -sha256 -sign #{node['delivery-cluster']['license_key_file']} " \
-          "-out #{cluster_data_dir}/delivery-license.sig " \
-          "#{cluster_data_dir}/delivery-license"
-  not_if { File.exist?("#{cluster_data_dir}/delivery-license.sig") }
-end
+# Fail early if license files cannot be found
+validate_license_file
 
 # Upload the license information to the Delivery Server
 machine_execute 'Create `/var/opt/delivery/license` directory on Delivery Server' do
@@ -102,17 +90,10 @@ machine_execute 'Create `/var/opt/delivery/license` directory on Delivery Server
   machine delivery_server_hostname
 end
 
-machine_file '/var/opt/delivery/license/delivery-license.sig' do
+machine_file '/var/opt/delivery/license/delivery.license' do
   chef_server lazy { chef_server_config }
   machine delivery_server_hostname
-  local_path "#{cluster_data_dir}/delivery-license.sig"
-  action :upload
-end
-
-machine_file '/var/opt/delivery/license/delivery-license' do
-  chef_server lazy { chef_server_config }
-  machine delivery_server_hostname
-  local_path "#{cluster_data_dir}/delivery-license"
+  local_path node['delivery-cluster']['delivery']['license_file']
   action :upload
 end
 

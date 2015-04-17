@@ -16,35 +16,43 @@ and perform the initial configuration.
 
 Make Help
 ------------
-New `Makefile` that will help you use Delivery Cluster! Give it a try:
+New `Rakefile` that will help you use Delivery Cluster! Give it a try:
 
 ```
 salimafiune@afiuneChef:~/github/delivery-cluster
-$ make help
-
+$ rake
 Delivery Cluster Helper
-  make prerequisites ....... Install all the prerequisites on you system
-  make chef_server ......... Setup a Chef Server
-  make splunk .............. Create a Splunk Server with Analytics Integration
-  make analytics ........... Activate Analytics Server
-  make delivery ............ Create a Delivery Server & Build Nodes
-  make cluster ............. Setup the Chef Delivery Cluster that includes
-                             [ Chef Server | Delivery Server | Build Nodes ]
-  make destroy_all ......... Destroy Everything
-  make destory_splunk ...... Destroy Splunk Server
-  make destory_analytics ... Destroy Analytics Server
-  make destory_builders .... Destroy Build Nodes
-  make destroy_delivery .... Destroy Delivery Server
-  make destroy_chef_server . Destroy Chef Server
-  make clean_cache ......... Clean the cache
+
+Setup Tasks
+The following tasks should be used to set up your cluster
+rake setup:analytics      # Activate Analytics Server
+rake setup:chef_server    # Setup a Chef Server
+rake setup:cluster        # Setup the Chef Delivery Cluster that includes: [ Chef Server | Delivery Server | Build Nodes ]
+rake setup:delivery       # Create a Delivery Server & Build Nodes
+rake setup:prerequisites  # Install all the prerequisites on you system
+rake setup:splunk         # Create a Splunk Server with Analytics Integration
+
+Maintenance Tasks
+The following tasks should be used to maintain your cluster
+rake maintenance:clean_cache  # Clean the cache
+rake maintenance:upgrade      # Upgrade your infrastructure
+
+Destroy Tasks
+The following tasks should be used to destroy you cluster
+rake destroy:all          # Destroy Everything
+rake destroy:analytics    # Destroy Analytics Server
+rake destroy:builders     # Destroy Build Nodes
+rake destroy:chef_server  # Destroy Chef Server
+rake destroy:delivery     # Destroy Delivery Server
+rake destroy:splunk       # Destroy Splunk Server
 
 Cluster Information
-  make delivery_creds ...... Show Delivery admin credentials
-  make list_core_services .. List all your core services
+The following tasks should be used to get information about your cluster
+rake info:delivery_creds      # Show Delivery admin credentials
+rake info:list_core_services  # List all your core services
 
 To switch your environment run:
   # export CHEF_ENV=my_new_environment
-
 ```
 
 Available Provisioning Methods
@@ -88,7 +96,6 @@ The list of attributes that you need to specify are:
 | `security_group_ids`     | Security Group on AWS.                      |
 | `bootstrap_proxy`        | Automatically configure HTTPS proxy. |
 | `use_private_ip_for_ssh` | Set to `true` if you want to use the private  ipaddress. |
-| `license_key_file` | Path to the Delivery license file on the provisioning machine. |
 
 Here is an example of how you specify them
 ```json
@@ -101,7 +108,6 @@ Here is an example of how you specify them
     "delivery-cluster": {
       "id": "aws-example",
       "driver": "aws",
-      "license_key_file": "~/keys/delivery-license.pem",
       "aws": {
         "key_name": "MY_PEM_KEY",
         "ssh_username": "ubuntu",
@@ -114,7 +120,8 @@ Here is an example of how you specify them
       "delivery": {
         "flavor": "c3.xlarge",
         "enterprise": "aws-example",
-        "version": "latest"
+        "version": "latest",
+        "license_file": "~/delivery.license",
       },
       "chef-server": {
         "flavor": "c3.xlarge",
@@ -156,7 +163,6 @@ This is an example of how to specify this information
     "delivery-cluster": {
       "id": "ssh-example",
       "driver": "ssh",
-      "license_key_file": "~/keys/delivery-license.pem",
       "ssh": {
         "ssh_username": "ubuntu",
         "prefix": "echo myPassword | sudo -S ",
@@ -171,7 +177,8 @@ This is an example of how to specify this information
       "delivery": {
         "ip": "33.33.33.11",
         "enterprise": "ssh-example",
-        "version": "latest"
+        "version": "latest",
+        "license_file": "~/delivery.license"
       },
       "analytics": {
         "ip": "33.33.33.12"
@@ -215,6 +222,7 @@ Specific Attributes per Machine
 | `enterprise`   | A Delivery Enterprise that it will create. |
 | `fqdn`         | The Delivery FQDN to substitute the IP Address. |
 | `flavor`       | Flavor of the Chef Server. |
+| `license_file` | The path to the `delivery.license` file on your provisioner node. To acquire this file, please speak with your CHEF account representative. |
 
 ### Delivery Build Nodes Settings
 
@@ -253,9 +261,14 @@ $ make prerequisites
 ```
 
 #### Download your Delivery license key
-Delivery now requires a valid license key to activate successfully. If you do
-not have an active license key, you can request one from your CHEF account
-representative.
+Delivery requires a valid license to activate successfully. **If you do
+not have a license key, you can request one from your CHEF account
+representative.**
+
+You will need to have the `delivery.license` file present on your provisioner
+node. Specify the path to this file on your provisioner node in the
+`node['delivery-cluster']['delivery']['license_file']` attribute.
+
 
 #### Create an environment
 
@@ -271,7 +284,6 @@ $ vi environments/test.json
     "delivery-cluster": {
       "id": "MY_UNIQ_ID",
       "driver": "aws",
-      "license_key_file": "~/keys/delivery-license.pem",
       "aws": {
         "key_name": "MY_PEM_KEY",
         "ssh_username": "ubuntu",
@@ -294,7 +306,8 @@ $ vi environments/test.json
         "flavor": "c3.xlarge",
         "ip": "33.33.33.11",
         "enterprise": "test",
-        "version": "latest"
+        "version": "latest",
+        "license_file": "~/delivery.license"
       },
       "analytics": {
         "flavor": "c3.xlarge",
@@ -320,7 +333,7 @@ $ vi environments/test.json
 #### Provision your Delivery Cluster
 
 ```
-$ make cluster
+$ rake setup:cluster
 ```
 
 #### [OPTIONAL] Provision an Analytics Server
@@ -328,7 +341,7 @@ $ make cluster
 Once you have completed the `cluster` provisioning, you could setup an Analytics Server by running:
 
 ```
-$ make analytics
+$ rake setup:analytics
 ```
 
 That will provision and activate Analytics on your entire cluster.
@@ -339,7 +352,7 @@ That will provision and activate Analytics on your entire cluster.
 Would you like to try our Splunk Server Integration with Analytics? If yes, provision the server by running:
 
 ```
-$ make splunk
+$ rake setup:splunk
 ```
 
 
@@ -347,7 +360,7 @@ UPGRADE
 ========
 
 ```
-$ make upgrade
+$ rake maintenance:upgrade
 ```
 
 SSH/Kitchen Local Provisioning
@@ -378,7 +391,6 @@ $ vi environments/kitchen.json
     "delivery-cluster": {
       "id": "kitchen",
       "driver": "ssh",
-      "license_key_file": "~/keys/delivery-license.pem",
       "ssh": {
         "ssh_username": "vagrant",
         "key_file": "/Users/salimafiune/.vagrant.d/insecure_private_key"
@@ -392,7 +404,8 @@ $ vi environments/kitchen.json
         "fqdn": "33.33.33.11",
         "ip": "33.33.33.11",
         "enterprise": "kitchen",
-        "version": "latest"
+        "version": "latest",
+        "license_file": "~/delivery.license"
       },
       "builders": {
         "1": { "ip": "33.33.33.12" },
@@ -424,7 +437,7 @@ KITCHEN_YAML=.kitchen.ssh.yml kitchen create
 Setup your cluster:
 
 ```
-$ make cluster
+$ rake setup:cluster
 ```
 
 Watch out your local resources! :smile:
