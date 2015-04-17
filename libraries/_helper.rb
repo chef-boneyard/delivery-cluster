@@ -319,6 +319,33 @@ module DeliveryCluster
         end
       end
     end
+
+    # Because Delivery requires a license key, we want to make sure that the
+    # user has the necessary keyfile on the provisioning node before we begin.
+    # This method will check for the keyfile in the compile phase to prevent
+    # any work being done if the user doesn't even have a license key.
+    def validate_local_license_key
+      msg_delim = "***************************************************"
+
+      contact_msg = <<-END
+
+#{msg_delim}
+
+Chef Delivery requires a valid license to run.
+To get a license key, please contact your CHEF
+account representative.
+
+END
+
+      if node['delivery-cluster']['license_key_file'].nil?
+        raise "#{contact_msg}Please set `node['delivery-cluster']['license_key_file']`\n" \
+              "in your environment file.\n\n#{msg_delim}"
+      end
+
+      unless File.exists?(node['delivery-cluster']['license_key_file'])
+        raise "#{contact_msg}License Key could not be found: #{node['delivery-cluster']['license_key_file']}\n\n#{msg_delim}"
+      end
+    end
   end
 end
 

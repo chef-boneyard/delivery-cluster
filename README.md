@@ -14,6 +14,39 @@ Additionally it enables extra optional infrastructure:
 It will install the appropriate platform-specific delivery package
 and perform the initial configuration.
 
+Make Help
+------------
+New `Makefile` that will help you use Delivery Cluster! Give it a try:
+
+```
+salimafiune@afiuneChef:~/github/delivery-cluster
+$ make help
+
+Delivery Cluster Helper
+  make prerequisites ....... Install all the prerequisites on you system
+  make chef_server ......... Setup a Chef Server
+  make splunk .............. Create a Splunk Server with Analytics Integration
+  make analytics ........... Activate Analytics Server
+  make delivery ............ Create a Delivery Server & Build Nodes
+  make cluster ............. Setup the Chef Delivery Cluster that includes
+                             [ Chef Server | Delivery Server | Build Nodes ]
+  make destroy_all ......... Destroy Everything
+  make destory_splunk ...... Destroy Splunk Server
+  make destory_analytics ... Destroy Analytics Server
+  make destory_builders .... Destroy Build Nodes
+  make destroy_delivery .... Destroy Delivery Server
+  make destroy_chef_server . Destroy Chef Server
+  make clean_cache ......... Clean the cache
+
+Cluster Information
+  make delivery_creds ...... Show Delivery admin credentials
+  make list_core_services .. List all your core services
+
+To switch your environment run:
+  # export CHEF_ENV=my_new_environment
+
+```
+
 Available Provisioning Methods
 ------------
 This cookbook uses [chef-provisioning](https://github.com/chef/chef-provisioning) to manipulate the infrastructure acting as the orchestrator, it uses the default driver `aws` but you can switch drivers by modifying the attribute `['delivery-cluster']['driver']`
@@ -54,7 +87,8 @@ The list of attributes that you need to specify are:
 | `flavor`                 | Size/flavor of your machine.                |
 | `security_group_ids`     | Security Group on AWS.                      |
 | `bootstrap_proxy`        | Automatically configure HTTPS proxy. |
-| `use_private_ip_for_ssh` | Set to `true` if you want to use the private ipaddress. |
+| `use_private_ip_for_ssh` | Set to `true` if you want to use the private  ipaddress. |
+| `license_key_file` | Path to the Delivery license file on the provisioning machine. |
 
 Here is an example of how you specify them
 ```json
@@ -65,8 +99,9 @@ Here is an example of how you specify them
   "chef_type": "environment",
   "override_attributes": {
     "delivery-cluster": {
-    "id": "aws-example",
-    "driver": "aws",
+      "id": "aws-example",
+      "driver": "aws",
+      "license_key_file": "~/keys/delivery-license.pem",
       "aws": {
         "key_name": "MY_PEM_KEY",
         "ssh_username": "ubuntu",
@@ -119,8 +154,9 @@ This is an example of how to specify this information
   "chef_type": "environment",
   "override_attributes": {
     "delivery-cluster": {
-    "id": "ssh-example",
-    "driver": "ssh",
+      "id": "ssh-example",
+      "driver": "ssh",
+      "license_key_file": "~/keys/delivery-license.pem",
       "ssh": {
         "ssh_username": "ubuntu",
         "prefix": "echo myPassword | sudo -S ",
@@ -210,17 +246,16 @@ So please don't use another AMI type.
 PROVISION
 =========
 
-#### Install your deps
+#### Install your gem and cookbook dependencies
 
 ```
-$ bundle install
+$ make prerequisites
 ```
 
-#### Assemble your cookbooks
-
-```
-$ bundle exec berks vendor cookbooks
-```
+#### Download your Delivery license key
+Delivery now requires a valid license key to activate successfully. If you do
+not have an active license key, you can request one from your CHEF account
+representative.
 
 #### Create an environment
 
@@ -234,8 +269,9 @@ $ vi environments/test.json
   "chef_type": "environment",
   "override_attributes": {
     "delivery-cluster": {
-    "id": "MY_UNIQ_ID",
-    "driver": "aws",
+      "id": "MY_UNIQ_ID",
+      "driver": "aws",
+      "license_key_file": "~/keys/delivery-license.pem",
       "aws": {
         "key_name": "MY_PEM_KEY",
         "ssh_username": "ubuntu",
@@ -281,39 +317,37 @@ $ vi environments/test.json
 }
 ```
 
-#### Run chef-client on the local system (provisioning node)
+#### Provision your Delivery Cluster
 
 ```
-$ bundle exec chef-client -z -o delivery-cluster::setup -E test
+$ make cluster
 ```
 
-Activate Analytics Server
-========
-In order to activate Analytics you MUST provision the entire `delivery-cluster::setup` first. After you are done completely you can execute a second `chef-zero` like:
+#### [OPTIONAL] Provision an Analytics Server
+
+Once you have completed the `cluster` provisioning, you could setup an Analytics Server by running:
+
 ```
-$ bundle exec chef-client -z -o delivery-cluster::setup_analytics -E test
+$ make analytics
 ```
 
 That will provision and activate Analytics on your entire cluster.
 
+
+#### [OPTIONAL] Provision a Splunk Server
+
+Would you like to try our Splunk Server Integration with Analytics? If yes, provision the server by running:
+
+```
+$ make splunk
+```
+
+
 UPGRADE
 ========
-In order to upgrade the existing infrastructure and cookbook dependencies you need to run the following steps:
-
-#### Update your cookbook dependencies
-```
-$ bundle exec berks update
-```
-#### Assemble your cookbooks again
 
 ```
-$ bundle exec berks vendor cookbooks
-```
-
-#### Run chef-client on the local system (provisioning node)
-
-```
-$ bundle exec chef-client -z -o delivery-cluster::setup -E test
+$ make upgrade
 ```
 
 SSH/Kitchen Local Provisioning
@@ -344,6 +378,7 @@ $ vi environments/kitchen.json
     "delivery-cluster": {
       "id": "kitchen",
       "driver": "ssh",
+      "license_key_file": "~/keys/delivery-license.pem",
       "ssh": {
         "ssh_username": "vagrant",
         "key_file": "/Users/salimafiune/.vagrant.d/insecure_private_key"
@@ -389,7 +424,7 @@ KITCHEN_YAML=.kitchen.ssh.yml kitchen create
 Setup your cluster:
 
 ```
-$ bundle exec chef-client -z -o delivery-cluster::setup -E kitchen
+$ make cluster
 ```
 
 Watch out your local resources! :smile:
@@ -398,3 +433,4 @@ LICENSE AND AUTHORS
 ===================
 - Author: Salim Afiune (<afiune@chef.io>)
 - Author: Seth Chisamore (<schisamo@chef.io>)
+- Author: Tom Duffield (<tom@chef.io>)
