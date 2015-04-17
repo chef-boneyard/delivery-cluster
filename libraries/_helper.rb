@@ -221,7 +221,7 @@ module DeliveryCluster
       @@delivery_server_ip ||= begin
         delivery_server_ip   = get_ip(delivery_server_node)
         Chef::Log.info("Your Delivery Server Public/Private IP is => #{delivery_server_ip}")
-        delivery_server_ip
+        node['delivery-cluster']['delivery']['fqdn'] || delivery_server_ip
       end
     end
 
