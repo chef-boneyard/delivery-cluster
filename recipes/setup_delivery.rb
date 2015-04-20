@@ -80,21 +80,27 @@ ruby_block 'delivery-versions-data-bag-item' do
   end
 end
 
-# Fail early if license files cannot be found
-validate_license_file
+# Right now, we should enforce license checks only for latest or post-0.3.0
+# versions of Delivery. Once all our customers are on post-0.3.0 versions of
+# Delivery we could remove this conditional.
+if node['delivery-cluster']['delivery']['version'] == 'latest' ||
+   Gem::Version.new(node['delivery-cluster']['delivery']['version']) > Gem::Version.new('0.3.0')
+    # Fail early if license files cannot be found
+    validate_license_file
 
-# Upload the license information to the Delivery Server
-machine_execute 'Create `/var/opt/delivery/license` directory on Delivery Server' do
-  chef_server lazy { chef_server_config }
-  command 'mkdir -p /var/opt/delivery/license'
-  machine delivery_server_hostname
-end
+    # Upload the license information to the Delivery Server
+    machine_execute 'Create `/var/opt/delivery/license` directory on Delivery Server' do
+      chef_server lazy { chef_server_config }
+      command 'mkdir -p /var/opt/delivery/license'
+      machine delivery_server_hostname
+    end
 
-machine_file '/var/opt/delivery/license/delivery.license' do
-  chef_server lazy { chef_server_config }
-  machine delivery_server_hostname
-  local_path node['delivery-cluster']['delivery']['license_file']
-  action :upload
+    machine_file '/var/opt/delivery/license/delivery.license' do
+      chef_server lazy { chef_server_config }
+      machine delivery_server_hostname
+      local_path node['delivery-cluster']['delivery']['license_file']
+      action :upload
+    end
 end
 
 # Now that we've extracted the Delivery Server's ipaddress we can fully
