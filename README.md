@@ -14,6 +14,47 @@ Additionally it enables extra optional infrastructure:
 It will install the appropriate platform-specific delivery package
 and perform the initial configuration.
 
+Make Help
+------------
+New `Rakefile` that will help you use Delivery Cluster! Give it a try:
+
+```
+salimafiune@afiuneChef:~/github/delivery-cluster
+$ rake
+Delivery Cluster Helper
+
+Setup Tasks
+The following tasks should be used to set up your cluster
+rake setup:analytics      # Activate Analytics Server
+rake setup:chef_server    # Setup a Chef Server
+rake setup:cluster        # Setup the Chef Delivery Cluster that includes: [ Chef Server | Delivery Server | Build Nodes ]
+rake setup:delivery       # Create a Delivery Server & Build Nodes
+rake setup:prerequisites  # Install all the prerequisites on you system
+rake setup:splunk         # Create a Splunk Server with Analytics Integration
+
+Maintenance Tasks
+The following tasks should be used to maintain your cluster
+rake maintenance:clean_cache  # Clean the cache
+rake maintenance:upgrade      # Upgrade your infrastructure
+
+Destroy Tasks
+The following tasks should be used to destroy you cluster
+rake destroy:all          # Destroy Everything
+rake destroy:analytics    # Destroy Analytics Server
+rake destroy:builders     # Destroy Build Nodes
+rake destroy:chef_server  # Destroy Chef Server
+rake destroy:delivery     # Destroy Delivery Server
+rake destroy:splunk       # Destroy Splunk Server
+
+Cluster Information
+The following tasks should be used to get information about your cluster
+rake info:delivery_creds      # Show Delivery admin credentials
+rake info:list_core_services  # List all your core services
+
+To switch your environment run:
+  # export CHEF_ENV=my_new_environment
+```
+
 Available Provisioning Methods
 ------------
 This cookbook uses [chef-provisioning](https://github.com/chef/chef-provisioning) to manipulate the infrastructure acting as the orchestrator, it uses the default driver `aws` but you can switch drivers by modifying the attribute `['delivery-cluster']['driver']`
@@ -54,7 +95,7 @@ The list of attributes that you need to specify are:
 | `flavor`                 | Size/flavor of your machine.                |
 | `security_group_ids`     | Security Group on AWS.                      |
 | `bootstrap_proxy`        | Automatically configure HTTPS proxy. |
-| `use_private_ip_for_ssh` | Set to `true` if you want to use the private ipaddress. |
+| `use_private_ip_for_ssh` | Set to `true` if you want to use the private  ipaddress. |
 
 Here is an example of how you specify them
 ```json
@@ -65,8 +106,8 @@ Here is an example of how you specify them
   "chef_type": "environment",
   "override_attributes": {
     "delivery-cluster": {
-    "id": "aws-example",
-    "driver": "aws",
+      "id": "aws-example",
+      "driver": "aws",
       "aws": {
         "key_name": "MY_PEM_KEY",
         "ssh_username": "ubuntu",
@@ -79,7 +120,8 @@ Here is an example of how you specify them
       "delivery": {
         "flavor": "c3.xlarge",
         "enterprise": "aws-example",
-        "version": "latest"
+        "version": "latest",
+        "license_file": "~/delivery.license",
       },
       "chef-server": {
         "flavor": "c3.xlarge",
@@ -119,8 +161,8 @@ This is an example of how to specify this information
   "chef_type": "environment",
   "override_attributes": {
     "delivery-cluster": {
-    "id": "ssh-example",
-    "driver": "ssh",
+      "id": "ssh-example",
+      "driver": "ssh",
       "ssh": {
         "ssh_username": "ubuntu",
         "prefix": "echo myPassword | sudo -S ",
@@ -135,7 +177,8 @@ This is an example of how to specify this information
       "delivery": {
         "ip": "33.33.33.11",
         "enterprise": "ssh-example",
-        "version": "latest"
+        "version": "latest",
+        "license_file": "~/delivery.license"
       },
       "analytics": {
         "ip": "33.33.33.12"
@@ -179,6 +222,7 @@ Specific Attributes per Machine
 | `enterprise`   | A Delivery Enterprise that it will create. |
 | `fqdn`         | The Delivery FQDN to substitute the IP Address. |
 | `flavor`       | Flavor of the Chef Server. |
+| `license_file` | The path to the `delivery.license` file on your provisioner node. To acquire this file, please speak with your CHEF account representative. |
 
 ### Delivery Build Nodes Settings
 
@@ -210,17 +254,21 @@ So please don't use another AMI type.
 PROVISION
 =========
 
-#### Install your deps
+#### Install your gem and cookbook dependencies
 
 ```
-$ bundle install
+$ make prerequisites
 ```
 
-#### Assemble your cookbooks
+#### Download your Delivery license key
+Delivery requires a valid license to activate successfully. **If you do
+not have a license key, you can request one from your CHEF account
+representative.**
 
-```
-$ bundle exec berks vendor cookbooks
-```
+You will need to have the `delivery.license` file present on your provisioner
+node. Specify the path to this file on your provisioner node in the
+`node['delivery-cluster']['delivery']['license_file']` attribute.
+
 
 #### Create an environment
 
@@ -234,8 +282,8 @@ $ vi environments/test.json
   "chef_type": "environment",
   "override_attributes": {
     "delivery-cluster": {
-    "id": "MY_UNIQ_ID",
-    "driver": "aws",
+      "id": "MY_UNIQ_ID",
+      "driver": "aws",
       "aws": {
         "key_name": "MY_PEM_KEY",
         "ssh_username": "ubuntu",
@@ -258,7 +306,8 @@ $ vi environments/test.json
         "flavor": "c3.xlarge",
         "ip": "33.33.33.11",
         "enterprise": "test",
-        "version": "latest"
+        "version": "latest",
+        "license_file": "~/delivery.license"
       },
       "analytics": {
         "flavor": "c3.xlarge",
@@ -281,39 +330,37 @@ $ vi environments/test.json
 }
 ```
 
-#### Run chef-client on the local system (provisioning node)
+#### Provision your Delivery Cluster
 
 ```
-$ bundle exec chef-client -z -o delivery-cluster::setup -E test
+$ rake setup:cluster
 ```
 
-Activate Analytics Server
-========
-In order to activate Analytics you MUST provision the entire `delivery-cluster::setup` first. After you are done completely you can execute a second `chef-zero` like:
+#### [OPTIONAL] Provision an Analytics Server
+
+Once you have completed the `cluster` provisioning, you could setup an Analytics Server by running:
+
 ```
-$ bundle exec chef-client -z -o delivery-cluster::setup_analytics -E test
+$ rake setup:analytics
 ```
 
 That will provision and activate Analytics on your entire cluster.
 
+
+#### [OPTIONAL] Provision a Splunk Server
+
+Would you like to try our Splunk Server Integration with Analytics? If yes, provision the server by running:
+
+```
+$ rake setup:splunk
+```
+
+
 UPGRADE
 ========
-In order to upgrade the existing infrastructure and cookbook dependencies you need to run the following steps:
-
-#### Update your cookbook dependencies
-```
-$ bundle exec berks update
-```
-#### Assemble your cookbooks again
 
 ```
-$ bundle exec berks vendor cookbooks
-```
-
-#### Run chef-client on the local system (provisioning node)
-
-```
-$ bundle exec chef-client -z -o delivery-cluster::setup -E test
+$ rake maintenance:upgrade
 ```
 
 SSH/Kitchen Local Provisioning
@@ -357,7 +404,8 @@ $ vi environments/kitchen.json
         "fqdn": "33.33.33.11",
         "ip": "33.33.33.11",
         "enterprise": "kitchen",
-        "version": "latest"
+        "version": "latest",
+        "license_file": "~/delivery.license"
       },
       "builders": {
         "1": { "ip": "33.33.33.12" },
@@ -389,7 +437,7 @@ KITCHEN_YAML=.kitchen.ssh.yml kitchen create
 Setup your cluster:
 
 ```
-$ bundle exec chef-client -z -o delivery-cluster::setup -E kitchen
+$ rake setup:cluster
 ```
 
 Watch out your local resources! :smile:
@@ -398,3 +446,4 @@ LICENSE AND AUTHORS
 ===================
 - Author: Salim Afiune (<afiune@chef.io>)
 - Author: Seth Chisamore (<schisamo@chef.io>)
+- Author: Tom Duffield (<tom@chef.io>)

@@ -319,6 +319,34 @@ module DeliveryCluster
         end
       end
     end
+
+    # Because Delivery requires a license, we want to make sure that the
+    # user has the necessary license file on the provisioning node before we begin.
+    # This method will check for the license file in the compile phase to prevent
+    # any work being done if the user doesn't even have a license.
+    def validate_license_files
+      msg_delim = "***************************************************"
+
+      contact_msg = <<-END
+
+#{msg_delim}
+
+Chef Delivery requires a valid license to run.
+To acquire a license, please contact your CHEF
+account representative.
+
+      END
+
+      if node['delivery-cluster']['delivery']['license_file'].nil?
+        raise "#{contact_msg}Please set `#{node['delivery-cluster']['delivery']['license_file']}`\n" \
+              "in your environment file.\n\n#{msg_delim}"
+      end
+
+      unless File.exist?(node['delivery-cluster']['delivery']['license_file']
+        raise "#{contact_msg}License file could not be found: " \
+              "#{node['delivery-cluster']['delivery']['license_file']}\n\n#{msg_delim}"
+      end
+    end
   end
 end
 

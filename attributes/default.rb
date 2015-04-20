@@ -46,8 +46,16 @@ default['delivery-cluster']['vagrant']['use_private_ip_for_ssh']  = false
 default['delivery-cluster']['azure']['ssh_username']            = nil
 default['delivery-cluster']['azure']['use_private_ip_for_ssh']  = false
 
-# => The Cluste Name which will be use to define all default hostnames
+# => The Cluster Name which will be use to define all default hostnames
 default['delivery-cluster']['id'] = nil
+
+
+# Delivery License
+# => Delivery requires a license in able to install properly. This license needs to
+#    be put on the server prior to installation of Delivery otherwise
+#    `delivery-ctl reconfigure` will fail. Specify the path to a local copy of the
+#    delivery.license file to have it synced to your Delivery Server.
+default['delivery-cluster']['delivery']['license_file'] = nil   # delivery.license
 
 # Specific attributes
 # => Delivery Server
