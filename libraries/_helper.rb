@@ -232,7 +232,7 @@ module DeliveryCluster
         },
         'delivery' => {
           'chef_server' => chef_server_url,
-          'fqdn'        => node['delivery-cluster']['delivery']['fqdn'] || delivery_server_ip
+          'fqdn'        => delivery_server_ip
         }
       }
 
