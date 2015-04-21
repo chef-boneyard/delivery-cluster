@@ -15,12 +15,12 @@ DEPENDENCIES
     metadata: true
   delivery-server
     git: https://github.com/chef/delivery.git
-    revision: c710bc0b8709b12709df9d954440083a65fd5c09
+    revision: fca1a8a5856c1357826d849591f18d5e42d1b773
     branch: master
     rel: cookbooks/delivery-server
   delivery_build
     git: https://github.com/chef/delivery.git
-    revision: c710bc0b8709b12709df9d954440083a65fd5c09
+    revision: fca1a8a5856c1357826d849591f18d5e42d1b773
     branch: master
     rel: cookbooks/delivery_build
 
