@@ -242,6 +242,15 @@ module DeliveryCluster
       delivery_attributes
     end
 
+    def builders_attributes
+      builders_attributes = {}
+
+      # Add cli attributes if they exists.
+      builders_attributes['delivery_build']['delivery-cli'] = node['delivery-cluster']['builders']['delivery-cli'] unless node['delivery-cluster']['builders']['delivery-cli'].empty?
+
+      builders_attributes
+    end
+
     def delivery_enterprise_cmd
       # We have introduced an additional constrain to the enterprise_ctl
       # command that require to specify --ssh-pub-key-file param starting
