@@ -53,7 +53,7 @@ module DeliveryCluster
       #
       # @return [Hash] the machine_options for the specific driver
       def machine_options
-        mo = {
+        base = {
                 convergence_options: {
                   bootstrap_proxy: @bootstrap_proxy,
                   chef_config: @chef_config
@@ -67,15 +67,15 @@ module DeliveryCluster
                 image_id:               @image_id,
                 use_private_ip_for_ssh: @use_private_ip_for_ssh
               }
-        add_optional_machine_options(mo)
+        add_optional_machine_options(base)
       end
 
       # Add any optional machine options
       #
-      # @param mo hash of machine options
-      def add_optional_machine_options(mo)
-        omo = mo
-        omo << { bootstrap_options: { subnet_id: @subnet_id }} if @subnet_id
+      # @param opts hash of machine options
+      def add_optional_machine_options(opts)
+        optional = opts
+        optional << { bootstrap_options: { subnet_id: @subnet_id }} if @subnet_id
       end
 
       # Create a array of machine_options specifics to a component
