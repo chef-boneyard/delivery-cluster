@@ -179,6 +179,7 @@ machine_batch "#{node['delivery-cluster']['builders']['count']}-build-nodes" do
         "/etc/chef/trusted_certs/#{delivery_server_ip}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{delivery_server_ip}.crt",
         '/etc/chef/encrypted_data_bag_secret' => "#{cluster_data_dir}/encrypted_data_bag_secret"
       }}
+      attributes lazy { builders_attributes }
       converge true
       action :converge
     end

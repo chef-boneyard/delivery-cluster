@@ -232,6 +232,7 @@ Specific Attributes per Machine
 | `role`                | Name of the Delivery Build Nodes Role. |
 | `count`               | Number of Build Nodes to create. |
 | `additional_run_list` | Additional run list items to apply to build nodes. |
+| `delivery-cli`        | Optional Hash of delivery-cli attrs: `{ "version": "0.3.0", "artifact": "http://my.delivery-cli.pkg", "checksum": "123456789ABCDEF"}` |
 
 ### Analytics Settings (Not required)
 
@@ -447,3 +448,4 @@ LICENSE AND AUTHORS
 - Author: Salim Afiune (<afiune@chef.io>)
 - Author: Seth Chisamore (<schisamo@chef.io>)
 - Author: Tom Duffield (<tom@chef.io>)
+- Author: Jon Morrow (<jmorrow@chef.io>)

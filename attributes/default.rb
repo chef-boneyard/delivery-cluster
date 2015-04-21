@@ -136,3 +136,13 @@ default['delivery-cluster']['builders']['hostname_prefix']     = nil
 default['delivery-cluster']['builders']['count']               = 3
 default['delivery-cluster']['builders']['flavor']              = 't2.small'
 default['delivery-cluster']['builders']['additional_run_list'] = []
+
+# Optional Hash of delivery-cli
+#
+# You can specify a delivery-cli artifact passing the following attributes:
+# => { 
+#      "version":  "0.3.0",
+#      "artifact": "http://my.delivery-cli.pkg",
+#      "checksum": "123456789ABCDEF" 
+#    }
+default['delivery-cluster']['builders']['delivery-cli']        = {}
