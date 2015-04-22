@@ -18,8 +18,6 @@ module DeliveryCluster
     # @author Salim Afiune <afiune@chef.io>
     class Ssh < DeliveryCluster::Provisioning::Base
 
-      require 'chef/provisioning/ssh_driver'
-
       attr_accessor :node
       attr_accessor :prefix
       attr_accessor :key_file
@@ -32,6 +30,8 @@ module DeliveryCluster
       #
       # @param node [Chef::Node]
       def initialize(node)
+        require 'chef/provisioning/ssh_driver'
+
         raise "Attributes not implemented (node['delivery-cluster'][#{driver}])" unless node['delivery-cluster'][driver]
         @node            = node
         @prefix          = "sudo "

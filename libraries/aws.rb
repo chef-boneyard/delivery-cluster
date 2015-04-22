@@ -18,8 +18,6 @@ module DeliveryCluster
     # @author Salim Afiune <afiune@chef.io>
     class Aws < DeliveryCluster::Provisioning::Base
 
-      require 'chef/provisioning/aws_driver'
-
       attr_accessor :node
       attr_accessor :flavor
       attr_accessor :key_name
@@ -35,6 +33,8 @@ module DeliveryCluster
       #
       # @param node [Chef::Node]
       def initialize(node)
+        require 'chef/provisioning/aws_driver'
+
         raise "[#{driver}] Attributes not implemented (node['delivery-cluster'][#{driver}])" unless node['delivery-cluster'][driver]
         @node                   = node
         @flavor                 = @node['delivery-cluster'][driver]['flavor'] if @node['delivery-cluster'][driver]['flavor']
