@@ -281,4 +281,3 @@ DEPENDENCIES
   chef-provisioning-ssh
   chef-vault
   kitchen-vagrant (~> 0.16.0)
-  thor
