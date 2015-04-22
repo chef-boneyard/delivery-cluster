@@ -17,11 +17,7 @@ module DeliveryCluster
   module Helper
 
     def provisioning
-      @@provisioning
-    end
-
-    def create_provisioning(current)
-      @@provisioning = current
+      @@provisioning ||= DeliveryCluster::Provisioning.for_driver(node['delivery-cluster']['driver'], node)
     end
 
     def current_dir
