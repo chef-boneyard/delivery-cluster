@@ -53,7 +53,7 @@ module DeliveryCluster
       #
       # @return [Hash] the machine_options for the specific driver
       def machine_options
-        base = {
+        opts = {
                 convergence_options: {
                   bootstrap_proxy: @bootstrap_proxy,
                   chef_config: @chef_config
@@ -67,15 +67,12 @@ module DeliveryCluster
                 image_id:               @image_id,
                 use_private_ip_for_ssh: @use_private_ip_for_ssh
               }
-        add_optional_machine_options(base)
-      end
 
-      # Add any optional machine options
-      #
-      # @param opts hash of machine options
-      def add_optional_machine_options(opts)
-        optional = opts
-        optional << { bootstrap_options: { subnet_id: @subnet_id }} if @subnet_id
+        # Add any optional machine options
+        require 'chef/mixin/deep_merge'
+        opts = Chef::Mixin::DeepMerge.hash_only_merge(opts, bootstrap_options: { subnet_id: @subnet_id }) if @subnet_id
+
+        opts
       end
 
       # Create a array of machine_options specifics to a component
