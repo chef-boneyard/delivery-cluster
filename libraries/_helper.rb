@@ -17,11 +17,7 @@ module DeliveryCluster
   module Helper
 
     def provisioning
-      @@provisioning
-    end
-
-    def create_provisioning(current)
-      @@provisioning = current
+      @@provisioning ||= DeliveryCluster::Provisioning.for_driver(node['delivery-cluster']['driver'], node)
     end
 
     def current_dir
@@ -192,7 +188,10 @@ module DeliveryCluster
         'chef-server-12' => {
           'delivery' => { 'organization' => node['delivery-cluster']['chef-server']['organization'] },
           'api_fqdn' => chef_server_ip,
-          'store_keys_databag' => false
+          'store_keys_databag' => false,
+          'plugin' => {
+           'opscode-reporting' => false
+          }
         }.merge(analytics_server_attributes)
       }
     end

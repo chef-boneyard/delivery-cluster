@@ -8,7 +8,6 @@
 #
 # All rights reserved - Do Not Redistribute
 #
-require "thor/util"
 
 module DeliveryCluster
   module Provisioning
@@ -18,7 +17,8 @@ module DeliveryCluster
     # @param driver [String] a driver type, to be constantized
     # @return [Provisioning::Base] a driver instance
     def self.for_driver(driver, node)
-      str_const = Thor::Util.camel_case(driver)
+      str_const = driver.split("_").map { |i| i.capitalize }.join
+
       klass = const_get(str_const)
       klass.new(node)
     rescue => e
