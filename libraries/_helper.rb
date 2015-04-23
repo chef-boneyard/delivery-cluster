@@ -328,6 +328,17 @@ module DeliveryCluster
       end
     end
 
+    # Upload a specific cookbook to our chef-server
+    def upload_cookbook(cookbook)
+      execute "Upload Cookbook => #{cookbook}" do
+        command "knife cookbook upload #{cookbook} --cookbook-path #{Chef::Config[:cookbook_path]}"
+        environment(
+          'KNIFE_HOME' => cluster_data_dir
+        )
+        not_if "knife cookbook show #{cookbook}"
+      end
+    end
+
     # Because Delivery requires a license, we want to make sure that the
     # user has the necessary license file on the provisioning node before we begin.
     # This method will check for the license file in the compile phase to prevent
