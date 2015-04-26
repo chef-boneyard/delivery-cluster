@@ -1,0 +1,28 @@
+---
+driver:
+  name: vagrant
+  customize:
+    memory: 4096
+    cpus: 4
+# We are using chef_solo because of the data_bag creation.
+# chef_zero uses chef-client so when I tried to fake the delivery
+# node to upload the data bag I got an SSL error..
+provisioner:
+  name: chef_solo
+
+platforms:
+- name: redhat-6.5
+- name: centos-6.5
+- name: ubuntu-12.04
+
+suites:
+  - name: default
+    encrypted_data_bag_secret_key_path: "test/integration/default/encrypted_data_bag_secret"
+    run_list:
+      - chef-server-12::default
+    attributes:
+      chef-server-12:
+        api_fqdn: 33.33.33.2
+    driver:
+      network:
+        - ["private_network", {ip: "33.33.33.2"}]
