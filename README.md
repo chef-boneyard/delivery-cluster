@@ -121,7 +121,7 @@ Here is an example of how you specify them
         "flavor": "c3.xlarge",
         "enterprise": "aws-example",
         "version": "latest",
-        "license_file": "~/delivery.license",
+        "license_file": "~/delivery.license"
       },
       "chef-server": {
         "flavor": "c3.xlarge",
