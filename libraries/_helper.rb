@@ -225,20 +225,21 @@ module DeliveryCluster
     end
 
     def delivery_server_attributes
-      delivery_attributes = {
-        'applications' => {
-          'delivery' => delivery_server_version
-        },
-        'delivery' => {
-          'chef_server' => chef_server_url,
-          'fqdn'        => delivery_server_ip
-        }
-      }
+      # If we want to pull down the packages from Chef Artifactory
+      if node['delivery-cluster']['delivery']['artifactory']
+        artifact = delivery_artifact
+        node.set['delivery-cluster']['delivery']['version']   = artifact['version']
+        node.set['delivery-cluster']['delivery']['artifact']  = artifact['artifact']
+        node.set['delivery-cluster']['delivery']['checksum']  = artifact['checksum']
+      end
 
-      # Add LDAP config if it exist
-      delivery_attributes['delivery']['ldap'] = node['delivery-cluster']['delivery']['ldap'] unless node['delivery-cluster']['delivery']['ldap'].empty?
+      # Configuring the chef-server url for delivery
+      node.set['delivery-cluster']['delivery']['chef_server'] = chef_server_url unless node['delivery-cluster']['delivery']['chef_server']
 
-      delivery_attributes
+      # Ensure we havea Delivery FQDN
+      node.set['delivery-cluster']['delivery']['fqdn'] = delivery_server_ip unless node['delivery-cluster']['delivery']['fqdn']
+
+      { 'delivery-cluster' => node['delivery-cluster'] }
     end
 
     def builders_attributes
@@ -258,14 +259,15 @@ module DeliveryCluster
         #{delivery_ctl} list-enterprises | grep -w ^#{node['delivery-cluster']['delivery']['enterprise']};
         [ $? -ne 0 ] && #{delivery_ctl} create-enterprise #{node['delivery-cluster']['delivery']['enterprise']}
       CMD
-      cmd << ' --ssh-pub-key-file=/etc/delivery/builder_key.pub' unless Gem::Version.new(delivery_server_version) < Gem::Version.new('0.2.52')
+      if node['delivery-cluster']['delivery']['version'] == 'latest' ||
+         Gem::Version.new(node['delivery-cluster']['delivery']['version']) > Gem::Version.new('0.2.52')
+        cmd << ' --ssh-pub-key-file=/etc/delivery/builder_key.pub'
+      end
       cmd << " > /tmp/#{node['delivery-cluster']['delivery']['enterprise']}.creds || echo 1"
     end
 
     def delivery_artifact
-      # If we don't have the artifact, we will get it from artifactory
-      # We will need VPN to do so. Or other way could be to upload it
-      # to S3 bucket automatically
+      # We will get the Delivery Package from artifactory (Require Chef VPN)
       #
       # Get the latest artifact:
       # => artifact = get_delivery_artifact('latest', 'redhat', '6.5')
@@ -273,16 +275,7 @@ module DeliveryCluster
       # Get specific artifact:
       # => artifact = get_delivery_artifact('0.2.21', 'ubuntu', '12.04', '/var/tmp')
       #
-      if node['delivery-cluster']['delivery'][delivery_server_node['platform_family']] && node['delivery-cluster']['delivery']['version'] != 'latest'
-        # We use the provided artifact
-        delivery_artifact = {
-          delivery_server_node['platform_family'] => {
-            "artifact" => node['delivery-cluster']['delivery'][delivery_server_node['platform_family']]['artifact'],
-            "checksum" => node['delivery-cluster']['delivery'][delivery_server_node['platform_family']]['checksum']
-          }
-        }
-      else
-        # We will get it from artifactory
+      @delivery_artifact ||= begin
         artifact = get_delivery_artifact(
                       node['delivery-cluster']['delivery']['version'],
                       delivery_server_node['platform'],
@@ -291,9 +284,8 @@ module DeliveryCluster
                     )
 
         delivery_artifact = {
-          delivery_server_node['platform_family'] => {
+            "version"  => artifact['version'],
             "checksum" => artifact['checksum']
-          }
         }
         # Upload Artifact to Delivery Server only if we have donwloaded the artifact
         if artifact['local_path']
@@ -303,28 +295,12 @@ module DeliveryCluster
           machine_file.local_path(artifact['local_path'])
           machine_file.run_action(:upload)
 
-          delivery_artifact[delivery_server_node['platform_family']]['artifact'] = "/var/tmp/#{artifact['name']}"
+          delivery_artifact['artifact'] = "/var/tmp/#{artifact['name']}"
         else
-          delivery_artifact[delivery_server_node['platform_family']]['artifact'] = artifact['uri']
+          delivery_artifact['artifact'] = artifact['uri']
         end
-      end
 
-      delivery_artifact
-    end
-
-    def delivery_server_version
-      @delivery_server_version ||= begin
-        if node['delivery-cluster']['delivery'][delivery_server_node['platform_family']] && node['delivery-cluster']['delivery']['version'] != 'latest'
-          node['delivery-cluster']['delivery']['version']
-        else
-          artifact = get_delivery_artifact(
-                        node['delivery-cluster']['delivery']['version'],
-                        delivery_server_node['platform'],
-                        delivery_server_node['platform_version'],
-                        node['delivery-cluster']['delivery']['pass-through'] ? nil : cluster_data_dir
-                      )
-          artifact['version']
-        end
+        delivery_artifact
       end
     end
 

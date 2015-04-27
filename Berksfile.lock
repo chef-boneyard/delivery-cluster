@@ -1,8 +1,6 @@
 DEPENDENCIES
   chef-server-12
-    git: https://github.com/opscode-cookbooks/chef-server-12.git
-    revision: e46a55bc2c56fc12b68a0bc258f894a3f7456728
-    branch: master
+    path: vendor/chef-server-12
   chef-server-ingredient
     git: https://github.com/opscode-cookbooks/chef-server-ingredient.git
     revision: 5a066b51e8a82bd4451eb77a4038d54e959b0261
@@ -13,20 +11,18 @@ DEPENDENCIES
   delivery-cluster
     path: .
     metadata: true
-  delivery-server
-    git: https://github.com/chef/delivery.git
-    revision: 14ff858ae4d71d71f99c7d338402746bdda34fb9
-    branch: master
-    rel: cookbooks/delivery-server
   delivery_build
     git: https://github.com/chef/delivery.git
     revision: 14ff858ae4d71d71f99c7d338402746bdda34fb9
     branch: master
     rel: cookbooks/delivery_build
+  packagecloud
+    git: https://github.com/afiune/packagecloud-cookbook.git
+    revision: 5988de62407d66dc654e5273db31bbae8029173f
 
 GRAPH
   build-essential (2.1.3)
-  chef-server-12 (0.1.3)
+  chef-server-12 (0.1.4)
     chef-server-ingredient (>= 0.0.0)
   chef-server-ingredient (0.3.0)
     packagecloud (>= 0.0.0)
@@ -34,14 +30,13 @@ GRAPH
     chef-vault (>= 1.0.4)
   chef-vault (1.2.5)
   chef_handler (1.1.6)
-  delivery-cluster (0.2.4)
+  delivery-cluster (0.2.5)
     chef-server-12 (>= 0.0.0)
     chef-server-ingredient (>= 0.0.0)
     chef-splunk (>= 0.0.0)
-    delivery-server (>= 0.0.0)
     delivery_build (>= 0.0.0)
+    packagecloud (>= 0.0.0)
     push-jobs (>= 0.0.0)
-  delivery-server (0.2.14)
   delivery_build (0.1.11)
     git (>= 0.0.0)
     packagecloud (>= 0.0.0)

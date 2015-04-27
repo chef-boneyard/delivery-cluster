@@ -1,0 +1,13 @@
+topology '<%= node['chef-server-12']['topology'] %>'
+api_fqdn '<%= node['chef-server-12']['api_fqdn'] %>'
+nginx['server_name'] = '<%= node['chef-server-12']['api_fqdn'] %>'
+
+<% if node['chef-server-12']['analytics'] -%>
+oc_id['applications'] = {
+  'analytics' => {
+    'redirect_uri' => 'https://<%= node['chef-server-12']['analytics']['fqdn'] %>/'
+  }
+}
+rabbitmq['vip'] = '<%= node['chef-server-12']['api_fqdn'] %>'
+rabbitmq['node_ip_address'] = '0.0.0.0'
+<% end -%>

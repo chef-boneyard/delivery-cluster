@@ -1,0 +1,11 @@
+delivery_fqdn "<%= node['delivery-cluster']['delivery']['fqdn'] %>"
+
+delivery['chef_username']    = "delivery"
+delivery['chef_private_key'] = "/etc/delivery/delivery.pem"
+delivery['chef_server']      = "<%= node['delivery-cluster']['delivery']['chef_server'] %>"
+
+delivery['default_search']   = "<%= @default_search %>"
+
+<% node['delivery-cluster']['delivery']['ldap'].each do |attr, value| -%>
+delivery['<%= attr %>'] = <%= value.pretty_inspect -%>
+<% end %>
