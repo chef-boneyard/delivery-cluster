@@ -59,10 +59,11 @@ default['delivery-cluster']['delivery']['license_file'] = nil   # delivery.licen
 
 # Specific attributes
 # => Delivery Server
-default['delivery-cluster']['delivery']['hostname']    = nil
-default['delivery-cluster']['delivery']['fqdn']        = nil
-default['delivery-cluster']['delivery']['flavor']      = 't2.medium'
-default['delivery-cluster']['delivery']['enterprise']  = 'my_enterprise'
+default['delivery-cluster']['delivery']['hostname']        = nil
+default['delivery-cluster']['delivery']['fqdn']            = nil
+default['delivery-cluster']['delivery']['chef_server']     = nil
+default['delivery-cluster']['delivery']['flavor']          = 't2.medium'
+default['delivery-cluster']['delivery']['enterprise']      = 'my_enterprise'
 
 # => pass-through
 # This attribute will allow the Artifact pass-through the delivery server.
@@ -90,23 +91,25 @@ default['delivery-cluster']['delivery']['ldap']        = {}
 # Delivery Artifacts
 #
 # There are three ways you can specify the Delivery Artifact
-# 1) If you want to deploy the latest Delivery Build set the version to 'latest'
-#    remember that this depend on Chef VPN Access
+# 1) If you want to deploy the latest Delivery Build set the version to
+#    'latest' and we will pull it down from `packagecloud`
 # => default['delivery-cluster']['delivery']['version'] = 'latest'
 #
 # 2) If you want to deploy a specific version you can also specify it
-#    and it will pull it down from artifactory. VPN Access Needed!
 #    To see the available versions go to:
-#      * http://artifactory.chef.co/webapp/browserepo.html?4&pathId=omnibus-current-local:com/getchef/delivery
-# => default['delivery-cluster']['delivery']['version']             = '0.2.21'
+#      * https://packagecloud.io/chef/current
+# => default['delivery-cluster']['delivery']['version']   = '0.3.9'
 #
-# 3) If you have the artifact URI you can specify it also and
-#    this way you don't depend on VPN Access
-# => default['delivery-cluster']['delivery']['version']             = '0.1.0_alpha.132'
-# => default['delivery-cluster']['delivery']['debian']['artifact']  = 'https://s3.amazonaws.com/chef-delivery/dev/delivery-0.1.0_alpha.132%2B20141126080809-1.x86_64.rpm'
-# => default['delivery-cluster']['delivery']['debian']['checksum']  = 'b279a4c7c0d277b9ec3f939c92a50970154eb7e56ddade4c2d701036aa27ee71'
+# 3) You can also specify the artifact
+#
+# => default['delivery-cluster']['delivery']['version']   = '0.3.7'
+# => default['delivery-cluster']['delivery']['artifact']  = 'https://s3.amazonaws.com/chef-delivery/dev/delivery_0.3.7+20150423080810-1.x86_64.rpm'
+# => default['delivery-cluster']['delivery']['checksum']  = 'b279a4c7c0d277b9ec3f939c92a50970154eb7e56ddade4c2d701036aa27ee71'
 #
 default['delivery-cluster']['delivery']['version'] = 'latest'
+
+# Use Chef Artifactory (Requires Chef VPN)
+default['delivery-cluster']['delivery']['artifactory'] = false
 
 # => Chef Server
 default['delivery-cluster']['chef-server']['hostname']     = nil
@@ -140,9 +143,9 @@ default['delivery-cluster']['builders']['additional_run_list'] = []
 # Optional Hash of delivery-cli
 #
 # You can specify a delivery-cli artifact passing the following attributes:
-# => { 
+# => {
 #      "version":  "0.3.0",
 #      "artifact": "http://my.delivery-cli.pkg",
-#      "checksum": "123456789ABCDEF" 
+#      "checksum": "123456789ABCDEF"
 #    }
 default['delivery-cluster']['builders']['delivery-cli']        = {}

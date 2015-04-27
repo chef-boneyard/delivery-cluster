@@ -59,32 +59,11 @@ machine delivery_server_hostname do
   action :converge
 end
 
-# Creating the Data Bag that store the Delivery Artifacts
-chef_data_bag "delivery" do
-  chef_server lazy { chef_server_config }
-  action :create
-end
-
-# This is ugly but there is no other easy way to set `chef_data_bag_item`'s
-# name attribute lazily
-ruby_block 'delivery-versions-data-bag-item' do
-  block do
-    dbi = Chef::Resource::ChefDataBagItem.new("delivery/#{delivery_server_version}", run_context)
-    dbi.chef_server(chef_server_config)
-    dbi.raw_data(
-      id: delivery_server_version,
-      version: delivery_server_version,
-      platforms: delivery_artifact
-    )
-    dbi.run_action(:create)
-  end
-end
-
 # Right now, we should enforce license checks only for latest or post-0.3.0
 # versions of Delivery. Once all our customers are on post-0.3.0 versions of
 # Delivery we could remove this conditional.
-if node['delivery-cluster']['delivery']['version'] == 'latest' ||
-   Gem::Version.new(node['delivery-cluster']['delivery']['version']) > Gem::Version.new('0.3.0')
+  if node['delivery-cluster']['delivery']['version'] == 'latest' ||
+     Gem::Version.new(node['delivery-cluster']['delivery']['version']) > Gem::Version.new('0.3.0')
     # Fail early if license files cannot be found
     validate_license_file
 
@@ -107,7 +86,7 @@ end
 # converge and complete the install.
 machine delivery_server_hostname do
   chef_server lazy { chef_server_config }
-  recipe "delivery-server"
+  recipe "delivery-cluster::delivery"
   files(
     '/etc/delivery/delivery.pem' => "#{cluster_data_dir}/delivery.pem",
     '/etc/delivery/builder_key' => "#{cluster_data_dir}/builder_key",
