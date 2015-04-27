@@ -64,13 +64,13 @@ namespace :setup do
   end
 
   desc 'Create a Delivery Server & Build Nodes'
-  task :delivery => [:chef_server] do
+  task :delivery do
     msg "Create Delivery Server and Build Nodes"
     chef_zero 'setup_delivery'
   end
 
   desc 'Activate Analytics Server'
-  task :analytics => [:chef_server, :delivery] do
+  task :analytics => [:chef_server] do
     msg "Setup Chef Analytics so we can see what is going on in our cluster"
     chef_zero 'setup_analytics'
   end
