@@ -160,7 +160,7 @@ task :help do
   Rake::application.options.show_task_pattern = /maintenance/
   Rake::application.display_tasks_and_comments
   puts "\nDestroy Tasks".pink
-  puts "The following tasks should be used to destroy you cluster".yellow
+  puts "The following tasks should be used to destroy your cluster".yellow
   Rake::application.options.show_task_pattern = /destroy/
   Rake::application.display_tasks_and_comments
   puts "\nCluster Information".pink
