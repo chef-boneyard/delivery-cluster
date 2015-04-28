@@ -121,7 +121,7 @@ Here is an example of how you specify them
         "flavor": "c3.xlarge",
         "enterprise": "aws-example",
         "version": "latest",
-        "license_file": "~/delivery.license"
+        "license_file": "/home/user/delivery.license"
       },
       "chef-server": {
         "flavor": "c3.xlarge",
@@ -407,7 +407,7 @@ $ vi environments/kitchen.json
         "ip": "33.33.33.11",
         "enterprise": "kitchen",
         "version": "latest",
-        "license_file": "~/delivery.license"
+        "license_file": "/home/user/delivery.license"
       },
       "builders": {
         "1": { "ip": "33.33.33.12" },
