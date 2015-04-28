@@ -1,5 +1,5 @@
 # `delivery-cluster`
-This cookbook setup a full delivery environment.
+This cookbook is licensed under apache 2.0 but the packages it installs are private soruce and require a license key. It will setup a full delivery environment.
 
 That includes:
 
