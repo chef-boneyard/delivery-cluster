@@ -4,7 +4,7 @@ driver:
   customize:
     memory: 4096
     cpus: 4
-# We are using chef_solo because of the data_bag creation.
+# We are using chef_solo because of the data_bag creation. 
 # chef_zero uses chef-client so when I tried to fake the delivery
 # node to upload the data bag I got an SSL error..
 provisioner:
@@ -22,7 +22,7 @@ suites:
       - chef-server-12::default
     attributes:
       chef-server-12:
-        api_fqdn: 33.33.33.2
+        api_fqdn: 192.168.33.12
     driver:
       network:
-        - ["private_network", {ip: "33.33.33.2"}]
+        - ["private_network", {ip: "192.168.33.12"}]
