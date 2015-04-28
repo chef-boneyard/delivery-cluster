@@ -27,7 +27,7 @@ Chef Server v12 packages are available for the following platforms:
 
 Usage Solo Mode
 -----
-This cookbook can be used on `solo` mode to spinup a Chef Server v12. 
+This cookbook can be used on `solo` mode to spinup a Chef Server v12.
 
 Steps:
 
@@ -98,3 +98,4 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
+limitations under the License.

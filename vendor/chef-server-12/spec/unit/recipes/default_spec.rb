@@ -24,7 +24,7 @@ require 'spec_helper'
 
 describe "chef-server-12::default WITHOUT delivery setup" do
   let(:chef_run) do
-    runner = ChefSpec::Runner.new(
+    runner = ChefSpec::SoloRunner.new(
       platform: 'redhat',
       version: '6.3',
       log_level: :error
@@ -54,7 +54,7 @@ describe "chef-server-12::default WITH delivery setup" do
   end
 
   let(:chef_run) do
-    runner = ChefSpec::Runner.new(
+    runner = ChefSpec::SoloRunner.new(
       platform: 'redhat',
       version: '6.3',
       log_level: :error
