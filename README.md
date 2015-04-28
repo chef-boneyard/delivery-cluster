@@ -178,7 +178,7 @@ This is an example of how to specify this information
         "ip": "33.33.33.11",
         "enterprise": "ssh-example",
         "version": "latest",
-        "license_file": "~/delivery.license"
+        "license_file": "/home/user/delivery.license"
       },
       "analytics": {
         "ip": "33.33.33.12"
@@ -222,7 +222,8 @@ Specific Attributes per Machine
 | `enterprise`   | A Delivery Enterprise that it will create. |
 | `fqdn`         | The Delivery FQDN to substitute the IP Address. |
 | `flavor`       | Flavor of the Chef Server. |
-| `license_file` | The path to the `delivery.license` file on your provisioner node. To acquire this file, please speak with your CHEF account representative. |
+| `license_file` | Absolute path to the `delivery.license` file on your provisioner node. To acquire this file, please speak with your CHEF account representative. |
+| `{rhel or debian}`   | Optional Hash of delivery attrs: `{ "artifact": "http://my.delivery.pkg", "checksum": "123456789ABCDEF"}` |
 
 ### Delivery Build Nodes Settings
 
@@ -308,7 +309,7 @@ $ vi environments/test.json
         "ip": "33.33.33.11",
         "enterprise": "test",
         "version": "latest",
-        "license_file": "~/delivery.license"
+        "license_file": "/home/user/delivery.license"
       },
       "analytics": {
         "flavor": "c3.xlarge",
@@ -441,7 +442,7 @@ Setup your cluster:
 $ rake setup:cluster
 ```
 
-Watch out your local resources! :smile:
+Watch out for your local machine resources! :smile:
 
 LICENSE AND AUTHORS
 ===================
