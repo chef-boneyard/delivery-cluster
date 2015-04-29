@@ -4,7 +4,7 @@ DEPENDENCIES
     metadata: true
 
 GRAPH
-  chef-server-12 (0.1.4)
+  chef-server-12 (0.1.5)
     chef-server-ingredient (>= 0.0.0)
   chef-server-ingredient (0.3.2)
     packagecloud (>= 0.0.0)
