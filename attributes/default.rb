@@ -114,8 +114,8 @@ default['delivery-cluster']['delivery']['ldap']        = {}
 # 3) You can also specify the artifact
 #
 # => default['delivery-cluster']['delivery']['version']   = '0.3.7'
-# => default['delivery-cluster']['delivery']['artifact']  = 'https://s3.amazonaws.com/chef-delivery/dev/delivery_0.3.7+20150423080810-1.x86_64.rpm'
-# => default['delivery-cluster']['delivery']['checksum']  = 'b279a4c7c0d277b9ec3f939c92a50970154eb7e56ddade4c2d701036aa27ee71'
+# => default['delivery-cluster']['delivery']['artifact']  = 'http://my.delivery-cli.pkg'
+# => default['delivery-cluster']['delivery']['checksum']  = '123456789ABCDEF'
 #
 default['delivery-cluster']['delivery']['version'] = 'latest'
 
