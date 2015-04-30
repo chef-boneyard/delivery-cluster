@@ -21,7 +21,7 @@ Additionally it enables extra optional infrastructure:
 It will install the appropriate platform-specific delivery package
 and perform the initial configuration.
 
-Make Help
+Rake Help
 ------------
 New `Rakefile` that will help you use Delivery Cluster! Give it a try:
 
@@ -155,7 +155,7 @@ This driver will NOT provision any infrastrucute. It assumes you have already pr
 
 You have to provide:
 
-1. Ip address for all your machine resources
+1. Ip address or Hostname for all your machine resources.
 2. Username
 3. Either `key_file` or `password`
 
@@ -266,7 +266,7 @@ PROVISION
 #### Install your gem and cookbook dependencies
 
 ```
-$ make prerequisites
+$ rake setup:prerequisites
 ```
 
 #### Download your Delivery license key
