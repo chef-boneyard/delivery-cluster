@@ -145,6 +145,11 @@ default['delivery-cluster']['splunk']['username']        = 'admin'
 default['delivery-cluster']['splunk']['password']        = nil
 default['delivery-cluster']['splunk']['flavor']          = 'c3.large'
 
+# Supermarket Server
+default['delivery-cluster']['supermarket']['hostname'] = nil
+default['delivery-cluster']['supermarket']['fqdn']     = nil
+default['delivery-cluster']['supermarket']['flavor']   = 'c3.large'
+
 # => Build Nodes
 default['delivery-cluster']['builders']['hostname_prefix']     = nil
 default['delivery-cluster']['builders']['count']               = 3

@@ -101,6 +101,14 @@ module DeliveryCluster
       node['delivery-cluster']['analytics']['hostname']
     end
 
+    def supermarket_server_hostname
+      unless node['delivery-cluster']['supermarket']['hostname']
+        node.set['delivery-cluster']['supermarket']['hostname'] = "supermarket-server-#{delivery_cluster_id}"
+      end
+
+      node['delivery-cluster']['supermarket']['hostname']
+    end
+
     def delivery_builder_hostname(index)
       unless node['delivery-cluster']['builders']['hostname_prefix']
         node.set['delivery-cluster']['builders']['hostname_prefix'] = "build-node-#{delivery_cluster_id}"
@@ -143,6 +151,10 @@ module DeliveryCluster
       "#{cluster_data_dir}/analytics"
     end
 
+    def supermarket_lock_file
+      "#{cluster_data_dir}/supermarket"
+    end
+
     def splunk_lock_file
       "#{cluster_data_dir}/splunk"
     end
@@ -157,12 +169,38 @@ module DeliveryCluster
       end
     end
 
+    def supermarket_server_node
+      @@supermarket_server_node ||= begin
+        Chef::REST.new(
+          chef_server_config[:chef_server_url],
+          chef_server_config[:options][:client_name],
+          chef_server_config[:options][:signing_key_filename]
+        ).get_rest("nodes/#{supermarket_server_hostname}")
+      end
+    end
+
     def analytics_server_ip
       @@analytics_server_ip ||= begin
         analytics_server_ip   = get_ip(analytics_server_node)
         Chef::Log.info("Your Analytics Server Public/Private IP is => #{analytics_server_ip}")
         node['delivery-cluster']['analytics']['fqdn'] || analytics_server_ip
       end
+    end
+
+    def supermarket_server_ip
+      @@supermarket_server_ip ||= begin
+        supermarket_server_ip   = get_ip(supermarket_server_node)
+        Chef::Log.info("Your Supermarket Server Public/Private IP is => #{supermarket_server_ip}")
+        node['delivery-cluster']['supermarket']['fqdn'] || supermarket_server_ip
+      end
+    end
+
+    def get_supermarket_attribute(attr)
+      @@supermarket ||= begin
+        supermarket_file = File.read("#{cluster_data_dir}/supermarket.json")
+        JSON.parse(supermarket_file)
+      end
+      @@supermarket[attr]
     end
 
     def chef_server_url
@@ -181,8 +219,16 @@ module DeliveryCluster
       FileUtils.touch(analytics_lock_file)
     end
 
+    def activate_supermarket
+      FileUtils.touch(supermarket_lock_file)
+    end
+
     def is_analytics_enabled?
       File.exist?(analytics_lock_file)
+    end
+
+    def is_supermarket_enabled?
+      File.exist?(supermarket_lock_file)
     end
 
     def analytics_server_attributes
@@ -194,17 +240,31 @@ module DeliveryCluster
       }
     end
 
-    def chef_server_attributes
+    def supermarket_server_attributes
+      return {} unless is_supermarket_enabled?
       {
+        'chef-server-12' => {
+          'supermarket' => {
+            'fqdn' => supermarket_server_ip
+          }
+        }
+      }
+    end
+
+    def chef_server_attributes
+      @@chef_server_attributes = {
         'chef-server-12' => {
           'delivery' => { 'organization' => node['delivery-cluster']['chef-server']['organization'] },
           'api_fqdn' => chef_server_ip,
           'store_keys_databag' => false,
           'plugin' => {
-           'opscode-reporting' => false
+            'opscode-reporting' => false
           }
-        }.merge(analytics_server_attributes)
+        }
       }
+      @@chef_server_attributes = Chef::Mixin::DeepMerge.hash_only_merge(@@chef_server_attributes, analytics_server_attributes)
+      @@chef_server_attributes = Chef::Mixin::DeepMerge.hash_only_merge(@@chef_server_attributes, supermarket_server_attributes)
+      @@chef_server_attributes
     end
 
     def chef_server_config

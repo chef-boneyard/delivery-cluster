@@ -80,6 +80,12 @@ namespace :setup do
     msg "Setup Splunk Server to show some Analytics Integrations"
     chef_zero 'setup_splunk'
   end
+
+  desc 'Create a Supermarket Server'
+  task :supermarket => [:chef_server] do
+    msg "Setup Supermarket Server to resolve cookbook dependencies"
+    chef_zero 'setup_supermarket'
+  end
 end
 
 namespace :maintenance do
@@ -114,6 +120,11 @@ namespace :destroy do
   desc 'Destroy Splunk Server'
   task :splunk do
     chef_zero 'destroy_splunk'
+  end
+
+  desc 'Destroy Supermarket Server'
+  task :supermarket do
+    chef_zero 'destroy_supermarket'
   end
 
   desc 'Destroy Build Nodes'

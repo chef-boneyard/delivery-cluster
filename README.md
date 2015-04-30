@@ -15,6 +15,7 @@ A full delivery cluster includes:
 *  N -  Build Nodes
 
 Additionally it enables extra optional infrastructure:
+*  1 -  Supermarket Server (Not Required)
 *  1 -  Analytics Server (Not Required)
 *  1 -  Splunk Server (Not Required)
 
@@ -38,6 +39,7 @@ rake setup:cluster        # Setup the Chef Delivery Cluster that includes: [ Che
 rake setup:delivery       # Create a Delivery Server & Build Nodes
 rake setup:prerequisites  # Install all the prerequisites on you system
 rake setup:splunk         # Create a Splunk Server with Analytics Integration
+rake setup:supermarket    # Create a Supermarket Server
 
 Maintenance Tasks
 The following tasks should be used to maintain your cluster
@@ -52,6 +54,7 @@ rake destroy:builders     # Destroy Build Nodes
 rake destroy:chef_server  # Destroy Chef Server
 rake destroy:delivery     # Destroy Delivery Server
 rake destroy:splunk       # Destroy Splunk Server
+rake destroy:supermarket  # Destroy Supermarket Server
 
 Cluster Information
 The following tasks should be used to get information about your cluster
@@ -362,6 +365,15 @@ Would you like to try our Splunk Server Integration with Analytics? If yes, prov
 
 ```
 $ rake setup:splunk
+```
+
+
+#### [OPTIONAL] Provision a Supermarket Server
+
+If you have cookbook dependencies to resolve, try our Supermarket Server by running:
+
+```
+$ rake setup:supermarket
 ```
 
 

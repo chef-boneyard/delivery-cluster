@@ -19,6 +19,9 @@ DEPENDENCIES
   packagecloud
     git: https://github.com/afiune/packagecloud-cookbook.git
     revision: 5988de62407d66dc654e5273db31bbae8029173f
+  supermarket-omnibus-cookbook
+    git: https://github.com/irvingpop/supermarket-omnibus-cookbook.git
+    revision: 2462b51587c60714eefb7d19e7fe42f7a697344d
 
 GRAPH
   build-essential (2.1.3)
@@ -37,6 +40,7 @@ GRAPH
     delivery_build (>= 0.0.0)
     packagecloud (>= 0.0.0)
     push-jobs (>= 0.0.0)
+    supermarket-omnibus-cookbook (>= 0.0.0)
   delivery_build (0.1.11)
     git (>= 0.0.0)
     packagecloud (>= 0.0.0)
@@ -54,6 +58,8 @@ GRAPH
     build-essential (>= 0.0.0)
     yum (~> 3.0)
     yum-epel (>= 0.0.0)
+  supermarket-omnibus-cookbook (0.2.0)
+    chef-server-ingredient (>= 0.0.0)
   windows (1.36.6)
     chef_handler (>= 0.0.0)
   yum (3.5.3)
