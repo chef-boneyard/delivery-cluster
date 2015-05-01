@@ -161,7 +161,7 @@ module DeliveryCluster
       @@analytics_server_ip ||= begin
         analytics_server_ip   = get_ip(analytics_server_node)
         Chef::Log.info("Your Analytics Server Public/Private IP is => #{analytics_server_ip}")
-        analytics_server_ip
+        node['delivery-cluster']['analytics']['fqdn'] || analytics_server_ip
       end
     end
 
@@ -189,7 +189,7 @@ module DeliveryCluster
       return {} unless is_analytics_enabled?
       {
         'analytics' => {
-          'fqdn' => node['delivery-cluster']['analytics']['fqdn'] || analytics_server_ip
+          'fqdn' => analytics_server_ip
         }
       }
     end
