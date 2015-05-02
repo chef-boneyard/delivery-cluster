@@ -386,6 +386,20 @@ module DeliveryCluster
       end
     end
 
+    # Render a knife config file that points at the new delivery cluster
+    def render_knife_config
+      template File.join(cluster_data_dir, 'knife.rb') do
+        variables lazy {{
+          :chef_server_url      => chef_server_url,
+          :client_key           => "#{cluster_data_dir}/delivery.pem",
+          :analytics_server_url => is_analytics_enabled? ?
+                                    "https://#{analytics_server_ip}/organizations" \
+                                    "/#{node['delivery-cluster']['chef-server']['organization']}" : "",
+          :supermarket_site     => is_supermarket_enabled? ? "https://#{supermarket_server_ip}" : ""
+        }}
+      end
+    end
+
     # Because Delivery requires a license, we want to make sure that the
     # user has the necessary license file on the provisioning node before we begin.
     # This method will check for the license file in the compile phase to prevent

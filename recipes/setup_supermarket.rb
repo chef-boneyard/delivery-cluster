@@ -82,15 +82,5 @@ machine_file 'supermarket-server-cert' do
   action :download
 end
 
-knife_conf = ""
-IO.foreach(File.join(cluster_data_dir, 'knife.rb')) { |l| knife_conf << l unless ~ /supermarket_site/ }
-
 # Add Supermarket Server to the knife.rb config file
-file File.join(cluster_data_dir, 'knife.rb') do
-  content lazy {
-    <<-EOH
-#{knife_conf.strip}
-knife[:supermarket_site] = 'https://#{supermarket_server_ip}'
-    EOH
-  }
-end
+render_knife_config

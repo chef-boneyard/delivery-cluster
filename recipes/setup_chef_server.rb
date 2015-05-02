@@ -89,17 +89,7 @@ file "#{cluster_data_dir}/delivery.pem" do
 end
 
 # generate a knife config file that points at the new Chef Server
-file File.join(cluster_data_dir, 'knife.rb') do
-  content lazy {
-    <<-EOH
-node_name         'delivery'
-chef_server_url   '#{chef_server_url}'
-client_key        '#{cluster_data_dir}/delivery.pem'
-cookbook_path     '#{Chef::Config[:cookbook_path]}'
-trusted_certs_dir '#{Chef::Config[:trusted_certs_dir]}'
-    EOH
-  }
-end
+render_knife_config
 
 execute "upload delivery cookbooks" do
   command "knife cookbook upload --all --cookbook-path #{Chef::Config[:cookbook_path]} --force"

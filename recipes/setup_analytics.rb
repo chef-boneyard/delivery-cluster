@@ -88,15 +88,5 @@ machine_file 'analytics-server-cert' do
   action :download
 end
 
-knife_conf = ""
-IO.foreach(File.join(cluster_data_dir, 'knife.rb')) { |l| knife_conf << l unless ~ /analytics_server_url/ }
-
 # Add Analytics Server to the knife.rb config file
-file File.join(cluster_data_dir, 'knife.rb') do
-  content lazy {
-    <<-EOH
-#{knife_conf.strip}
-analytics_server_url "https://#{analytics_server_ip}/organizations/#{node['delivery-cluster']['chef-server']['organization']}"
-    EOH
-  }
-end
+render_knife_config
