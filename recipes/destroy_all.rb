@@ -28,6 +28,9 @@ include_recipe "delivery-cluster::destroy_builders"
 # => Analytics Server
 include_recipe "delivery-cluster::destroy_analytics"
 
+# => Supermarket Server
+include_recipe "delivery-cluster::destroy_supermarket"
+
 # => Splunk Server
 include_recipe "delivery-cluster::destroy_splunk"
 
