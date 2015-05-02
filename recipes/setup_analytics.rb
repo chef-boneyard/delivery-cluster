@@ -24,8 +24,8 @@ include_recipe 'delivery-cluster::_settings'
 
 # There are two ways to provision the Analytics Server
 #
-# 1) Provisioning the entire `delivery-cluster::setup` or
-# 2) Just the Chef Server `delivery-cluster::setup_chef_server`
+# 1) Provisioning the entire "delivery-cluster::setup" or
+# 2) Just the Chef Server "delivery-cluster::setup_chef_server"
 #
 # After that you are good to provision Analytics running:
 # => # bundle exec chef-client -z -o delivery-cluster::setup_analytics -E test
@@ -35,9 +35,11 @@ machine analytics_server_hostname do
   provisioning.specific_machine_options('analytics').each do |option|
     add_machine_options option
   end
-  files lazy {{
-    "/etc/chef/trusted_certs/#{chef_server_ip}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt"
-  }}
+  files lazy {
+    {
+      "/etc/chef/trusted_certs/#{chef_server_ip}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt"
+    }
+  }
   action :converge
 end
 
@@ -46,13 +48,13 @@ activate_analytics
 
 # Configuring Analytics on the Chef Server
 machine chef_server_hostname do
-  recipe "chef-server-12::analytics"
+  recipe 'chef-server-12::analytics'
   attributes lazy { chef_server_attributes }
   converge true
   action :converge
 end
 
-%w{ actions-source.json webui_priv.pem }.each do |analytics_file|
+%w( actions-source.json webui_priv.pem ).each do |analytics_file|
   machine_file "/etc/opscode-analytics/#{analytics_file}" do
     machine chef_server_hostname
     local_path "#{cluster_data_dir}/#{analytics_file}"
@@ -63,19 +65,21 @@ end
 # Installing Analytics
 machine analytics_server_hostname do
   chef_server lazy { chef_server_config }
-  recipe "delivery-cluster::analytics"
+  recipe 'delivery-cluster::analytics'
   files(
     '/etc/opscode-analytics/actions-source.json' => "#{cluster_data_dir}/actions-source.json",
     '/etc/opscode-analytics/webui_priv.pem' => "#{cluster_data_dir}/webui_priv.pem"
   )
-  attributes lazy {{
-    'delivery-cluster' => {
-      'analytics' => {
-        'fqdn' => analytics_server_ip,
-        'features' => is_splunk_enabled? ? 'true' : 'false'
+  attributes lazy {
+    {
+      'delivery-cluster' => {
+        'analytics' => {
+          'fqdn' => analytics_server_ip,
+          'features' => splunk_enabled? ? 'true' : 'false'
+        }
       }
     }
-  }}
+  }
   converge true
   action :converge
 end

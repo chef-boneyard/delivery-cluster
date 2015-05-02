@@ -22,7 +22,7 @@
 
 require 'spec_helper'
 
-describe "delivery-cluster::default" do
+describe 'delivery-cluster::default' do
   let(:chef_run) do
     runner = ChefSpec::SoloRunner.new(
       platform: 'redhat',

@@ -23,22 +23,22 @@
 # If we want to destroy everything. Let's do it! But in order.
 # First: The servers that are registered to our chef-server
 # => Build Nodes
-include_recipe "delivery-cluster::destroy_builders"
+include_recipe 'delivery-cluster::destroy_builders'
 
 # => Analytics Server
-include_recipe "delivery-cluster::destroy_analytics"
+include_recipe 'delivery-cluster::destroy_analytics'
 
 # => Supermarket Server
-include_recipe "delivery-cluster::destroy_supermarket"
+include_recipe 'delivery-cluster::destroy_supermarket'
 
 # => Splunk Server
-include_recipe "delivery-cluster::destroy_splunk"
+include_recipe 'delivery-cluster::destroy_splunk'
 
 # => Delivery Server
-include_recipe "delivery-cluster::destroy_delivery"
+include_recipe 'delivery-cluster::destroy_delivery'
 
 # Then: We will destroy the chef-server that its being manage locally
-include_recipe "delivery-cluster::destroy_chef_server"
+include_recipe 'delivery-cluster::destroy_chef_server'
 
 # Finally: All the keys & creds used on the currect delivery-cluster
-include_recipe "delivery-cluster::destroy_keys"
+include_recipe 'delivery-cluster::destroy_keys'

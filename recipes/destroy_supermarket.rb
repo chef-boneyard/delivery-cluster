@@ -23,12 +23,12 @@
 include_recipe 'delivery-cluster::_settings'
 
 # If Supermarket is enabled
-if is_supermarket_enabled?
+if supermarket_enabled?
   begin
     # Setting the new Chef Server we just created
     with_chef_server chef_server_url,
-      client_name: 'delivery',
-      signing_key_filename: "#{cluster_data_dir}/delivery.pem"
+                     client_name: 'delivery',
+                     signing_key_filename: "#{cluster_data_dir}/delivery.pem"
 
     # Destroy Supermarket Server
     machine supermarket_server_hostname do
@@ -37,11 +37,11 @@ if is_supermarket_enabled?
 
     # Delete the lock file
     File.delete(supermarket_lock_file)
-  rescue Exception => e
+  rescue StandardError => e
     Chef::Log.warn("We can't proceed to destroy the Supermarket Server.")
     Chef::Log.warn("We couldn't get the chef-server Public IP: #{e.message}")
   end
 else
-  Chef::Log.warn("You must provision an Supermarket Server before be able to")
-  Chef::Log.warn("destroy it. READ => delivery-cluster/setup_supermarket.rb")
+  Chef::Log.warn('You must provision an Supermarket Server before be able to')
+  Chef::Log.warn('destroy it. READ => delivery-cluster/setup_supermarket.rb')
 end

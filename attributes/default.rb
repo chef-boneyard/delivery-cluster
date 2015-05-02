@@ -60,7 +60,6 @@ default['delivery-cluster']['azure']['use_private_ip_for_ssh']  = false
 # => The Cluster Name which will be use to define all default hostnames
 default['delivery-cluster']['id'] = nil
 
-
 # Delivery License
 # => Delivery requires a license in able to install properly. This license needs to
 #    be put on the server prior to installation of Delivery otherwise
@@ -78,7 +77,7 @@ default['delivery-cluster']['delivery']['enterprise']      = 'my_enterprise'
 
 # => pass-through
 # This attribute will allow the Artifact pass-through the delivery server.
-# This feature requires that the delivery server has VPN Access.
+# This feature requires that the delivery server has VPN Access.
 #
 # NOTE: If your delivery server does NOT have access to Chef VPN you have to
 # set this to `false` so it can download the artifact locally and then
@@ -132,7 +131,7 @@ default['delivery-cluster']['chef-server']['existing']     = false
 # => Analytics Server (Not Required)
 #
 # In order to provision an Analytics Server you have to first provision the entire
-# `delivery-cluster::setup` after that, you are ready to run `delivery-cluster::setup_analytics`
+# `delivery-cluster::setup` after that, you are ready to run `delivery-cluster::setup_analytics`
 # that will activate analytics.
 default['delivery-cluster']['analytics']['hostname']  = nil
 default['delivery-cluster']['analytics']['fqdn']      = nil

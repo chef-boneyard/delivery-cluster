@@ -28,8 +28,8 @@ if File.exist?("#{cluster_data_dir}/delivery.pem")
   begin
     # Setting the new Chef Server we just created
     with_chef_server chef_server_url,
-      client_name: 'delivery',
-      signing_key_filename: "#{cluster_data_dir}/delivery.pem"
+                     client_name: 'delivery',
+                     signing_key_filename: "#{cluster_data_dir}/delivery.pem"
 
     # Destroy Delivery Server
     machine delivery_server_hostname do
@@ -40,7 +40,7 @@ if File.exist?("#{cluster_data_dir}/delivery.pem")
     file File.join(cluster_data_dir, "#{node['delivery-cluster']['delivery']['enterprise']}.creds") do
       action :delete
     end
-  rescue Exception => e
+  rescue StandardError => e
     Chef::Log.warn("We can't proceed to destroy the Delivery Server.")
     Chef::Log.warn("We couldn't get the chef-server Public/Private IP: #{e.message}")
   end

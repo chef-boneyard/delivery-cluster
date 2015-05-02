@@ -25,10 +25,10 @@ require 'fileutils'
 require 'securerandom'
 
 module DeliveryCluster
+  # Helper Module for general purposes
   module Helper
-
     def provisioning
-      @@provisioning ||= DeliveryCluster::Provisioning.for_driver(node['delivery-cluster']['driver'], node)
+      @provisioning ||= DeliveryCluster::Provisioning.for_driver(node['delivery-cluster']['driver'], node)
     end
 
     def current_dir
@@ -118,7 +118,7 @@ module DeliveryCluster
     end
 
     def builder_private_key
-      File.read(File.join(cluster_data_dir, "builder_key"))
+      File.read(File.join(cluster_data_dir, 'builder_key'))
     end
 
     def builder_run_list
@@ -130,7 +130,7 @@ module DeliveryCluster
 
     # Generate or load an existing encrypted data bag secret
     def encrypted_data_bag_secret
-      if File.exists?("#{cluster_data_dir}/encrypted_data_bag_secret")
+      if File.exist?("#{cluster_data_dir}/encrypted_data_bag_secret")
         File.read("#{cluster_data_dir}/encrypted_data_bag_secret")
       else
         # Ruby's `SecureRandom` module uses OpenSSL under the covers
@@ -139,7 +139,7 @@ module DeliveryCluster
     end
 
     def chef_server_ip
-      @@chef_server_ip ||= begin
+      @chef_server_ip ||= begin
         chef_server_node = Chef::Node.load(chef_server_hostname)
         chef_server_ip   = get_ip(chef_server_node)
         Chef::Log.info("Your Chef Server Public/Private IP is => #{chef_server_ip}")
@@ -160,7 +160,7 @@ module DeliveryCluster
     end
 
     def analytics_server_node
-      @@analytics_server_node ||= begin
+      @analytics_server_node ||= begin
         Chef::REST.new(
           chef_server_config[:chef_server_url],
           chef_server_config[:options][:client_name],
@@ -170,7 +170,7 @@ module DeliveryCluster
     end
 
     def supermarket_server_node
-      @@supermarket_server_node ||= begin
+      @supermarket_server_node ||= begin
         Chef::REST.new(
           chef_server_config[:chef_server_url],
           chef_server_config[:options][:client_name],
@@ -180,7 +180,7 @@ module DeliveryCluster
     end
 
     def analytics_server_ip
-      @@analytics_server_ip ||= begin
+      @analytics_server_ip ||= begin
         analytics_server_ip   = get_ip(analytics_server_node)
         Chef::Log.info("Your Analytics Server Public/Private IP is => #{analytics_server_ip}")
         node['delivery-cluster']['analytics']['fqdn'] || analytics_server_ip
@@ -188,7 +188,7 @@ module DeliveryCluster
     end
 
     def supermarket_server_ip
-      @@supermarket_server_ip ||= begin
+      @supermarket_server_ip ||= begin
         supermarket_server_ip   = get_ip(supermarket_server_node)
         Chef::Log.info("Your Supermarket Server Public/Private IP is => #{supermarket_server_ip}")
         node['delivery-cluster']['supermarket']['fqdn'] || supermarket_server_ip
@@ -196,11 +196,11 @@ module DeliveryCluster
     end
 
     def get_supermarket_attribute(attr)
-      @@supermarket ||= begin
+      @supermarket ||= begin
         supermarket_file = File.read("#{cluster_data_dir}/supermarket.json")
         JSON.parse(supermarket_file)
       end
-      @@supermarket[attr]
+      @supermarket[attr]
     end
 
     def chef_server_url
@@ -211,7 +211,7 @@ module DeliveryCluster
       FileUtils.touch(splunk_lock_file)
     end
 
-    def is_splunk_enabled?
+    def splunk_enabled?
       File.exist?(splunk_lock_file)
     end
 
@@ -223,16 +223,16 @@ module DeliveryCluster
       FileUtils.touch(supermarket_lock_file)
     end
 
-    def is_analytics_enabled?
+    def analytics_enabled?
       File.exist?(analytics_lock_file)
     end
 
-    def is_supermarket_enabled?
+    def supermarket_enabled?
       File.exist?(supermarket_lock_file)
     end
 
     def analytics_server_attributes
-      return {} unless is_analytics_enabled?
+      return {} unless analytics_enabled?
       {
         'analytics' => {
           'fqdn' => analytics_server_ip
@@ -241,7 +241,7 @@ module DeliveryCluster
     end
 
     def supermarket_server_attributes
-      return {} unless is_supermarket_enabled?
+      return {} unless supermarket_enabled?
       {
         'chef-server-12' => {
           'supermarket' => {
@@ -252,7 +252,7 @@ module DeliveryCluster
     end
 
     def chef_server_attributes
-      @@chef_server_attributes = {
+      @chef_server_attributes = {
         'chef-server-12' => {
           'delivery' => { 'organization' => node['delivery-cluster']['chef-server']['organization'] },
           'api_fqdn' => chef_server_ip,
@@ -262,9 +262,9 @@ module DeliveryCluster
           }
         }
       }
-      @@chef_server_attributes = Chef::Mixin::DeepMerge.hash_only_merge(@@chef_server_attributes, analytics_server_attributes)
-      @@chef_server_attributes = Chef::Mixin::DeepMerge.hash_only_merge(@@chef_server_attributes, supermarket_server_attributes)
-      @@chef_server_attributes
+      @chef_server_attributes = Chef::Mixin::DeepMerge.hash_only_merge(@chef_server_attributes, analytics_server_attributes)
+      @chef_server_attributes = Chef::Mixin::DeepMerge.hash_only_merge(@chef_server_attributes, supermarket_server_attributes)
+      @chef_server_attributes
     end
 
     def chef_server_config
@@ -278,7 +278,7 @@ module DeliveryCluster
     end
 
     def delivery_server_node
-      @@delivery_server_node ||= begin
+      @delivery_server_node ||= begin
         Chef::REST.new(
           chef_server_config[:chef_server_url],
           chef_server_config[:options][:client_name],
@@ -288,7 +288,7 @@ module DeliveryCluster
     end
 
     def delivery_server_ip
-      @@delivery_server_ip ||= begin
+      @delivery_server_ip ||= begin
         delivery_server_ip   = get_ip(delivery_server_node)
         Chef::Log.info("Your Delivery Server Public/Private IP is => #{delivery_server_ip}")
         node['delivery-cluster']['delivery']['fqdn'] || delivery_server_ip
@@ -326,7 +326,7 @@ module DeliveryCluster
       # We have introduced an additional constrain to the enterprise_ctl
       # command that require to specify --ssh-pub-key-file param starting
       # from the Delivery Version 0.2.52
-      cmd = <<-CMD.gsub(/\s+/, " ").strip!
+      cmd = <<-CMD.gsub(/\s+/, ' ').strip!
         #{delivery_ctl} list-enterprises | grep -w ^#{node['delivery-cluster']['delivery']['enterprise']};
         [ $? -ne 0 ] && #{delivery_ctl} create-enterprise #{node['delivery-cluster']['delivery']['enterprise']}
       CMD
@@ -355,8 +355,8 @@ module DeliveryCluster
                     )
 
         delivery_artifact = {
-            "version"  => artifact['version'],
-            "checksum" => artifact['checksum']
+          'version'  => artifact['version'],
+          'checksum' => artifact['checksum']
         }
         # Upload Artifact to Delivery Server only if we have donwloaded the artifact
         if artifact['local_path']
@@ -375,7 +375,7 @@ module DeliveryCluster
       end
     end
 
-    # Upload a specific cookbook to our chef-server
+    # Upload a specific cookbook to our chef-server
     def upload_cookbook(cookbook)
       execute "Upload Cookbook => #{cookbook}" do
         command "knife cookbook upload #{cookbook} --cookbook-path #{Chef::Config[:cookbook_path]}"
@@ -386,17 +386,22 @@ module DeliveryCluster
       end
     end
 
-    # Render a knife config file that points at the new delivery cluster
+    # Render a knife config file that points at the new delivery cluster
     def render_knife_config
       template File.join(cluster_data_dir, 'knife.rb') do
-        variables lazy {{
-          :chef_server_url      => chef_server_url,
-          :client_key           => "#{cluster_data_dir}/delivery.pem",
-          :analytics_server_url => is_analytics_enabled? ?
+        variables lazy {
+          {
+            chef_server_url:      chef_server_url,
+            client_key:           "#{cluster_data_dir}/delivery.pem",
+            analytics_server_url: if analytics_enabled?
                                     "https://#{analytics_server_ip}/organizations" \
-                                    "/#{node['delivery-cluster']['chef-server']['organization']}" : "",
-          :supermarket_site     => is_supermarket_enabled? ? "https://#{supermarket_server_ip}" : ""
-        }}
+                                    "/#{node['delivery-cluster']['chef-server']['organization']}"
+                                  else
+                                    ''
+                                  end,
+            supermarket_site:     supermarket_enabled? ? "https://#{supermarket_server_ip}" : ''
+          }
+        }
       end
     end
 
@@ -405,7 +410,7 @@ module DeliveryCluster
     # This method will check for the license file in the compile phase to prevent
     # any work being done if the user doesn't even have a license.
     def validate_license_file
-      msg_delim = "***************************************************"
+      msg_delim = '***************************************************'
 
       contact_msg = <<-END
 
@@ -417,10 +422,8 @@ account representative.
 
       END
 
-      if node['delivery-cluster']['delivery']['license_file'].nil?
-        raise "#{contact_msg}Please set `#{node['delivery-cluster']['delivery']['license_file']}`\n" \
-              "in your environment file.\n\n#{msg_delim}"
-      end
+      fail "#{contact_msg}Please set `#{node['delivery-cluster']['delivery']['license_file']}`\n" \
+            "in your environment file.\n\n#{msg_delim}" if node['delivery-cluster']['delivery']['license_file'].nil?
     end
   end
 end

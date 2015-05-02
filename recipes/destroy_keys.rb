@@ -21,12 +21,12 @@
 #
 
 %W(
-   builder_key
-   builder_key.pub
-   encrypted_data_bag_secret
-   validator.pem
-   delivery.pem
-   #{node['delivery-cluster']['delivery']['enterprise']}.creds
+  builder_key
+  builder_key.pub
+  encrypted_data_bag_secret
+  validator.pem
+  delivery.pem
+  #{node['delivery-cluster']['delivery']['enterprise']}.creds
 ).each do |file|
   file File.join(cluster_data_dir, file) do
     action :delete

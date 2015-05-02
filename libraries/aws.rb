@@ -22,13 +22,11 @@
 
 module DeliveryCluster
   module Provisioning
-
     # AWS class for AWS Provisioning Driver
     #
     # Specify all the methods a Provisioning Driver should implement
     # @author Salim Afiune <afiune@chef.io>
     class Aws < DeliveryCluster::Provisioning::Base
-
       attr_accessor :node
       attr_accessor :flavor
       attr_accessor :key_name
@@ -46,7 +44,7 @@ module DeliveryCluster
       def initialize(node)
         require 'chef/provisioning/aws_driver'
 
-        raise "[#{driver}] Attributes not implemented (node['delivery-cluster'][#{driver}])" unless node['delivery-cluster'][driver]
+        fail "[#{driver}] Attributes not implemented (node['delivery-cluster'][#{driver}])" unless node['delivery-cluster'][driver]
         @node                   = node
         @flavor                 = @node['delivery-cluster'][driver]['flavor'] if @node['delivery-cluster'][driver]['flavor']
         @key_name               = @node['delivery-cluster'][driver]['key_name'] if @node['delivery-cluster'][driver]['key_name']
@@ -65,19 +63,19 @@ module DeliveryCluster
       # @return [Hash] the machine_options for the specific driver
       def machine_options
         opts = {
-                convergence_options: {
-                  bootstrap_proxy: @bootstrap_proxy,
-                  chef_config: @chef_config
-                },
-                bootstrap_options: {
-                  instance_type:      @flavor,
-                  key_name:           @key_name,
-                  security_group_ids: @security_group_ids,
-                },
-                ssh_username:           @ssh_username,
-                image_id:               @image_id,
-                use_private_ip_for_ssh: @use_private_ip_for_ssh
-              }
+          convergence_options: {
+            bootstrap_proxy: @bootstrap_proxy,
+            chef_config: @chef_config
+          },
+          bootstrap_options: {
+            instance_type:      @flavor,
+            key_name:           @key_name,
+            security_group_ids: @security_group_ids
+          },
+          ssh_username:           @ssh_username,
+          image_id:               @image_id,
+          use_private_ip_for_ssh: @use_private_ip_for_ssh
+        }
 
         # Add any optional machine options
         require 'chef/mixin/deep_merge'
@@ -91,10 +89,10 @@ module DeliveryCluster
       # @param component [String] component name
       # @param count [Integer] component number
       # @return [Array] specific machine_options for the specific component
-      def specific_machine_options(component, count = nil)
+      def specific_machine_options(component, _count = nil)
         return [] unless @node['delivery-cluster'][component]
         options = []
-        options << { bootstrap_options: { instance_type: @node['delivery-cluster'][component]['flavor'] }} if @node['delivery-cluster'][component]['flavor']
+        options << { bootstrap_options: { instance_type: @node['delivery-cluster'][component]['flavor'] } } if @node['delivery-cluster'][component]['flavor']
         # Specify more specific machine_options to add
       end
 
@@ -112,7 +110,6 @@ module DeliveryCluster
       def ipaddress(node)
         @use_private_ip_for_ssh ? node['ec2']['local_ipv4'] : node['ec2']['public_ipv4']
       end
-
     end
   end
 end
