@@ -44,7 +44,7 @@ namespace :setup do
     system "bundle exec berks vendor cookbooks"
 
     msg "Current chef environment => #{ENV['CHEF_ENV_FILE']}"
-    if File.exist?(ENV['CHEF_ENV_FILE'])
+    unless File.exist?(ENV['CHEF_ENV_FILE'])
       puts "You need to configure an Environment under 'environments/'. Check the README.md".red
       puts "If you just have a different chef environment name run:"
       puts "  # export CHEF_ENV=#{"my_new_environment".yellow}"
