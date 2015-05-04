@@ -1,0 +1,11 @@
+node_name            'delivery'
+chef_server_url      '<%= @chef_server_url %>'
+client_key           '<%= @client_key %>'
+cookbook_path        '<%= Chef::Config[:cookbook_path] %>'
+trusted_certs_dir    '<%= Chef::Config[:trusted_certs_dir] %>'
+<% unless @analytics_server_url.empty? -%>
+analytics_server_url '<%= @analytics_server_url %>'
+<% end -%>
+<% unless @supermarket_site.empty? -%>
+knife[:supermarket_site] = '<%= @supermarket_site %>'
+<% end -%>

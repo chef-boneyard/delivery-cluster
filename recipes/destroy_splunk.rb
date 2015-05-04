@@ -25,19 +25,19 @@ include_recipe 'delivery-cluster::_settings'
 # TODO: This should be moved out
 begin
   with_chef_server chef_server_url,
-    client_name: 'delivery',
-    signing_key_filename: "#{cluster_data_dir}/delivery.pem"
+                   client_name: 'delivery',
+                   signing_key_filename: "#{cluster_data_dir}/delivery.pem"
 
   directory "#{current_dir}/data_bags/vault" do
     recursive true
     action :delete
   end
 
-  %W{
+  %W(
     #{cluster_data_dir}/splunk.key
     #{cluster_data_dir}/splunk.csr
     #{cluster_data_dir}/splunk.crt
-  }.each do |f|
+  ).each do |f|
     file f do
       action :delete
     end
@@ -46,8 +46,8 @@ begin
   # Delete Splunk ChefVault
   execute 'Creating Splunk ChefVault' do
     cwd current_dir
-    command "knife data bag delete vault -y"
-    only_if "knife data bag show vault"
+    command 'knife data bag delete vault -y'
+    only_if 'knife data bag show vault'
     action :run
   end
 
@@ -58,6 +58,6 @@ begin
 
   # Delete the lock file
   File.delete(splunk_lock_file)
-rescue Exception => e
+rescue StandardError => e
   Chef::Log.warn("We can't proceed to destroy Splunk Sever: #{e.message}")
 end

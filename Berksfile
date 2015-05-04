@@ -19,3 +19,6 @@ cookbook 'delivery_build',
 
 cookbook 'chef-splunk',
   git: 'https://github.com/chef-cookbooks/chef-splunk.git'
+
+cookbook 'supermarket-omnibus-cookbook',
+  git: 'https://github.com/irvingpop/supermarket-omnibus-cookbook.git'

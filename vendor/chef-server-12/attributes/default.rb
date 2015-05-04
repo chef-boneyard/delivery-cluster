@@ -39,6 +39,9 @@ default['chef-server-12']['topology'] = "standalone"
 # Analytics Server Parameters
 default['chef-server-12']['analytics'] = nil
 
+# Supermarket Server Parameters
+default['chef-server-12']['supermarket'] = nil
+
 # Delivery Server
 #
 # This section is dedicated to setup the basic requirements for delivery-server

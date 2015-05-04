@@ -22,13 +22,11 @@
 
 module DeliveryCluster
   module Provisioning
-
     # Ssh class for SsH Provisioning Driver
     #
     # Specify all the methods a Provisioning Driver should implement
     # @author Salim Afiune <afiune@chef.io>
     class Ssh < DeliveryCluster::Provisioning::Base
-
       attr_accessor :node
       attr_accessor :prefix
       attr_accessor :key_file
@@ -43,16 +41,16 @@ module DeliveryCluster
       def initialize(node)
         require 'chef/provisioning/ssh_driver'
 
-        raise "Attributes not implemented (node['delivery-cluster'][#{driver}])" unless node['delivery-cluster'][driver]
+        fail "Attributes not implemented (node['delivery-cluster'][#{driver}])" unless node['delivery-cluster'][driver]
         @node            = node
-        @prefix          = "sudo "
+        @prefix          = 'sudo '
         @ssh_username    = @node['delivery-cluster'][driver]['ssh_username'] if @node['delivery-cluster'][driver]['ssh_username']
         @password        = @node['delivery-cluster'][driver]['password'] if @node['delivery-cluster'][driver]['password']
         @prefix          = @node['delivery-cluster'][driver]['prefix'] if @node['delivery-cluster'][driver]['prefix']
         @key_file        = @node['delivery-cluster'][driver]['key_file'] if @node['delivery-cluster'][driver]['key_file']
         @bootstrap_proxy = @node['delivery-cluster'][driver]['bootstrap_proxy'] if @node['delivery-cluster'][driver]['bootstrap_proxy']
         @chef_config     = @node['delivery-cluster'][driver]['chef_config'] if @node['delivery-cluster'][driver]['chef_config']
-        raise "You should not specify both key_file and password." if @password && @key_file
+        fail 'You should not specify both key_file and password.' if @password && @key_file
       end
 
       # Return the machine options to use.
@@ -116,7 +114,6 @@ module DeliveryCluster
       def ipaddress(node)
         node['ipaddress']
       end
-
     end
   end
 end

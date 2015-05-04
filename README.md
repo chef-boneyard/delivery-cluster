@@ -16,6 +16,7 @@ This cookbook will setup a full delivery cluster which includes:
 *  N -  Build Nodes
 
 Additionally it enables extra optional infrastructure:
+*  1 -  Supermarket Server (Not Required)
 *  1 -  Analytics Server (Not Required)
 *  1 -  Splunk Server (Not Required)
 
@@ -39,6 +40,7 @@ rake setup:cluster        # Setup the Chef Delivery Cluster that includes: [ Che
 rake setup:delivery       # Create a Delivery Server & Build Nodes
 rake setup:prerequisites  # Install all the prerequisites on you system
 rake setup:splunk         # Create a Splunk Server with Analytics Integration
+rake setup:supermarket    # Create a Supermarket Server
 
 Maintenance Tasks
 The following tasks should be used to maintain your cluster
@@ -53,6 +55,7 @@ rake destroy:builders     # Destroy Build Nodes
 rake destroy:chef_server  # Destroy Chef Server
 rake destroy:delivery     # Destroy Delivery Server
 rake destroy:splunk       # Destroy Splunk Server
+rake destroy:supermarket  # Destroy Supermarket Server
 
 Cluster Information
 The following tasks should be used to get information about your cluster
@@ -138,6 +141,9 @@ Here is an example of how you specify them
       "analytics": {
         "flavor": "c3.xlarge"
       },
+      "supermarket": {
+        "flavor": "c3.xlarge"
+      },
       "splunk": {
         "flavor": "c3.xlarge",
         "password": "demo"
@@ -195,6 +201,9 @@ This is an example of how to specify this information
         "password": "demo",
         "ip": "33.33.33.13"
       },
+      "supermarket": {
+        "ip": "33.33.33.17"
+      },
       "builders": {
         "count": 3,
         "1": { "ip": "33.33.33.14" },
@@ -250,6 +259,18 @@ Specific Attributes per Machine
 | `hostname`      | Hostname of your Analytics Server.|
 | `fqdn`          | The Analytics FQDN to use for the `/etc/opscode-analytics/opscode-analytics.rb`. |
 | `flavor`        | AWS Flavor of the Analytics Server.|
+| `ip`            | [SSH Driver] Ip Address of the Analytics Server.|
+| `host`          | [SSH Driver] Hostname of the Analytics Server.|
+
+### Supermarket Settings (Not required)
+
+| Attribute       | Description                       |
+| --------------- | --------------------------------- |
+| `hostname`      | Hostname of your Supermarket Server.|
+| `fqdn`          | The Supermarket FQDN to use. Although Supermarket will consume it from `node['fqdn']` |
+| `flavor`        | AWS Flavor of the Supermarket Server.|
+| `ip`            | [SSH Driver] Ip Address of the Supermarket Server.|
+| `host`          | [SSH Driver] Hostname of the Supermarket Server.|
 
 Supported Platforms
 -------------------
@@ -328,6 +349,10 @@ $ vi environments/test.json
         "password": "demo",
         "ip": "33.33.33.13"
       },
+      "supermarket": {
+        "flavor": "c3.xlarge",
+        "ip": "33.33.33.17"
+      },
       "builders": {
         "flavor": "c3.large",
         "count": 3,
@@ -356,7 +381,6 @@ $ rake setup:analytics
 
 That will provision and activate Analytics on your entire cluster.
 
-
 #### [OPTIONAL] Provision a Splunk Server
 
 Would you like to try our Splunk Server Integration with Analytics? If yes, provision the server by running:
@@ -365,6 +389,13 @@ Would you like to try our Splunk Server Integration with Analytics? If yes, prov
 $ rake setup:splunk
 ```
 
+#### [OPTIONAL] Provision a Supermarket Server
+
+If you have cookbook dependencies to resolve, try our Supermarket Server by running:
+
+```
+$ rake setup:supermarket
+```
 
 UPGRADE
 ========
@@ -432,6 +463,10 @@ $ vi environments/kitchen.json
         "ip": "33.33.33.16",
         "username": "admin",
         "password": "salim"
+      },
+      "supermarket": {
+        "fqdn": "33.33.33.17",
+        "ip": "33.33.33.17"
       }
     }
   }

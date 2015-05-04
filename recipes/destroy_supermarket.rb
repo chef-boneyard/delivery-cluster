@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: delivery-cluster
-# Recipe:: destroy_builders
+# Recipe:: destroy_supermarket
 #
 # Author:: Salim Afiune (<afiune@chef.io>)
 #
@@ -20,28 +20,28 @@
 # limitations under the License.
 #
 
-# Starting to abstract the specific configurations by providers
 include_recipe 'delivery-cluster::_settings'
 
-# Only if we have the credentials to destroy it
-if File.exist?("#{cluster_data_dir}/delivery.pem")
+# If Supermarket is enabled
+if supermarket_enabled?
   begin
     # Setting the new Chef Server we just created
     with_chef_server chef_server_url,
                      client_name: 'delivery',
                      signing_key_filename: "#{cluster_data_dir}/delivery.pem"
 
-    # Destroy Build Nodes
-    machine_batch 'Destroying Build Nodes' do
-      1.upto(node['delivery-cluster']['builders']['count']) do |i|
-        machine delivery_builder_hostname(i)
-      end
+    # Destroy Supermarket Server
+    machine supermarket_server_hostname do
       action :destroy
     end
+
+    # Delete the lock file
+    File.delete(supermarket_lock_file)
   rescue StandardError => e
-    Chef::Log.warn("We can't proceed to destroy the Build Nodes.")
+    Chef::Log.warn("We can't proceed to destroy the Supermarket Server.")
     Chef::Log.warn("We couldn't get the chef-server Public IP: #{e.message}")
   end
 else
-  log 'Skipping Build Nodes deletion because missing delivery.pem key'
+  Chef::Log.warn('You must provision an Supermarket Server before be able to')
+  Chef::Log.warn('destroy it. READ => delivery-cluster/setup_supermarket.rb')
 end

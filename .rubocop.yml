@@ -1,0 +1,11 @@
+AllCops:
+  Exclude:
+    - 'Berksfile'
+    - 'vendor/**/*'
+
+Metrics/MethodLength:
+  CountComments: false  # count full line comments?
+  Max: 20
+
+Metrics/LineLength:
+  Max: 200

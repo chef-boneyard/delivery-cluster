@@ -42,7 +42,6 @@ require 'net/http'
 # NOTE: If you do not specify a `tmp_dir` it will not download the artifact
 #       so there will be no `local_path` in the returned value
 def get_delivery_artifact(version = 'latest', platform = 'ubuntu', platform_version = '14.04', tmp_dir = nil)
-
   # Yup! We must validate access to Chef VPN
   validate_vpn
 
@@ -93,14 +92,13 @@ def get_delivery_artifact(version = 'latest', platform = 'ubuntu', platform_vers
     'checksum' => artifact.properties['omnibus.sha256'].first,
     'uri' => artifact.download_uri
   }.merge(local_path)
-
 end
 
 def supported_platforms_format(platform, platform_version)
   case platform
   when 'centos', 'redhat'
     case platform_version.to_s
-    when "6", "6.1", "6.2", "6.3", "6.4", "6.5", "6.6"
+    when '6', '6.1', '6.2', '6.3', '6.4', '6.5', '6.6'
       {
         'platform' => 'el',
         'version' => '6'
@@ -109,7 +107,7 @@ def supported_platforms_format(platform, platform_version)
       Chef::Log.fatal("Unsupported Platform Version: #{platform_version}")
     end
   when 'ubuntu'
-    if platform_version.to_s == "12.04" || platform_version.to_s == "14.04"
+    if platform_version.to_s == '12.04' || platform_version.to_s == '14.04'
       {
         'platform' => 'ubuntu',
         'version' => platform_version

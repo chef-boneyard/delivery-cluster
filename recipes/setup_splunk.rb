@@ -65,11 +65,12 @@ file "#{current_dir}/data_bags/vault/splunk_delivered.json" do
 end
 
 file "#{current_dir}/data_bags/vault/splunk_certificates.json" do
-  content lazy { JSON.generate(
-      "id" => "splunk_certificates",
-      "data" => {
-        "self-signed.example.com.crt" => File.read("#{cluster_data_dir}/splunk.crt"),
-        "self-signed.example.com.key" => File.read("#{cluster_data_dir}/splunk.key")
+  content lazy {
+    JSON.generate(
+      'id' => 'splunk_certificates',
+      'data' => {
+        'self-signed.example.com.crt' => File.read("#{cluster_data_dir}/splunk.crt"),
+        'self-signed.example.com.key' => File.read("#{cluster_data_dir}/splunk.key")
       }
     )
   }
@@ -83,9 +84,11 @@ machine splunk_server_hostname do
   provisioning.specific_machine_options('splunk').each do |option|
     add_machine_options option
   end
-  files lazy {{
-    "/etc/chef/trusted_certs/#{chef_server_ip}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt"
-  }}
+  files lazy {
+    {
+      "/etc/chef/trusted_certs/#{chef_server_ip}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt"
+    }
+  }
   action :converge
 end
 
@@ -98,7 +101,7 @@ execute 'Creating ChefVault [splunk_delivered]' do
       --search 'name:splunk-server*' --admins 'delivery' \
       --mode client
   EOF
-  not_if "knife data bag show vault splunk_delivered"
+  not_if 'knife data bag show vault splunk_delivered'
   action :run
 end
 
@@ -111,13 +114,13 @@ execute 'Creating ChefVault [splunk_certificates]' do
       --search 'name:splunk-server*' --admins 'delivery' \
       --mode client
   EOF
-  not_if "knife data bag show vault splunk_certificates"
+  not_if 'knife data bag show vault splunk_certificates'
   action :run
 end
 
-upload_cookbook("chef-splunk")
+upload_cookbook('chef-splunk')
 
-chef_environment "delivered" do
+chef_environment 'delivered' do
   chef_server lazy { chef_server_config }
 end
 
@@ -125,12 +128,14 @@ end
 machine splunk_server_hostname do
   chef_server lazy { chef_server_config }
   chef_environment 'delivered'
-  recipe "chef-splunk::server"
-  attributes lazy {{
-    'splunk' => {
-      'accept_license' => true
+  recipe 'chef-splunk::server'
+  attributes lazy {
+    {
+      'splunk' => {
+        'accept_license' => true
+      }
     }
-  }}
+  }
   converge true
   action :converge
 end
@@ -155,8 +160,8 @@ machine_file "/opt/splunk/etc/apps/#{splunk_pkg}.tar.gz" do
   action :upload
 end
 
-machine_execute "Unpackage Analytics Splunk App" do
-  chef_server lazy {chef_server_config}
+machine_execute 'Unpackage Analytics Splunk App' do
+  chef_server lazy { chef_server_config }
   machine splunk_server_hostname
   command <<-EOF
     sh -c "

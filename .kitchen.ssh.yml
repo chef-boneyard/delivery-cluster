@@ -11,7 +11,7 @@ platforms:
   - name: centos-6.6
 
 suites:
-<%  10.upto(16) do |n| %>
+<%  10.upto(17) do |n| %>
 - name: delivery-<%= n %>
   run_list:
   - recipe[delivery-cluster::default]

@@ -3,6 +3,7 @@ clients*
 cookbooks/
 data_bags/
 environments*
+workspace*
 nodes*
 .chef/local-mode-cache
 .chef/trusted_certs

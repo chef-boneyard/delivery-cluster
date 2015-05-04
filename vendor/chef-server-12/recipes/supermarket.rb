@@ -1,6 +1,6 @@
 #
-# Cookbook Name:: delivery-cluster
-# Recipe:: destroy_keys
+# Cookbook Name:: chef-server-12
+# Recipe:: supermarket
 #
 # Author:: Salim Afiune (<afiune@chef.io>)
 #
@@ -20,15 +20,16 @@
 # limitations under the License.
 #
 
-%W(
-  builder_key
-  builder_key.pub
-  encrypted_data_bag_secret
-  validator.pem
-  delivery.pem
-  #{node['delivery-cluster']['delivery']['enterprise']}.creds
-).each do |file|
-  file File.join(cluster_data_dir, file) do
-    action :delete
+if File.exist?('/etc/opscode/chef-server.rb')
+  template "/etc/opscode/chef-server.rb" do
+    owner "root"
+    mode "0644"
+    not_if 'grep supermarket /etc/opscode/chef-server.rb'
+    notifies :run, "execute[reconfigure chef]", :immediately
+  end if node['chef-server-12']['supermarket']
+
+  execute "reconfigure chef" do
+    command "chef-server-ctl reconfigure"
+    action :nothing
   end
 end

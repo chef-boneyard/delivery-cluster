@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: delivery-cluster
-# Recipe:: setup_analytics
+# Recipe:: setup_supermarket
 #
 # Author:: Salim Afiune (<afiune@chef.io>)
 #
@@ -22,17 +22,17 @@
 
 include_recipe 'delivery-cluster::_settings'
 
-# There are two ways to provision the Analytics Server
+# There are two ways to provision the Supermarket Server
 #
 # 1) Provisioning the entire "delivery-cluster::setup" or
 # 2) Just the Chef Server "delivery-cluster::setup_chef_server"
 #
-# After that you are good to provision Analytics running:
-# => # bundle exec chef-client -z -o delivery-cluster::setup_analytics -E test
+# After that you are good to provision Supermarket running:
+# => # bundle exec chef-client -z -o delivery-cluster::setup_supermarket -E test
 
-machine analytics_server_hostname do
+machine supermarket_server_hostname do
   chef_server lazy { chef_server_config }
-  provisioning.specific_machine_options('analytics').each do |option|
+  provisioning.specific_machine_options('supermarket').each do |option|
     add_machine_options option
   end
   files lazy {
@@ -43,40 +43,34 @@ machine analytics_server_hostname do
   action :converge
 end
 
-# Activate Analytics
-activate_analytics
+# Activate Supermarket
+activate_supermarket
 
-# Configuring Analytics on the Chef Server
+# Configuring Supermarket on the Chef Server
 machine chef_server_hostname do
-  recipe 'chef-server-12::analytics'
+  recipe 'chef-server-12::supermarket'
   attributes lazy { chef_server_attributes }
   converge true
   action :converge
 end
 
-%w( actions-source.json webui_priv.pem ).each do |analytics_file|
-  machine_file "/etc/opscode-analytics/#{analytics_file}" do
-    machine chef_server_hostname
-    local_path "#{cluster_data_dir}/#{analytics_file}"
-    action :download
-  end
+machine_file '/etc/opscode/oc-id-applications/supermarket.json' do
+  machine chef_server_hostname
+  local_path "#{cluster_data_dir}/supermarket.json"
+  action :download
 end
 
-# Installing Analytics
-machine analytics_server_hostname do
+# Installing Sypermarket
+machine supermarket_server_hostname do
   chef_server lazy { chef_server_config }
-  recipe 'delivery-cluster::analytics'
-  files(
-    '/etc/opscode-analytics/actions-source.json' => "#{cluster_data_dir}/actions-source.json",
-    '/etc/opscode-analytics/webui_priv.pem' => "#{cluster_data_dir}/webui_priv.pem"
-  )
+  recipe 'supermarket-omnibus-cookbook'
   attributes lazy {
     {
-      'delivery-cluster' => {
-        'analytics' => {
-          'fqdn' => analytics_server_ip,
-          'features' => splunk_enabled? ? 'true' : 'false'
-        }
+      'supermarket_omnibus' => {
+        'chef_server_url' => "https://#{chef_server_ip}",
+        'chef_oauth2_app_id' => get_supermarket_attribute('uid'),
+        'chef_oauth2_secret' => get_supermarket_attribute('secret'),
+        'chef_oauth2_verify_ssl' => false
       }
     }
   }
@@ -84,13 +78,13 @@ machine analytics_server_hostname do
   action :converge
 end
 
-machine_file 'analytics-server-cert' do
+machine_file 'supermarket-server-cert' do
   chef_server lazy { chef_server_config }
-  path lazy { "/var/opt/opscode-analytics/ssl/ca/#{analytics_server_ip}.crt" }
-  machine analytics_server_hostname
-  local_path lazy { "#{Chef::Config[:trusted_certs_dir]}/#{analytics_server_ip}.crt" }
+  path lazy { "/var/opt/supermarket/ssl/ca/#{supermarket_server_ip}.crt" }
+  machine supermarket_server_hostname
+  local_path lazy { "#{Chef::Config[:trusted_certs_dir]}/#{supermarket_server_ip}.crt" }
   action :download
 end
 
-# Add Analytics Server to the knife.rb config file
+# Add Supermarket Server to the knife.rb config file
 render_knife_config
