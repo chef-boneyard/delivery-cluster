@@ -3,12 +3,13 @@ This cookbook installs Chef Delivery, a solution for continuously delivering
 applications and infrastructure safely at speed.
 
 Delivery is not open source software and requires a license from Chef to install
-and use. This cookbook is open source and released under the Apache 2.0 license.
-This cookbook is licensed under apache 2.0 but the packages it installs are
-private source and require a license key. It will setup a full delivery
-environment.
+and use. This cookbook is open source and released under the Apache 2.0 license,
+but the packages it installs are private source and require a license key. 
 
-A full delivery cluster includes:
+If you happened stumble here on your own you can request an [INVITE](https://www.chef.io/delivery/) 
+or speak with your account rep.
+
+This cookbook will setup a full delivery cluster which includes:
 
 *  1 -  Chef Server 12
 *  1 -  Delivery Server
