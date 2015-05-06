@@ -57,12 +57,16 @@ def get_delivery_artifact(version = 'latest', platform = 'ubuntu', platform_vers
     endpoint: artifactory_endpoint
   )
 
-  deliv_version = client.artifact_latest_version(
-    repos: artifactory_omnibus_repo,
-    group: 'com.getchef',
-    name: 'delivery',
-    version: version == 'latest' ? '*' : version
-  )
+  deliv_version = version
+
+  # If we need the latest version, lets get it from artifactory
+  if version.eql?('latest')
+    deliv_version = client.artifact_latest_version(
+      repos: artifactory_omnibus_repo,
+      group: 'com.getchef',
+      name: 'delivery'
+    )
+  end
 
   supported = supported_platforms_format(platform, platform_version)
 
