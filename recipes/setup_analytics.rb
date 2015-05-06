@@ -37,7 +37,7 @@ machine analytics_server_hostname do
   end
   files lazy {
     {
-      "/etc/chef/trusted_certs/#{chef_server_ip}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt"
+      "/etc/chef/trusted_certs/#{chef_server_fqdn}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_fqdn}.crt"
     }
   }
   action :converge
@@ -74,7 +74,7 @@ machine analytics_server_hostname do
     {
       'delivery-cluster' => {
         'analytics' => {
-          'fqdn' => analytics_server_ip,
+          'fqdn' => analytics_server_fqdn,
           'features' => splunk_enabled? ? 'true' : 'false'
         }
       }
@@ -86,9 +86,9 @@ end
 
 machine_file 'analytics-server-cert' do
   chef_server lazy { chef_server_config }
-  path lazy { "/var/opt/opscode-analytics/ssl/ca/#{analytics_server_ip}.crt" }
+  path lazy { "/var/opt/opscode-analytics/ssl/ca/#{analytics_server_fqdn}.crt" }
   machine analytics_server_hostname
-  local_path lazy { "#{Chef::Config[:trusted_certs_dir]}/#{analytics_server_ip}.crt" }
+  local_path lazy { "#{Chef::Config[:trusted_certs_dir]}/#{analytics_server_fqdn}.crt" }
   action :download
 end
 

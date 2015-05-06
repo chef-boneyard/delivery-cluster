@@ -57,9 +57,9 @@ directory Chef::Config[:trusted_certs_dir] do
 end
 
 machine_file 'chef-server-cert' do
-  path lazy { "/var/opt/opscode/nginx/ca/#{chef_server_ip}.crt" }
+  path lazy { "/var/opt/opscode/nginx/ca/#{chef_server_fqdn}.crt" }
   machine chef_server_hostname
-  local_path lazy { "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt" }
+  local_path lazy { "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_fqdn}.crt" }
   action :download
 end
 
