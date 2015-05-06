@@ -234,8 +234,10 @@ module DeliveryCluster
     def analytics_server_attributes
       return {} unless analytics_enabled?
       {
-        'analytics' => {
-          'fqdn' => analytics_server_ip
+        'chef-server-12' => {
+          'analytics' => {
+            'fqdn' => analytics_server_ip
+          }
         }
       }
     end
