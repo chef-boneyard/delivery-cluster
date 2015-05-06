@@ -37,7 +37,7 @@ machine supermarket_server_hostname do
   end
   files lazy {
     {
-      "/etc/chef/trusted_certs/#{chef_server_ip}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt"
+      "/etc/chef/trusted_certs/#{chef_server_fqdn}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_fqdn}.crt"
     }
   }
   action :converge
@@ -67,7 +67,7 @@ machine supermarket_server_hostname do
   attributes lazy {
     {
       'supermarket_omnibus' => {
-        'chef_server_url' => "https://#{chef_server_ip}",
+        'chef_server_url' => "https://#{chef_server_fqdn}",
         'chef_oauth2_app_id' => get_supermarket_attribute('uid'),
         'chef_oauth2_secret' => get_supermarket_attribute('secret'),
         'chef_oauth2_verify_ssl' => false
@@ -80,9 +80,9 @@ end
 
 machine_file 'supermarket-server-cert' do
   chef_server lazy { chef_server_config }
-  path lazy { "/var/opt/supermarket/ssl/ca/#{supermarket_server_ip}.crt" }
+  path lazy { "/var/opt/supermarket/ssl/ca/#{supermarket_server_fqdn}.crt" }
   machine supermarket_server_hostname
-  local_path lazy { "#{Chef::Config[:trusted_certs_dir]}/#{supermarket_server_ip}.crt" }
+  local_path lazy { "#{Chef::Config[:trusted_certs_dir]}/#{supermarket_server_fqdn}.crt" }
   action :download
 end
 

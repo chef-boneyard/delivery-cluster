@@ -138,12 +138,12 @@ module DeliveryCluster
       end
     end
 
-    def chef_server_ip
-      @chef_server_ip ||= begin
+    def chef_server_fqdn
+      @chef_server_fqdn ||= begin
         chef_server_node = Chef::Node.load(chef_server_hostname)
-        chef_server_ip   = get_ip(chef_server_node)
-        Chef::Log.info("Your Chef Server Public/Private IP is => #{chef_server_ip}")
-        node['delivery-cluster']['chef-server']['fqdn'] || chef_server_ip
+        chef_server_fqdn   = get_ip(chef_server_node)
+        Chef::Log.info("Your Chef Server Public/Private IP is => #{chef_server_fqdn}")
+        node['delivery-cluster']['chef-server']['fqdn'] || chef_server_fqdn
       end
     end
 
@@ -179,19 +179,19 @@ module DeliveryCluster
       end
     end
 
-    def analytics_server_ip
-      @analytics_server_ip ||= begin
-        analytics_server_ip   = get_ip(analytics_server_node)
-        Chef::Log.info("Your Analytics Server Public/Private IP is => #{analytics_server_ip}")
-        node['delivery-cluster']['analytics']['fqdn'] || analytics_server_ip
+    def analytics_server_fqdn
+      @analytics_server_fqdn ||= begin
+        analytics_server_fqdn   = get_ip(analytics_server_node)
+        Chef::Log.info("Your Analytics Server Public/Private IP is => #{analytics_server_fqdn}")
+        node['delivery-cluster']['analytics']['fqdn'] || analytics_server_fqdn
       end
     end
 
-    def supermarket_server_ip
-      @supermarket_server_ip ||= begin
-        supermarket_server_ip   = get_ip(supermarket_server_node)
-        Chef::Log.info("Your Supermarket Server Public/Private IP is => #{supermarket_server_ip}")
-        node['delivery-cluster']['supermarket']['fqdn'] || supermarket_server_ip
+    def supermarket_server_fqdn
+      @supermarket_server_fqdn ||= begin
+        supermarket_server_fqdn   = get_ip(supermarket_server_node)
+        Chef::Log.info("Your Supermarket Server Public/Private IP is => #{supermarket_server_fqdn}")
+        node['delivery-cluster']['supermarket']['fqdn'] || supermarket_server_fqdn
       end
     end
 
@@ -204,7 +204,7 @@ module DeliveryCluster
     end
 
     def chef_server_url
-      "https://#{chef_server_ip}/organizations/#{node['delivery-cluster']['chef-server']['organization']}"
+      "https://#{chef_server_fqdn}/organizations/#{node['delivery-cluster']['chef-server']['organization']}"
     end
 
     def activate_splunk
@@ -236,7 +236,7 @@ module DeliveryCluster
       {
         'chef-server-12' => {
           'analytics' => {
-            'fqdn' => analytics_server_ip
+            'fqdn' => analytics_server_fqdn
           }
         }
       }
@@ -247,7 +247,7 @@ module DeliveryCluster
       {
         'chef-server-12' => {
           'supermarket' => {
-            'fqdn' => supermarket_server_ip
+            'fqdn' => supermarket_server_fqdn
           }
         }
       }
@@ -257,7 +257,7 @@ module DeliveryCluster
       @chef_server_attributes = {
         'chef-server-12' => {
           'delivery' => { 'organization' => node['delivery-cluster']['chef-server']['organization'] },
-          'api_fqdn' => chef_server_ip,
+          'api_fqdn' => chef_server_fqdn,
           'store_keys_databag' => false,
           'plugin' => {
             'opscode-reporting' => false
@@ -289,11 +289,11 @@ module DeliveryCluster
       end
     end
 
-    def delivery_server_ip
-      @delivery_server_ip ||= begin
-        delivery_server_ip   = get_ip(delivery_server_node)
-        Chef::Log.info("Your Delivery Server Public/Private IP is => #{delivery_server_ip}")
-        node['delivery-cluster']['delivery']['fqdn'] || delivery_server_ip
+    def delivery_server_fqdn
+      @delivery_server_fqdn ||= begin
+        delivery_server_fqdn   = get_ip(delivery_server_node)
+        Chef::Log.info("Your Delivery Server Public/Private IP is => #{delivery_server_fqdn}")
+        node['delivery-cluster']['delivery']['fqdn'] || delivery_server_fqdn
       end
     end
 
@@ -310,7 +310,7 @@ module DeliveryCluster
       node.set['delivery-cluster']['delivery']['chef_server'] = chef_server_url unless node['delivery-cluster']['delivery']['chef_server']
 
       # Ensure we havea Delivery FQDN
-      node.set['delivery-cluster']['delivery']['fqdn'] = delivery_server_ip unless node['delivery-cluster']['delivery']['fqdn']
+      node.set['delivery-cluster']['delivery']['fqdn'] = delivery_server_fqdn unless node['delivery-cluster']['delivery']['fqdn']
 
       { 'delivery-cluster' => node['delivery-cluster'] }
     end
@@ -396,12 +396,12 @@ module DeliveryCluster
             chef_server_url:      chef_server_url,
             client_key:           "#{cluster_data_dir}/delivery.pem",
             analytics_server_url: if analytics_enabled?
-                                    "https://#{analytics_server_ip}/organizations" \
+                                    "https://#{analytics_server_fqdn}/organizations" \
                                     "/#{node['delivery-cluster']['chef-server']['organization']}"
                                   else
                                     ''
                                   end,
-            supermarket_site:     supermarket_enabled? ? "https://#{supermarket_server_ip}" : ''
+            supermarket_site:     supermarket_enabled? ? "https://#{supermarket_server_fqdn}" : ''
           }
         }
       end

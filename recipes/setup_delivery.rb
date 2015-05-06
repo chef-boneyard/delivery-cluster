@@ -68,7 +68,7 @@ machine delivery_server_hostname do
   end
   files lazy {
     {
-      "/etc/chef/trusted_certs/#{chef_server_ip}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt"
+      "/etc/chef/trusted_certs/#{chef_server_fqdn}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_fqdn}.crt"
     }
   }
   action :converge
@@ -121,9 +121,9 @@ end
 
 machine_file 'delivery-server-cert' do
   chef_server lazy { chef_server_config }
-  path lazy { "/var/opt/delivery/nginx/ca/#{delivery_server_ip}.crt" }
+  path lazy { "/var/opt/delivery/nginx/ca/#{delivery_server_fqdn}.crt" }
   machine delivery_server_hostname
-  local_path lazy { "#{Chef::Config[:trusted_certs_dir]}/#{delivery_server_ip}.crt" }
+  local_path lazy { "#{Chef::Config[:trusted_certs_dir]}/#{delivery_server_fqdn}.crt" }
   action :download
 end
 
@@ -170,8 +170,8 @@ machine_batch "#{node['delivery-cluster']['builders']['count']}-build-nodes" do
       end
       files lazy {
         {
-          "/etc/chef/trusted_certs/#{chef_server_ip}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_ip}.crt",
-          "/etc/chef/trusted_certs/#{delivery_server_ip}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{delivery_server_ip}.crt",
+          "/etc/chef/trusted_certs/#{chef_server_fqdn}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_fqdn}.crt",
+          "/etc/chef/trusted_certs/#{delivery_server_fqdn}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{delivery_server_fqdn}.crt",
           '/etc/chef/encrypted_data_bag_secret' => "#{cluster_data_dir}/encrypted_data_bag_secret"
         }
       }
