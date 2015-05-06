@@ -4,9 +4,9 @@ applications and infrastructure safely at speed.
 
 Delivery is not open source software and requires a license from Chef to install
 and use. This cookbook is open source and released under the Apache 2.0 license,
-but the packages it installs are private source and require a license key. 
+but the packages it installs are private source and require a license key.
 
-If you happened stumble here on your own you can request an [INVITE](https://www.chef.io/delivery/) 
+If you happened stumble here on your own you can request an [INVITE](https://www.chef.io/delivery/)
 or speak with your account rep.
 
 This cookbook will setup a full delivery cluster which includes:
@@ -235,6 +235,7 @@ Specific Attributes per Machine
 | ---------------| --------------------------------- |
 | `version`      | Delivery Version. See `attributes/default.rb` |
 | `pass-through` | Allow the Artifact pass-through the delivery server. Set this parameter to `false` if your delivery server does not have VPN Access. With that, the artifact will be downloaded locally and uploaded to the server.|
+| `artifactory`  | Set to `true` if you want to use Chef Artifactory. (Requires Chef VPN)|
 | `hostname`     | Hostname of your Delivery Server. |
 | `enterprise`   | A Delivery Enterprise that it will create. |
 | `fqdn`         | The Delivery FQDN to substitute the IP Address. |
