@@ -182,6 +182,15 @@ machine_batch "#{node['delivery-cluster']['builders']['count']}-build-nodes" do
   end
 end
 
+# Set right permissions to dbuild cert files on build-nodes
+1.upto(node['delivery-cluster']['builders']['count']) do |i|
+  machine_execute "Chown '/etc/chef/trusted_certs' to 'dbuild' user on [#{delivery_builder_hostname(i)}]" do
+    chef_server lazy { chef_server_config }
+    command 'chown -R dbuild /etc/chef/trusted_certs'
+    machine delivery_builder_hostname(i)
+  end
+end
+
 # Print the generated Delivery server credentials
 ruby_block 'print-delivery-credentials' do
   block do
