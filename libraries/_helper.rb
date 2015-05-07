@@ -74,7 +74,7 @@ module DeliveryCluster
     end
 
     def chef_server_hostname
-      component_hostname('chef-server', "chef-server-#{delivery_cluster_id}")
+      component_hostname('chef-server', 'chef-server')
     end
 
     def delivery_server_hostname
