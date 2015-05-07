@@ -138,17 +138,6 @@ module DeliveryCluster
       end
     end
 
-    def chef_server_fqdn
-      @chef_server_fqdn ||= begin
-        chef_server_node = Chef::Node.load(chef_server_hostname)
-        chef_server_fqdn = get_ip(chef_server_node)
-        Chef::Log.info("Your Chef Server Public/Private IP is => #{chef_server_fqdn}")
-        node['delivery-cluster']['chef-server']['fqdn'] ||
-        node['delivery-cluster']['chef-server']['host'] ||
-        chef_server_fqdn
-      end
-    end
-
     def analytics_lock_file
       "#{cluster_data_dir}/analytics"
     end
@@ -181,24 +170,29 @@ module DeliveryCluster
       end
     end
 
-    def analytics_server_fqdn
-      @analytics_server_fqdn ||= begin
-        analytics_server_fqdn  = get_ip(analytics_server_node)
-        Chef::Log.info("Your Analytics Server Public/Private IP is => #{analytics_server_fqdn}")
-        node['delivery-cluster']['analytics']['fqdn'] ||
-        node['delivery-cluster']['analytics']['host'] ||
-        analytics_server_fqdn
+    def chef_server_fqdn
+      @chef_server_fqdn ||= begin
+        chef_server_node = Chef::Node.load(chef_server_hostname)
+        chef_server_fqdn = component_fqdn('chef-server', chef_server_node)
       end
     end
 
+    def delivery_server_fqdn
+      @delivery_server_fqdn ||= component_fqdn('delivery', delivery_server_node)
+    end
+
+    def analytics_server_fqdn
+      @analytics_server_fqdn ||= component_fqdn('analytics', analytics_server_node)
+    end
+
     def supermarket_server_fqdn
-      @supermarket_server_fqdn ||= begin
-        supermarket_server_fqdn  = get_ip(supermarket_server_node)
-        Chef::Log.info("Your Supermarket Server Public/Private IP is => #{supermarket_server_fqdn}")
-        node['delivery-cluster']['supermarket']['fqdn'] ||
-        node['delivery-cluster']['supermarket']['host'] ||
-        supermarket_server_fqdn
-      end
+      @supermarket_server_fqdn ||= component_fqdn('supermarket', supermarket_server_node)
+    end
+
+    def component_fqdn(componet, component_node)
+      node['delivery-cluster'][componet]['fqdn'] ||
+      node['delivery-cluster'][componet]['host'] ||
+      get_ip(component_node)
     end
 
     def get_supermarket_attribute(attr)
@@ -292,16 +286,6 @@ module DeliveryCluster
           chef_server_config[:options][:client_name],
           chef_server_config[:options][:signing_key_filename]
         ).get_rest("nodes/#{delivery_server_hostname}")
-      end
-    end
-
-    def delivery_server_fqdn
-      @delivery_server_fqdn ||= begin
-        delivery_server_fqdn  = get_ip(delivery_server_node)
-        Chef::Log.info("Your Delivery Server Public/Private IP is => #{delivery_server_fqdn}")
-        node['delivery-cluster']['delivery']['fqdn'] ||
-        node['delivery-cluster']['delivery']['host'] ||
-        delivery_server_fqdn
       end
     end
 
