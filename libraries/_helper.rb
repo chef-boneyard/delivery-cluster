@@ -70,43 +70,31 @@ module DeliveryCluster
     end
 
     def splunk_server_hostname
-      unless node['delivery-cluster']['splunk']['hostname']
-        node.set['delivery-cluster']['splunk']['hostname'] = "splunk-server-#{delivery_cluster_id}"
-      end
-
-      node['delivery-cluster']['splunk']['hostname']
+      component_hostname('splunk')
     end
 
     def chef_server_hostname
-      unless node['delivery-cluster']['chef-server']['hostname']
-        node.set['delivery-cluster']['chef-server']['hostname'] = "chef-server-#{delivery_cluster_id}"
-      end
-
-      node['delivery-cluster']['chef-server']['hostname']
+      component_hostname('chef-server', "chef-server-#{delivery_cluster_id}")
     end
 
     def delivery_server_hostname
-      unless node['delivery-cluster']['delivery']['hostname']
-        node.set['delivery-cluster']['delivery']['hostname'] = "delivery-server-#{delivery_cluster_id}"
-      end
-
-      node['delivery-cluster']['delivery']['hostname']
+      component_hostname('delivery')
     end
 
     def analytics_server_hostname
-      unless node['delivery-cluster']['analytics']['hostname']
-        node.set['delivery-cluster']['analytics']['hostname'] = "analytics-server-#{delivery_cluster_id}"
-      end
-
-      node['delivery-cluster']['analytics']['hostname']
+      component_hostname('analytics')
     end
 
     def supermarket_server_hostname
-      unless node['delivery-cluster']['supermarket']['hostname']
-        node.set['delivery-cluster']['supermarket']['hostname'] = "supermarket-server-#{delivery_cluster_id}"
-      end
+      component_hostname('supermarket')
+    end
 
-      node['delivery-cluster']['supermarket']['hostname']
+    def component_hostname(component, prefix = nil)
+      unless node['delivery-cluster'][component]['hostname']
+        component_prefix = prefix ? prefix : "#{component}-server"
+        node.set['delivery-cluster'][component]['hostname'] = "#{component_prefix}-#{delivery_cluster_id}"
+      end
+      node['delivery-cluster'][component]['hostname']
     end
 
     def delivery_builder_hostname(index)
@@ -189,9 +177,9 @@ module DeliveryCluster
       @supermarket_server_fqdn ||= component_fqdn('supermarket', supermarket_server_node)
     end
 
-    def component_fqdn(componet, component_node)
-      node['delivery-cluster'][componet]['fqdn'] ||
-      node['delivery-cluster'][componet]['host'] ||
+    def component_fqdn(component, component_node)
+      node['delivery-cluster'][component]['fqdn'] ||
+      node['delivery-cluster'][component]['host'] ||
       get_ip(component_node)
     end
 
