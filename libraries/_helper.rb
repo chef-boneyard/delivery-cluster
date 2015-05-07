@@ -94,6 +94,7 @@ module DeliveryCluster
         component_prefix = prefix ? prefix : "#{component}-server"
         node.set['delivery-cluster'][component]['hostname'] = "#{component_prefix}-#{delivery_cluster_id}"
       end
+
       node['delivery-cluster'][component]['hostname']
     end
 
@@ -138,24 +139,12 @@ module DeliveryCluster
       "#{cluster_data_dir}/splunk"
     end
 
-    def analytics_server_node
-      @analytics_server_node ||= begin
-        Chef::REST.new(
-          chef_server_config[:chef_server_url],
-          chef_server_config[:options][:client_name],
-          chef_server_config[:options][:signing_key_filename]
-        ).get_rest("nodes/#{analytics_server_hostname}")
-      end
-    end
-
-    def supermarket_server_node
-      @supermarket_server_node ||= begin
-        Chef::REST.new(
-          chef_server_config[:chef_server_url],
-          chef_server_config[:options][:client_name],
-          chef_server_config[:options][:signing_key_filename]
-        ).get_rest("nodes/#{supermarket_server_hostname}")
-      end
+    def component_node(component)
+      Chef::REST.new(
+        chef_server_config[:chef_server_url],
+        chef_server_config[:options][:client_name],
+        chef_server_config[:options][:signing_key_filename]
+      ).get_rest("nodes/#{component_hostname(component)}")
     end
 
     def chef_server_fqdn
@@ -166,18 +155,19 @@ module DeliveryCluster
     end
 
     def delivery_server_fqdn
-      @delivery_server_fqdn ||= component_fqdn('delivery', delivery_server_node)
+      @delivery_server_fqdn ||= component_fqdn('delivery')
     end
 
     def analytics_server_fqdn
-      @analytics_server_fqdn ||= component_fqdn('analytics', analytics_server_node)
+      @analytics_server_fqdn ||= component_fqdn('analytics')
     end
 
     def supermarket_server_fqdn
-      @supermarket_server_fqdn ||= component_fqdn('supermarket', supermarket_server_node)
+      @supermarket_server_fqdn ||= component_fqdn('supermarket')
     end
 
-    def component_fqdn(component, component_node)
+    def component_fqdn(component, component_node = nil)
+      component_node = component_node ? component_node : component_node(component)
       node['delivery-cluster'][component]['fqdn'] ||
       node['delivery-cluster'][component]['host'] ||
       get_ip(component_node)
@@ -265,16 +255,6 @@ module DeliveryCluster
           signing_key_filename: "#{cluster_data_dir}/delivery.pem"
         }
       }
-    end
-
-    def delivery_server_node
-      @delivery_server_node ||= begin
-        Chef::REST.new(
-          chef_server_config[:chef_server_url],
-          chef_server_config[:options][:client_name],
-          chef_server_config[:options][:signing_key_filename]
-        ).get_rest("nodes/#{delivery_server_hostname}")
-      end
     end
 
     def delivery_server_attributes
