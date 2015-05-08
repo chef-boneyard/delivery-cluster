@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: delivery-cluster
-# Recipe:: destroy_keys
+# Recipe:: destroy_cluster_data
 #
 # Author:: Salim Afiune (<afiune@chef.io>)
 #
@@ -20,15 +20,14 @@
 # limitations under the License.
 #
 
-%W(
-  builder_key
-  builder_key.pub
-  encrypted_data_bag_secret
-  validator.pem
-  delivery.pem
-  #{node['delivery-cluster']['delivery']['enterprise']}.creds
-).each do |file|
-  file File.join(cluster_data_dir, file) do
-    action :delete
-  end
+# Delete Link "delivery-cluster-data"
+link File.join(current_dir, '.chef', 'delivery-cluster-data') do
+  action :delete
+  only_if "test -L #{File.join(current_dir, '.chef', 'delivery-cluster-data')}"
+end
+
+# Delete "cluster_data_dir" directory
+directory cluster_data_dir do
+  recursive true
+  action :delete
 end
