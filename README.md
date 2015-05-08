@@ -34,13 +34,15 @@ Delivery Cluster Helper
 
 Setup Tasks
 The following tasks should be used to set up your cluster
-rake setup:analytics      # Activate Analytics Server
-rake setup:chef_server    # Setup a Chef Server
-rake setup:cluster        # Setup the Chef Delivery Cluster that includes: [ Chef Server | Delivery Server | Build Nodes ]
-rake setup:delivery       # Create a Delivery Server & Build Nodes
-rake setup:prerequisites  # Install all the prerequisites on you system
-rake setup:splunk         # Create a Splunk Server with Analytics Integration
-rake setup:supermarket    # Create a Supermarket Server
+rake setup:analytics             # Activate Analytics Server
+rake setup:chef_server           # Setup a Chef Server
+rake setup:cluster               # Setup the Chef Delivery Cluster that includes: [ Chef Server | Delivery Server | Build Nodes ]
+rake setup:delivery              # Create a Delivery Server & Build Nodes
+rake setup:delivery_build_nodes  # Create Delivery Build Nodes
+rake setup:delivery_server       # Create a Delivery Server only
+rake setup:prerequisites         # Install all the prerequisites on you system
+rake setup:splunk                # Create a Splunk Server with Analytics Integration
+rake setup:supermarket           # Create a Supermarket Server
 
 Maintenance Tasks
 The following tasks should be used to maintain your cluster
@@ -228,6 +230,7 @@ Specific Attributes per Machine
 | `flavor`        | AWS Flavor of the Chef Server.   |
 | `fqdn`          | The Chef Server FQDN to substitute the IP Address. |
 | `existing`      | Set this to `true` if you want to use an existing chef-server. |
+| `recipes`       | Additional recipes to run on your Chef Server. |
 
 ### Delivery Server Settings
 
@@ -242,6 +245,7 @@ Specific Attributes per Machine
 | `flavor`       | Flavor of the Chef Server. |
 | `license_file` | Absolute path to the `delivery.license` file on your provisioner node. To acquire this file, please speak with your CHEF account representative. |
 | `{rhel or debian}`   | Optional Hash of delivery attrs: `{ "artifact": "http://my.delivery.pkg", "checksum": "123456789ABCDEF"}` |
+| `recipes`      | Additional recipes to run on your Delivery Server. |
 
 ### Delivery Build Nodes Settings
 

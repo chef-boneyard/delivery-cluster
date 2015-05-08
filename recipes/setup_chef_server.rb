@@ -43,10 +43,11 @@ end
 # converge and complete the install.
 machine chef_server_hostname do
   if node['delivery-cluster']['chef-server']['existing']
-    recipe 'chef-server-12::delivery_setup'
+    'chef-server-12::delivery_setup'
   else
-    recipe 'chef-server-12'
+    'chef-server-12'
   end
+  node['delivery-cluster']['chef-server']['recipes'].each { |r| recipe r }
   attributes lazy { chef_server_attributes }
   converge true
   action :converge
