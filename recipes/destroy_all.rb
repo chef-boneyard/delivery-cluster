@@ -40,5 +40,5 @@ include_recipe 'delivery-cluster::destroy_delivery'
 # Then: We will destroy the chef-server that its being manage locally
 include_recipe 'delivery-cluster::destroy_chef_server'
 
-# Finally: All the keys & creds used on the currect delivery-cluster
-include_recipe 'delivery-cluster::destroy_keys'
+# Finally: All the delivery-cluster data
+include_recipe 'delivery-cluster::destroy_cluster_data'
