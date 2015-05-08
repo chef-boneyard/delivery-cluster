@@ -34,13 +34,15 @@ Delivery Cluster Helper
 
 Setup Tasks
 The following tasks should be used to set up your cluster
-rake setup:analytics      # Activate Analytics Server
-rake setup:chef_server    # Setup a Chef Server
-rake setup:cluster        # Setup the Chef Delivery Cluster that includes: [ Chef Server | Delivery Server | Build Nodes ]
-rake setup:delivery       # Create a Delivery Server & Build Nodes
-rake setup:prerequisites  # Install all the prerequisites on you system
-rake setup:splunk         # Create a Splunk Server with Analytics Integration
-rake setup:supermarket    # Create a Supermarket Server
+rake setup:analytics             # Activate Analytics Server
+rake setup:chef_server           # Setup a Chef Server
+rake setup:cluster               # Setup the Chef Delivery Cluster that includes: [ Chef Server | Delivery Server | Build Nodes ]
+rake setup:delivery              # Create a Delivery Server & Build Nodes
+rake setup:delivery_build_nodes  # Create Delivery Build Nodes
+rake setup:delivery_server       # Create a Delivery Server only
+rake setup:prerequisites         # Install all the prerequisites on you system
+rake setup:splunk                # Create a Splunk Server with Analytics Integration
+rake setup:supermarket           # Create a Supermarket Server
 
 Maintenance Tasks
 The following tasks should be used to maintain your cluster

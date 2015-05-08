@@ -69,6 +69,18 @@ namespace :setup do
     chef_zero 'setup_delivery'
   end
 
+  desc 'Create a Delivery Server only'
+  task :delivery_server do
+    msg 'Create Delivery Server'
+    chef_zero 'setup_delivery_server'
+  end
+
+  desc 'Create Delivery Build Nodes'
+  task :delivery_build_nodes do
+    msg 'Create Delivery Build Nodes'
+    chef_zero 'setup_delivery_builders'
+  end
+
   desc 'Activate Analytics Server'
   task analytics: [:chef_server] do
     msg 'Setup Chef Analytics so we can see what is going on in our cluster'
