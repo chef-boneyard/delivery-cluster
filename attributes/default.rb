@@ -74,7 +74,7 @@ default['delivery-cluster']['delivery']['fqdn']            = nil
 default['delivery-cluster']['delivery']['chef_server']     = nil
 default['delivery-cluster']['delivery']['flavor']          = 't2.medium'
 default['delivery-cluster']['delivery']['enterprise']      = 'my_enterprise'
-default['delivery-cluster']['delivery']['recipes']         = ['delivery-cluster::delivery']
+default['delivery-cluster']['delivery']['recipes']         = []
 
 # => pass-through
 # This attribute will allow the Artifact pass-through the delivery server.
@@ -128,8 +128,7 @@ default['delivery-cluster']['chef-server']['fqdn']         = nil
 default['delivery-cluster']['chef-server']['organization'] = 'my_enterprise'
 default['delivery-cluster']['chef-server']['flavor']       = 't2.medium'
 default['delivery-cluster']['chef-server']['existing']     = false
-default['delivery-cluster']['chef-server']['recipes_existing'] = ['chef-server-12::delivery_setup']
-default['delivery-cluster']['chef-server']['recipes_new']      = ['chef-server-12']
+default['delivery-cluster']['chef-server']['recipes']      = []
 
 # => Analytics Server (Not Required)
 #

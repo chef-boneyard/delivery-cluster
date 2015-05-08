@@ -230,6 +230,7 @@ Specific Attributes per Machine
 | `flavor`        | AWS Flavor of the Chef Server.   |
 | `fqdn`          | The Chef Server FQDN to substitute the IP Address. |
 | `existing`      | Set this to `true` if you want to use an existing chef-server. |
+| `recipes`       | Additional recipes to run on your Chef Server. |
 
 ### Delivery Server Settings
 
@@ -244,6 +245,7 @@ Specific Attributes per Machine
 | `flavor`       | Flavor of the Chef Server. |
 | `license_file` | Absolute path to the `delivery.license` file on your provisioner node. To acquire this file, please speak with your CHEF account representative. |
 | `{rhel or debian}`   | Optional Hash of delivery attrs: `{ "artifact": "http://my.delivery.pkg", "checksum": "123456789ABCDEF"}` |
+| `recipes`      | Additional recipes to run on your Delivery Server. |
 
 ### Delivery Build Nodes Settings
 
