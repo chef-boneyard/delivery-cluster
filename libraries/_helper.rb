@@ -311,8 +311,8 @@ module DeliveryCluster
       @delivery_artifact ||= begin
         artifact = get_delivery_artifact(
                       node['delivery-cluster']['delivery']['version'],
-                      delivery_server_node['platform'],
-                      delivery_server_node['platform_version'],
+                      component_node('delivery')['platform'],
+                      component_node('delivery')['platform_version'],
                       node['delivery-cluster']['delivery']['pass-through'] ? nil : cluster_data_dir
                     )
 
