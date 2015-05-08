@@ -101,7 +101,7 @@ end
 # converge and complete the install.
 machine delivery_server_hostname do
   chef_server lazy { chef_server_config }
-  run_list node['delivery-cluster']['delivery']['run_list']
+  node['delivery-cluster']['delivery']['recipes'].each { |r| recipe r }
   files(
     '/etc/delivery/delivery.pem' => "#{cluster_data_dir}/delivery.pem",
     '/etc/delivery/builder_key' => "#{cluster_data_dir}/builder_key",
