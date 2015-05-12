@@ -40,6 +40,7 @@ rake setup:cluster               # Setup the Chef Delivery Cluster that includes
 rake setup:delivery              # Create a Delivery Server & Build Nodes
 rake setup:delivery_build_nodes  # Create Delivery Build Nodes
 rake setup:delivery_server       # Create a Delivery Server only
+rake setup:generate_env[name]    # Generate an Environment
 rake setup:prerequisites         # Install all the prerequisites on you system
 rake setup:splunk                # Create a Splunk Server with Analytics Integration
 rake setup:supermarket           # Create a Supermarket Server
@@ -66,6 +67,92 @@ rake info:list_core_services  # List all your core services
 
 To switch your environment run:
   # export CHEF_ENV=my_new_environment
+```
+
+Easy Setup
+------------
+
+The easiest way to setup a Delivery Cluster is to follow these four steps:
+
+#### 1) Download your Delivery license key
+Delivery requires a valid license to activate successfully. **If you do
+not have a license key, you can request one from your CHEF account
+representative.**
+
+You will need to have the `delivery.license` file present on your provisioner
+node or local workstation.
+
+#### 2) Provisioning infrastructure [SSH/Kitchen]
+
+You can provision your infrastructure on your prefered provider. We will use
+[KichenCI](http://kitchen.ci/) for the easy setup so you can get familiarize.
+
+Depending on the resources you have on your workstation we recommend you to
+create the minimum number of instances (3):
+
+```
+$ export KITCHEN_YAML=.kitchen.ssh.yml
+$ kitchen create chef-server
+$ kitchen create delivery-server
+$ kitchen create build-node1
+```
+
+#### 3) Create an environment
+
+Use the `rake` task `generate_env[name]` (substitute `name` with your environment name)
+to generate an environment file.
+
+**Use the defaults by pressing <enter> on all of the questions.**
+
+```
+$ rake setup:generate_env[name]
+```
+
+Do not forget to `export` your new environment.
+
+#### 4) Provision your Delivery Cluster
+
+```
+$ rake setup:cluster
+```
+
+#### Access to Delivery Cluster
+
+At this time you should have your Delivery Cluster up & running.
+
+Now it is time to get access. You can use the `admin` credentials shown by:
+
+```
+rake info:delivery_creds
+```
+
+Additional features [OPTIONAL]
+------------
+
+#### Provision an Analytics Server
+
+Once you have completed the `cluster` provisioning, you could setup an Analytics Server by running:
+
+```
+$ rake setup:analytics
+```
+
+That will provision and activate Analytics on your entire cluster.
+
+#### Provision a Splunk Server
+
+Would you like to try our Splunk Server Integration with Analytics? If yes, provision the server by running:
+
+```
+$ rake setup:splunk
+```
+
+#### Provision a Supermarket Server
+
+If you have cookbook dependencies to resolve, try our Supermarket Server by running:
+
+```
+$ rake setup:supermarket
 ```
 
 Available Provisioning Methods
@@ -287,210 +374,12 @@ Delivery Server packages are available for the following platforms:
 
 So please don't use another AMI type.
 
-PROVISION
-=========
-
-#### Install your gem and cookbook dependencies
-
-```
-$ rake setup:prerequisites
-```
-
-#### Download your Delivery license key
-Delivery requires a valid license to activate successfully. **If you do
-not have a license key, you can request one from your CHEF account
-representative.**
-
-You will need to have the `delivery.license` file present on your provisioner
-node. Specify the path to this file on your provisioner node in the
-`node['delivery-cluster']['delivery']['license_file']` attribute.
-
-
-#### Create an environment
-
-This example includes every single functionality, please modify it as your needs require.
-```
-$ vi environments/test.json
-{
-"name": "test",
-  "description": "",
-  "json_class": "Chef::Environment",
-  "chef_type": "environment",
-  "override_attributes": {
-    "delivery-cluster": {
-      "id": "MY_UNIQ_ID",
-      "driver": "aws",
-      "aws": {
-        "key_name": "MY_PEM_KEY",
-        "ssh_username": "ubuntu",
-        "image_id": "ami-3d50120d",
-        "subnet_id": "subnet-19ac017c",
-        "security_group_ids": "sg-cbacf8ae",
-        "bootstrap_proxy": "MY_PROXY_URL",
-        "use_private_ip_for_ssh": true
-      },
-      "ssh": {
-        "ssh_username": "ubuntu",
-        "key_file": "~/.ssh/id_rsa.pem"
-      },
-      "chef-server": {
-        "flavor": "c3.xlarge",
-        "ip": "33.33.33.10",
-        "organization": "test"
-      },
-      "delivery": {
-        "flavor": "c3.xlarge",
-        "ip": "33.33.33.11",
-        "enterprise": "test",
-        "version": "latest",
-        "license_file": "/home/user/delivery.license"
-      },
-      "analytics": {
-        "flavor": "c3.xlarge",
-        "ip": "33.33.33.12"
-      },
-      "splunk": {
-        "flavor": "c3.xlarge",
-        "password": "demo",
-        "ip": "33.33.33.13"
-      },
-      "supermarket": {
-        "flavor": "c3.xlarge",
-        "ip": "33.33.33.17"
-      },
-      "builders": {
-        "flavor": "c3.large",
-        "count": 3,
-        "1": { "ip": "33.33.33.14" },
-        "2": { "ip": "33.33.33.15" },
-        "3": { "ip": "33.33.33.16" }
-      }
-    }
-  }
-}
-```
-
-#### Provision your Delivery Cluster
-
-```
-$ rake setup:cluster
-```
-
-#### [OPTIONAL] Provision an Analytics Server
-
-Once you have completed the `cluster` provisioning, you could setup an Analytics Server by running:
-
-```
-$ rake setup:analytics
-```
-
-That will provision and activate Analytics on your entire cluster.
-
-#### [OPTIONAL] Provision a Splunk Server
-
-Would you like to try our Splunk Server Integration with Analytics? If yes, provision the server by running:
-
-```
-$ rake setup:splunk
-```
-
-#### [OPTIONAL] Provision a Supermarket Server
-
-If you have cookbook dependencies to resolve, try our Supermarket Server by running:
-
-```
-$ rake setup:supermarket
-```
-
 UPGRADE
 ========
 
 ```
 $ rake maintenance:upgrade
 ```
-
-SSH/Kitchen Local Provisioning
-================
-Included in this cookbook is a `.kitchen.ssh.yml` file that can build test nodes with test-kitchen for ssh provisioning.
-
-`KITCHEN_YAML=.kitchen.ssh.yml kitchen list`
-
-Use the vagrant `insecure_private_key` in your environment file for ssh.
-
-```
-      "ssh": {
-        "ssh_username": "vagrant",
-        "key_file": "~/.vagrant.d/insecure_private_key"
-      }
-```
-
-Try using this `kitchen.json` environment:
-
-```
-$ vi environments/kitchen.json
-{
-  "name": "kitchen",
-  "description": "Kitchen Test over SSH",
-  "json_class": "Chef::Environment",
-  "chef_type": "environment",
-  "override_attributes": {
-    "delivery-cluster": {
-      "id": "kitchen",
-      "driver": "ssh",
-      "ssh": {
-        "ssh_username": "vagrant",
-        "key_file": "/Users/salimafiune/.vagrant.d/insecure_private_key"
-      },
-      "chef-server": {
-        "fqdn":"33.33.33.10",
-        "ip":"33.33.33.10",
-        "organization": "kitchen"
-      },
-      "delivery": {
-        "fqdn": "33.33.33.11",
-        "ip": "33.33.33.11",
-        "enterprise": "kitchen",
-        "version": "latest",
-        "license_file": "/home/user/delivery.license"
-      },
-      "builders": {
-        "1": { "ip": "33.33.33.12" },
-        "2": { "ip": "33.33.33.13" },
-        "3": { "ip": "33.33.33.14" },
-        "count": 3
-      },
-      "analytics": {
-        "fqdn": "33.33.33.15",
-        "ip": "33.33.33.15"
-      },
-      "splunk": {
-        "fqdn": "33.33.33.16",
-        "ip": "33.33.33.16",
-        "username": "admin",
-        "password": "salim"
-      },
-      "supermarket": {
-        "fqdn": "33.33.33.17",
-        "ip": "33.33.33.17"
-      }
-    }
-  }
-}
-```
-
-Create your instances:
-
-```
-KITCHEN_YAML=.kitchen.ssh.yml kitchen create
-```
-
-Setup your cluster:
-
-```
-$ rake setup:cluster
-```
-
-Watch out for your local machine resources! :smile:
 
 LICENSE AND AUTHORS
 ===================
