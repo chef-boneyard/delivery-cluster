@@ -31,7 +31,7 @@ end
 
 # Provision our builders in parallel
 machine_batch "#{node['delivery-cluster']['builders']['count']}-build-nodes" do
-  1.upto(node['delivery-cluster']['builders']['count']) do |i|
+  1.upto(node['delivery-cluster']['builders']['count'].to_i) do |i|
     machine delivery_builder_hostname(i) do
       chef_server lazy { chef_server_config }
       role 'delivery_builders'
