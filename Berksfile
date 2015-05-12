@@ -12,11 +12,6 @@ cookbook 'chef-server-ingredient',
 cookbook 'packagecloud',
   git: 'https://github.com/afiune/packagecloud-cookbook.git'
 
-cookbook 'delivery_build',
-  git: 'https://github.com/chef/delivery.git',
-  rel: 'cookbooks/delivery_build',
-  branch: 'master'
-
 cookbook 'chef-splunk',
   git: 'https://github.com/chef-cookbooks/chef-splunk.git'
 
