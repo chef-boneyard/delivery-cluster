@@ -14,3 +14,8 @@ depends 'push-jobs'
 depends 'chef-splunk'
 depends 'packagecloud'
 depends 'supermarket-omnibus-cookbook'
+
+# provisioning-node
+%w(apt build-essential git chef-dk).each do |cb|
+  depends cb
+end
