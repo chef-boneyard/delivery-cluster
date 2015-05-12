@@ -40,7 +40,7 @@ rake setup:cluster               # Setup the Chef Delivery Cluster that includes
 rake setup:delivery              # Create a Delivery Server & Build Nodes
 rake setup:delivery_build_nodes  # Create Delivery Build Nodes
 rake setup:delivery_server       # Create a Delivery Server only
-rake setup:generate_env[name]    # Generate an Environment
+rake setup:generate_env          # Generate an Environment
 rake setup:prerequisites         # Install all the prerequisites on you system
 rake setup:splunk                # Create a Splunk Server with Analytics Integration
 rake setup:supermarket           # Create a Supermarket Server
@@ -85,7 +85,7 @@ node or local workstation.
 #### 2) Provisioning infrastructure [SSH/Kitchen]
 
 You can provision your infrastructure on your prefered provider. We will use
-[KichenCI](http://kitchen.ci/) for the easy setup so you can get familiarize.
+[KichenCI](http://kitchen.ci/) for the easy setup so you can get familiar.
 
 Depending on the resources you have on your workstation we recommend you to
 create the minimum number of instances (3):
@@ -99,13 +99,12 @@ $ kitchen create build-node1
 
 #### 3) Create an environment
 
-Use the `rake` task `generate_env[name]` (substitute `name` with your environment name)
-to generate an environment file.
+Use the `rake` task `generate_env` to generate an environment file.
 
 **Use the defaults by pressing <enter> on all of the questions.**
 
 ```
-$ rake setup:generate_env[name]
+$ rake setup:generate_env
 ```
 
 Do not forget to `export` your new environment.

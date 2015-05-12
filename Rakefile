@@ -121,26 +121,20 @@ Rake::TaskManager.record_task_metadata = true
 
 namespace :setup do
   desc 'Generate an Environment'
-  task :generate_env, [:name] do |t, args|
-    # Environment Name
-    environment = args[:name]
+  task :generate_env do
+    msg "Gathering Cluster Information"
+    puts "Provide the following information to generate your environment."
 
-    unless environment
-      puts "ERROR: Specify an Environment Name".red
-      puts 'rake setup:generate_env[ENV_NAME]'.yellow
-      exit 1
-    end
+    options = Hash.new
+    puts "\nGlobal Attributes".pink
+    # Environment Name
+    environment = ask_for('Environment Name', 'test')
 
     if File.exist? "environments/#{environment}.json"
       puts "ERROR: Environment environments/#{environment}.json already exist".red
       exit 1
     end
 
-    msg "Gathering Cluster Information"
-    puts "Provide the following information to generate your environment."
-
-    options = Hash.new
-    puts "\nGlobal Attributes".pink
     options['cluster_id']   = ask_for('Cluster ID', environment)
     options['driver_name']  = ask_for('Driver Name', 'ssh')
 
@@ -186,11 +180,14 @@ namespace :setup do
     options['delivery']['version']      = ask_for('Package Version', 'latest')
     options['delivery']['enterprise']   = ask_for('Enterprise Name', environment)
     options['delivery']['artifactory']  = ask_for('Use chef artifactory?', 'no')
-    begin
-      puts "License File Not Found".red if options['delivery']['license_file']
-      options['delivery']['license_file'] = ask_for('License File',
-        File.expand_path('delivery.license'))
-    end until File.exist?(options['delivery']['license_file'])
+    options['delivery']['license_file'] = ask_for('License File',
+      File.expand_path('~/delivery.license'))
+    unless File.exist?(options['delivery']['license_file'])
+      puts "License File Not Found".red
+      puts "Please confirm the location of the license file.".yellow
+      exit 1
+    end
+
     case options['driver_name']
     when 'aws'
       options['delivery']['flavor'] = ask_for('Flavor', 'c3.xlarge')
@@ -258,7 +255,7 @@ namespace :setup do
     unless File.exist?(ENV['CHEF_ENV_FILE'])
       puts 'You need to configure an Environment under \'environments/\'. Check the README.md'.red
       puts 'You can use the \'generate_env\' task to auto-generate one:'
-      puts "  # rake setup:generate_env[#{'my_new_environment'.yellow}]"
+      puts "  # rake setup:generate_env"
       puts "\nOr if you just have a different chef environment name run:"
       puts "  # export CHEF_ENV=#{'my_new_environment'.yellow}"
     end
