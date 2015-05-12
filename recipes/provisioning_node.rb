@@ -1,5 +1,9 @@
 # configure provision node
 
+packagecloud_repo 'chef/current' do
+    type value_for_platform_family(debian: 'deb', rhel: 'rpm')
+end
+
 case node['platform_family']
 when 'debian'
   include_recipe 'apt'
@@ -9,10 +13,8 @@ end
   include_recipe ir
 end
 
-chef_dk 'my_chef_dk' do
-    version 'latest'
-    global_shell_init true
-    action :install
+package 'chefdk' do
+  action :upgrade
 end
 
 chef_gem 'knife-push'
@@ -35,24 +37,8 @@ directory '/home/vagrant/delivery-cluster/environments' do
   action :create
 end
 
-# install delivery-cli
-case node['platform_family']
-when 'debian'
-  execute 'installing-delivery-cli' do
-    command <<-EOF
-      curl https://packagecloud.io/install/repositories/chef/current/script.deb | sudo bash
-      sudo apt-get install delivery-cli
-    EOF
-    not_if('which delivery')
-  end
-when 'rhel'
-  execute 'installing-delivery-cli' do
-    command <<-EOF
-      curl -o delivery-cli.rpm https://s3.amazonaws.com/delivery-packages/cli/delivery-cli-20150408004719-1.x86_64.rpm
-      sudo yum install delivery-cli.rpm -y
-    EOF
-    not_if('which delivery')
-  end
+package 'delivery-cli' do
+  action :upgrade
 end
 
 # setup ssh keys
