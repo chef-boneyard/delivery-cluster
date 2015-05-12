@@ -82,6 +82,9 @@ representative.**
 You will need to have the `delivery.license` file present on your provisioner
 node or local workstation.
 
+If using the provided provisioning-node, the license file should be at 
+'/home/vagrant/delivery.license'.
+
 #### 2) Provisioning infrastructure [SSH/Kitchen]
 
 You can provision your infrastructure on your prefered provider. We will use
@@ -92,10 +95,11 @@ create the minimum number of instances (3):
 
 ```
 $ export KITCHEN_YAML=.kitchen.ssh.yml
-$ kitchen create chef-server
-$ kitchen create delivery-server
-$ kitchen create build-node1
+$ kitchen converge provisioning
+$ kitchen create .*server
+$ kitchen create .*build
 ```
+### On the provisioning node
 
 #### 3) Create an environment
 

@@ -11,6 +11,13 @@ platforms:
   - name: centos-6.6
 
 suites:
+- name: provisioning
+  driver:
+    network:
+      - ['private_network', {ip: '33.33.33.9'}]
+  run_list:
+    - recipe[delivery-cluster::provisioning_node]
+  attributes:
 <% count = 9; %W{ chef delivery analytics supermarket }.each do |name| %>
 - name: <%= name %>-server
   run_list:
@@ -37,3 +44,4 @@ suites:
       cpus: 2
   attributes:
 <% end %>
+
