@@ -17,3 +17,6 @@ cookbook 'chef-splunk',
 
 cookbook 'supermarket-omnibus-cookbook',
   git: 'https://github.com/irvingpop/supermarket-omnibus-cookbook.git'
+
+cookbook 'chef-provisioning-node',
+  git: 'https://github.com/stephenlauck/chef-provisioning-node'
