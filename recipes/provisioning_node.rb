@@ -6,7 +6,6 @@ include_recipe 'chef-provisioning-node::setup_ssh_keys'
 # clone delivery-cluster cookbook to provisiong node
 git "/home/vagrant/delivery-cluster" do
   repository "https://github.com/opscode-cookbooks/delivery-cluster.git"
-  revision 'master'
   user 'vagrant'
   group 'vagrant'
   action :sync
