@@ -22,8 +22,8 @@
 
 # Configure chef server hostname in /etc/hosts if it isn't there
 hostsfile_entry node['ipaddress'] do
-  hostname node.name
-  not_if "grep #{node.name} /etc/hosts"
+  hostname node.hostname
+  not_if "grep #{node.hostname} /etc/hosts"
 end
 
 directory "/etc/opscode" do
