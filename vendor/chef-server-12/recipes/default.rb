@@ -20,6 +20,12 @@
 # limitations under the License.
 #
 
+# Configure chef server hostname in /etc/hosts if it isn't there
+hostsfile_entry node['ipaddress'] do
+  hostname node.name
+  not_if "grep #{node.name} /etc/hosts"
+end
+
 directory "/etc/opscode" do
   recursive true
 end
