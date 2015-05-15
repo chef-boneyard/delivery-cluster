@@ -52,7 +52,7 @@ if node['delivery-cluster']['delivery']['artifact']
   end
 else
   # Lets Install from packagecloud
-  packagecloud_repo 'chef/current' do
+  packagecloud_repo "chef/#{node['delivery-cluster']['delivery']['packagecloud-channel']}" do
     type value_for_platform_family(debian: 'deb', rhel: 'rpm')
   end
 
