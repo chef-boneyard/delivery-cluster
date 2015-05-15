@@ -105,6 +105,9 @@ default['delivery-cluster']['delivery']['ldap']        = {}
 # 1) If you want to deploy the latest Delivery Build set the version to
 #    'latest' and we will pull it down from `packagecloud`
 # => default['delivery-cluster']['delivery']['version'] = 'latest'
+#    Note that will pull from stable packages; if you want to pull from
+#    bleeding edge, untested packages (not recommended!), please use
+# => default['delivery-cluster']['delivery']['packagecloud-channel'] = 'current'
 #
 # 2) If you want to deploy a specific version you can also specify it
 #    To see the available versions go to:
@@ -114,10 +117,11 @@ default['delivery-cluster']['delivery']['ldap']        = {}
 # 3) You can also specify the artifact
 #
 # => default['delivery-cluster']['delivery']['version']   = '0.3.7'
-# => default['delivery-cluster']['delivery']['artifact']  = 'http://my.delivery-cli.pkg'
+# => default['delivery-cluster']['delivery']['artifact']  = 'http://my.delivery.pkg'
 # => default['delivery-cluster']['delivery']['checksum']  = '123456789ABCDEF'
 #
 default['delivery-cluster']['delivery']['version'] = 'latest'
+default['delivery-cluster']['delivery']['packagecloud-channel'] = 'stable'
 
 # Use Chef Artifactory (Requires Chef VPN)
 default['delivery-cluster']['delivery']['artifactory'] = false
