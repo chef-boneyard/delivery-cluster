@@ -3,7 +3,7 @@ DEPENDENCIES
     path: vendor/chef-server-12
   chef-server-ingredient
     git: https://github.com/opscode-cookbooks/chef-server-ingredient.git
-    revision: 5a066b51e8a82bd4451eb77a4038d54e959b0261
+    revision: 8672cec53c958626f51106e75f597e23f1e3489f
     branch: master
   chef-splunk
     git: https://github.com/chef-cookbooks/chef-splunk.git
@@ -11,57 +11,50 @@ DEPENDENCIES
   delivery-cluster
     path: .
     metadata: true
-  delivery_build
-    git: https://github.com/chef/delivery.git
-    revision: 14ff858ae4d71d71f99c7d338402746bdda34fb9
-    branch: master
-    rel: cookbooks/delivery_build
+  hostsfile
   packagecloud
     git: https://github.com/afiune/packagecloud-cookbook.git
     revision: 5988de62407d66dc654e5273db31bbae8029173f
   supermarket-omnibus-cookbook
     git: https://github.com/irvingpop/supermarket-omnibus-cookbook.git
-    revision: 2462b51587c60714eefb7d19e7fe42f7a697344d
+    revision: 72a6f33e4972c5733343d8080619a8a3a1c3ff44
 
 GRAPH
-  build-essential (2.1.3)
-  chef-server-12 (0.1.5)
+  build-essential (2.2.3)
+  chef-server-12 (0.1.7)
     chef-server-ingredient (>= 0.0.0)
-  chef-server-ingredient (0.3.0)
+    hostsfile (>= 0.0.0)
+  chef-server-ingredient (0.3.2)
     packagecloud (>= 0.0.0)
   chef-splunk (1.3.1)
     chef-vault (>= 1.0.4)
-  chef-vault (1.2.5)
+  chef-vault (1.3.0)
   chef_handler (1.1.6)
-  delivery-cluster (0.2.14)
+  delivery-cluster (0.2.19)
     chef-server-12 (>= 0.0.0)
     chef-server-ingredient (>= 0.0.0)
     chef-splunk (>= 0.0.0)
-    delivery_build (>= 0.0.0)
+    git (>= 0.0.0)
     packagecloud (>= 0.0.0)
     push-jobs (>= 0.0.0)
     supermarket-omnibus-cookbook (>= 0.0.0)
-  delivery_build (0.1.11)
-    git (>= 0.0.0)
-    packagecloud (>= 0.0.0)
   dmg (2.2.2)
   git (4.2.2)
     build-essential (>= 0.0.0)
     dmg (>= 0.0.0)
     windows (>= 0.0.0)
     yum-epel (>= 0.0.0)
+  hostsfile (2.4.5)
   packagecloud (0.0.17)
   push-jobs (2.2.0)
     runit (>= 0.0.0)
     windows (>= 0.0.0)
-  runit (1.5.18)
-    build-essential (>= 0.0.0)
-    yum (~> 3.0)
-    yum-epel (>= 0.0.0)
-  supermarket-omnibus-cookbook (0.2.0)
+  runit (1.6.0)
+    packagecloud (>= 0.0.0)
+  supermarket-omnibus-cookbook (0.3.0)
     chef-server-ingredient (>= 0.0.0)
   windows (1.36.6)
     chef_handler (>= 0.0.0)
-  yum (3.5.3)
+  yum (3.6.0)
   yum-epel (0.6.0)
     yum (~> 3.0)
