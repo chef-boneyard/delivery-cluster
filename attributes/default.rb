@@ -130,6 +130,13 @@ default['delivery-cluster']['chef-server']['flavor']       = 't2.medium'
 default['delivery-cluster']['chef-server']['existing']     = false
 default['delivery-cluster']['chef-server']['recipes']      = []
 
+# Disable the opscode-reporting module by default
+# Context: There is a bug at present where reporting may fail to install
+# due to a port conflict with the chef-zero process that's configuring it.
+# Moving out of an explicit disable in _helper.rb and into an atribute
+# Reference: libraries/_helper.rb, line 241
+default['delivery-cluster']['chef-server']['enable-reporting'] = false
+
 # => Analytics Server (Not Required)
 #
 # In order to provision an Analytics Server you have to first provision the entire
