@@ -93,6 +93,8 @@ module DeliveryCluster
         return [] unless @node['delivery-cluster'][component]
         options = []
         options << { bootstrap_options: { instance_type: @node['delivery-cluster'][component]['flavor'] } } if @node['delivery-cluster'][component]['flavor']
+        options << { bootstrap_options: { instance_type: @node['delivery-cluster'][component]['security_group_ids'] } } if @node['delivery-cluster'][component]['security_group_ids']
+        options << { bootstrap_options: { instance_type: @node['delivery-cluster'][component]['image_id'] } } if @node['delivery-cluster'][component]['image_id']
         # Specify more specific machine_options to add
       end
 
