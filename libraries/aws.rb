@@ -96,6 +96,7 @@ module DeliveryCluster
         options << { bootstrap_options: { security_group_ids: @node['delivery-cluster'][component]['security_group_ids'] } } if @node['delivery-cluster'][component]['security_group_ids']
         options << { image_id: @node['delivery-cluster'][component]['image_id'] } if @node['delivery-cluster'][component]['image_id']
         # Specify more specific machine_options to add
+        options
       end
 
       # Return the Provisioning Driver Name.
