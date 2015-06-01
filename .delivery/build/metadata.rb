@@ -6,3 +6,4 @@ description      'Installs/Configures build'
 long_description 'Installs/Configures build'
 version          '0.1.0'
 
+depends 'delivery-truck'
