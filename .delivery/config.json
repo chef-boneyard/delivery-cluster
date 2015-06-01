@@ -7,9 +7,9 @@
   "skip_phases": [
     "security",
     "quality",
-    "provision",
     "deploy",
     "smoke",
-    "functional"
+    "functional",
+    "publish"
   ]
 }
