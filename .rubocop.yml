@@ -5,7 +5,16 @@ AllCops:
 
 Metrics/MethodLength:
   CountComments: false  # count full line comments?
-  Max: 20
+  Max: 50
 
 Metrics/LineLength:
   Max: 200
+
+Metrics/PerceivedComplexity:
+  Max: 15
+
+Style/CyclomaticComplexity:
+  Max: 15
+
+Metrics/AbcSize:
+  Max: 100

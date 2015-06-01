@@ -36,31 +36,31 @@ class DeliveryEnvironment
   end
 
   def self.template
-    "<%= JSON.pretty_generate(@data) %>"
+    '<%= JSON.pretty_generate(@data) %>'
   end
 
   def json
     {
-      "name" => @name,
-      "description" => "Delivery Cluster Environment",
-      "json_class" => "Chef::Environment",
-      "chef_type" => "environment",
-      "override_attributes" => {
-        "delivery-cluster" => {
-          "id" => @cluster_id,
-          "driver" => @driver_name,
+      'name' => @name,
+      'description' => 'Delivery Cluster Environment',
+      'json_class' => 'Chef::Environment',
+      'chef_type' => 'environment',
+      'override_attributes' => {
+        'delivery-cluster' => {
+          'id' => @cluster_id,
+          'driver' => @driver_name,
           @driver_name => @driver,
-          "chef-server" => @chef_server,
-          "delivery" => @delivery,
-          "analytics" => (@analytics if @analytics && ! @analytics.empty?),
-          "supermarket" => (@supermarket if @supermarket && ! @supermarket.empty?),
-          "builders" => @builders
-        }.delete_if{ |k,v| v.nil? }
+          'chef-server' => @chef_server,
+          'delivery' => @delivery,
+          'analytics' => (@analytics if @analytics && ! @analytics.empty?),
+          'supermarket' => (@supermarket if @supermarket && ! @supermarket.empty?),
+          'builders' => @builders
+        }.delete_if { |_k, v| v.nil? }
       }
     }
   end
 
-  def get_binding
+  def binding
     binding
   end
 end
@@ -73,11 +73,11 @@ def chef_zero(recipe)
 end
 
 def render_environment(environment, options)
-  FileUtils::mkdir_p 'environments'
+  ::FileUtils.mkdir_p 'environments'
 
   env_file = File.open("environments/#{environment}.json", 'w+')
-    env_file << ERB.new(DeliveryEnvironment.template).
-      result(DeliveryEnvironment.new(environment, options).get_binding)
+  env_file << ERB.new(DeliveryEnvironment.template)
+    .result(DeliveryEnvironment.new(environment, options).binding)
   env_file.close
 
   puts File.read("environments/#{environment}.json")
@@ -103,7 +103,7 @@ def ask_for(thing, default = nil)
     case default
     when 'no', 'yes'
       break if stdin.empty? || stdin.eql?('no') || stdin.eql?('yes')
-      print "Answer (yes/no) "
+      print 'Answer (yes/no) '
     when nil
       break unless stdin.empty?
     else
@@ -122,11 +122,11 @@ Rake::TaskManager.record_task_metadata = true
 namespace :setup do
   desc 'Generate an Environment'
   task :generate_env do
-    msg "Gathering Cluster Information"
-    puts "Provide the following information to generate your environment."
+    msg 'Gathering Cluster Information'
+    puts 'Provide the following information to generate your environment.'
 
     options = Hash.new
-    puts "\nGlobal Attributes".pink
+    puts '\nGlobal Attributes'.pink
     # Environment Name
     environment = ask_for('Environment Name', 'test')
 
@@ -144,11 +144,12 @@ namespace :setup do
     when 'ssh'
       options['driver']['ssh_username'] = ask_for('SSH Username', 'vagrant')
       # TODO: Ask for 'password' when we are ready to encrypt it
-      begin
-        puts "Key File Not Found".red if options['driver']['key_file']
+      loop do
+        puts 'Key File Not Found'.red if options['driver']['key_file']
         options['driver']['key_file']   = ask_for('Key File',
-          File.expand_path('~/.vagrant.d/insecure_private_key'))
-      end until File.exist?(options['driver']['key_file'])
+                                                  File.expand_path('~/.vagrant.d/insecure_private_key'))
+        break if File.exist?(options['driver']['key_file'])
+      end
     when 'aws'
       options['driver']['key_name']           = ask_for('Key Name: ')
       options['driver']['ssh_username']       = ask_for('SSH Username', 'ubuntu')
@@ -181,10 +182,10 @@ namespace :setup do
     options['delivery']['enterprise']   = ask_for('Enterprise Name', environment)
     options['delivery']['artifactory']  = ask_for('Use chef artifactory?', 'no')
     options['delivery']['license_file'] = ask_for('License File',
-      File.expand_path('~/delivery.license'))
+                                                  File.expand_path('~/delivery.license'))
     unless File.exist?(options['delivery']['license_file'])
-      puts "License File Not Found".red
-      puts "Please confirm the location of the license file.".yellow
+      puts 'License File Not Found'.red
+      puts 'Please confirm the location of the license file.'.yellow
       exit 1
     end
 
@@ -195,7 +196,7 @@ namespace :setup do
       options['delivery']['host'] = ask_for('Host', '33.33.33.11')
     end
 
-    puts "\nAnalytics Server".pink
+    puts '\nAnalytics Server'.pink
     if ask_for('Enable Analytics?', 'no')
       options['analytics'] = Hash.new
       case options['driver_name']
@@ -225,8 +226,8 @@ namespace :setup do
       options['builders']['flavor'] = ask_for('Flavor', 'c3.large')
     when 'ssh'
       1.upto(options['builders']['count'].to_i) do |i|
-        h = ask_for("Host for Build Node #{i}", "33.33.33.1#{i+3}")
-        options['builders'][i] = { "host" => h }
+        h = ask_for("Host for Build Node #{i}", "33.33.33.1#{i + 3}")
+        options['builders'][i] = { 'host' => h }
       end
     end
     if ask_for('Specify a delivery-cli artifact?', 'no')
@@ -239,7 +240,7 @@ namespace :setup do
 
     render_environment(environment, options)
 
-    puts "\nExport your new environment by executing:".yellow
+    puts '\nExport your new environment by executing:'.yellow
     puts "  # export CHEF_ENV=#{environment.green}\n"
   end
 
@@ -255,8 +256,8 @@ namespace :setup do
     unless File.exist?(ENV['CHEF_ENV_FILE'])
       puts 'You need to configure an Environment under \'environments/\'. Check the README.md'.red
       puts 'You can use the \'generate_env\' task to auto-generate one:'
-      puts "  # rake setup:generate_env"
-      puts "\nOr if you just have a different chef environment name run:"
+      puts '  # rake setup:generate_env'
+      puts '\nOr if you just have a different chef environment name run:'
       puts "  # export CHEF_ENV=#{'my_new_environment'.yellow}"
     end
   end

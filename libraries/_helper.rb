@@ -150,7 +150,7 @@ module DeliveryCluster
     def chef_server_fqdn
       @chef_server_fqdn ||= begin
         chef_server_node = Chef::Node.load(chef_server_hostname)
-        chef_server_fqdn = component_fqdn('chef-server', chef_server_node)
+        component_fqdn('chef-server', chef_server_node)
       end
     end
 
@@ -169,8 +169,8 @@ module DeliveryCluster
     def component_fqdn(component, component_node = nil)
       component_node = component_node ? component_node : component_node(component)
       node['delivery-cluster'][component]['fqdn'] ||
-      node['delivery-cluster'][component]['host'] ||
-      get_ip(component_node)
+        node['delivery-cluster'][component]['host'] ||
+        get_ip(component_node)
     end
 
     def get_supermarket_attribute(attr)
