@@ -32,7 +32,7 @@ module DeliveryCluster
       klass = const_get(str_const)
       klass.new(node)
     rescue => e
-      fail "Could not load the '#{driver}' driver: #{e.message}"
+      raise "Could not load the '#{driver}' driver: #{e.message}"
     end
   end
 end
