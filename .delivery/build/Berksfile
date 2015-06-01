@@ -1,0 +1,5 @@
+source "https://supermarket.chef.io"
+
+metadata
+
+cookbook 'delivery-truck', git: 'https://github.com/opscode-cookbooks/delivery-truck.git'

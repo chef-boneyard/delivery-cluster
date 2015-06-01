@@ -5,7 +5,6 @@
     "path": ".delivery/build"
   },
   "skip_phases": [
-    "unit",
     "lint",
     "syntax",
     "security",
