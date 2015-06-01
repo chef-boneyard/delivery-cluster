@@ -1,0 +1,36 @@
+{
+  "name": "aws",
+  "description": "Delivery Cluster Environment",
+  "json_class": "Chef::Environment",
+  "chef_type": "environment",
+  "override_attributes": {
+    "delivery-cluster": {
+      "id": "aws",
+      "driver": "aws",
+      "aws": {
+        "key_name": "<%= @key_name %>",
+        "ssh_username": "ubuntu",
+        "image_id": "ami-3d50120d",
+        "subnet_id": "subnet-19ac017c",
+        "security_group_ids": "sg-cbacf8ae",
+        "use_private_ip_for_ssh": true
+      },
+      "chef-server": {
+        "organization": "aws",
+        "existing": false,
+        "flavor": "c3.xlarge"
+      },
+      "delivery": {
+        "version": "latest",
+        "enterprise": "aws",
+        "artifactory": false,
+        "license_file": "/Users/stephen/delivery.license",
+        "flavor": "c3.xlarge"
+      },
+      "builders": {
+        "count": "1",
+        "flavor": "c3.large"
+      }
+    }
+  }
+}

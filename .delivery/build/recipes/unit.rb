@@ -1,3 +1,4 @@
 include_recipe 'delivery-truck::unit'
 
-log("working repo dir: #{node['delivery']['workspace']['repo']}")
+# testing provisiong pre-merge by using unit.rb in build cookbook
+include_recipe 'build::provision'
