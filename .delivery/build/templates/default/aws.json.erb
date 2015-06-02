@@ -8,7 +8,7 @@
       "id": "aws",
       "driver": "aws",
       "aws": {
-        "key_name": "<%= @key_name %>",
+        "key_name": "chef-delivery-cluster",
         "ssh_username": "ubuntu",
         "image_id": "ami-3d50120d",
         "subnet_id": "subnet-19ac017c",
@@ -24,7 +24,7 @@
         "version": "latest",
         "enterprise": "aws",
         "artifactory": false,
-        "license_file": "/Users/stephen/delivery.license",
+        "license_file": "<%= @delivery_license %>",
         "flavor": "c3.xlarge"
       },
       "builders": {
