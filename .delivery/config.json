@@ -4,7 +4,7 @@
     "name": "build",
     "path": ".delivery/build"
   },
-  "build_attributes": {
+  "delivery-truck": {
     "publish": {
         "github": "opscode-cookbooks/delivery-cluster"
     }
