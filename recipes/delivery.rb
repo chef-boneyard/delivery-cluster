@@ -58,6 +58,7 @@ else
 
   package 'delivery' do
     action :upgrade
+    notifies :run, 'execute[reconfigure delivery]'
   end
 end
 
