@@ -4,6 +4,11 @@
     "name": "build",
     "path": ".delivery/build"
   },
+  "build_attributes": {
+    "publish": {
+        "github": "opscode-cookbooks/delivery-cluster"
+    }
+  },
   "skip_phases": [
     "unit",
     "security",
@@ -11,7 +16,6 @@
     "deploy",
     "smoke",
     "functional",
-    "publish",
     "provision"
   ]
 }

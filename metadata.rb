@@ -5,7 +5,7 @@ license 'Apache 2.0'
 description 'Deployment cookbook for standing up Delivery Clusters'
 long_description 'Installs Chef Delivery, a solution for continuously ' \
                  'delivering applications and infrastructure safely at speed'
-version '0.2.20'
+version '0.2.21'
 
 depends 'chef-server-12'
 depends 'chef-server-ingredient'
