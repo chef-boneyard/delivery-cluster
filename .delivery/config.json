@@ -5,11 +5,13 @@
     "path": ".delivery/build"
   },
   "skip_phases": [
+    "unit",
     "security",
     "quality",
     "deploy",
     "smoke",
     "functional",
-    "publish"
+    "publish",
+    "provision"
   ]
 }
