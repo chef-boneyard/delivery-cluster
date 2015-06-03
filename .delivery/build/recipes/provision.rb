@@ -1,4 +1,5 @@
 
+
 delivery_secrets = get_project_secrets
 
 directory File.join(node['delivery']['workspace']['cache'], '.ssh')
@@ -49,18 +50,30 @@ s3_file "#{node['delivery']['workspace']['cache']}/delivery.license" do
 end
 
 execute "chef exec bundle install" do
-  cwd "#{node['delivery']['workspace']['repo']}"
+  cwd node['delivery']['workspace']['repo']
   action :run
 end
 
 execute "chef exec bundle exec berks vendor cookbooks" do
-  cwd "#{node['delivery']['workspace']['repo']}"
+  cwd node['delivery']['workspace']['repo']
   action :run
+end
+
+execute "restore nodes and clients from outside workspace" do
+  command <<-EOF
+    mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/clients clients
+    mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/nodes nodes
+    mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/delivery-cluster-data-aws .chef/delivery-cluster-data-aws
+    rm -rf /var/opt/delivery/workspace/delivery-cluster-aws-cache
+  EOF
+  cwd node['delivery']['workspace']['repo']
+  action :run
+  only_if do ::File.exists?('var/opt/delivery/workspace/delivery-cluster-aws-cache/nodes') end
 end
 
 # destroy everything
 execute "chef exec bundle exec chef-client -z -o delivery-cluster::destroy_all -E aws" do
-  cwd "#{node['delivery']['workspace']['repo']}"
+  cwd node['delivery']['workspace']['repo']
   environment (
     {
       'CHEF_ENV' => 'aws', 
@@ -71,13 +84,21 @@ execute "chef exec bundle exec chef-client -z -o delivery-cluster::destroy_all -
 end
 
 execute "chef exec bundle exec chef-client -z -o delivery-cluster::setup -E aws" do
-  cwd "#{node['delivery']['workspace']['repo']}"
+  cwd node['delivery']['workspace']['repo']
   environment (
     {
       'CHEF_ENV' => 'aws', 
       'AWS_CONFIG_FILE' => "#{node['delivery']['workspace']['cache']}/.aws/config"
     }
   )
+  action :run
+end
+
+execute "copy the nodes and clients dir outside of workspace" do
+  command <<-EOF
+    cp -r clients nodes .chef/delivery-cluster-data-aws /var/opt/delivery/workspace/delivery-cluster-aws-cache/
+  EOF
+  cwd node['delivery']['workspace']['repo']
   action :run
 end
 
