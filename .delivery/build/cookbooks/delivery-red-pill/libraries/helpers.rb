@@ -1,5 +1,6 @@
 module DeliveryRedPill
   module Helpers
+    include Chef::Mixin::ShellOut
     extend self
 
     def add_all_change_data_to_node(node)
@@ -10,6 +11,28 @@ module DeliveryRedPill
 
     def git_ssh
       ::File.join('/var/opt/delivery/workspace/bin', 'git_ssh')
+    end
+
+    # Return the SHA for the point in our history where we split off. For verify
+    # this will be HEAD on the pipeline branch. For later stages, because HEAD
+    # on the pipeline branch is our change, we will look for the 2nd most recent
+    # commit to the pipeline branch.
+    #
+    # @param [Chef::Node] Chef Node object
+    # @return [String]
+    def pre_change_sha(node)
+      branch1 = node['delivery']['change']['pipeline']
+
+      branch2 = node['delivery']['change']['patchset_branch']
+
+      ## If we have a merge sha we need to get the commit before the merge
+      ## otherwise merge-base == HEAD
+      if node['delivery']['change']['sha']
+        branch2 = "#{node['delivery']['change']['sha']}~1"
+      end
+
+      shell_out("git merge-base #{branch1} #{branch2}", cwd: workspace)
+               .stdout.chomp
     end
 
     def wait_for_stage_completion(node, stage, change_id)
