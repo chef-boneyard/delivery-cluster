@@ -85,6 +85,13 @@ begin
       'AWS_CONFIG_FILE' => "#{cache}/.aws/config"
     })
   end
+
+  # Print the Delivery credentials
+  ruby_block 'print-delivery-credentials' do
+    block do
+      puts File.read(File.join(path, '.chef/delivery-cluster-data-#{environment}/#{environment}.creds'))
+    end
+  end
 ensure
   execute "copy the nodes and clients dir outside of workspace" do
     command "cp -r clients nodes .chef/delivery-cluster-data-* /var/opt/delivery/workspace/delivery-cluster-aws-cache/"
