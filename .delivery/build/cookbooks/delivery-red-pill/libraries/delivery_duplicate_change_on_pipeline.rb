@@ -49,7 +49,7 @@ class Chef
       end
 
       def create_pipeline(node)
-        base = ::DeliveryTruck::Helpers.pre_change_sha(node)
+        base = ::DeliveryRedPill::Helpers.pre_change_sha(node)
         begin
           ::DeliveryRedPill::Helpers.delivery_api_create_pipeline(node, pipeline, base)
         rescue Net::HTTPServerException => hse
