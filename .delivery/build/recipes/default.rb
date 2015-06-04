@@ -6,7 +6,7 @@
 
 include_recipe 'delivery-truck::default'
 
-# copy the nodes and clients dir outside of workspace
+# Temporal cache directory to store delivery-cluster-data
 directory "/var/opt/delivery/workspace/delivery-cluster-aws-cache" do
   owner node['delivery_builder']['build_user']
   group node['delivery_builder']['build_user']

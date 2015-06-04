@@ -14,10 +14,9 @@
     "quality",
     "deploy",
     "smoke",
-    "functional",
-    "provision"
+    "functional"
   ],
   "build_nodes": {
-    "unit": ["name:builder-2.delivery.chef.co"]
+    "provision": ["name:builder-2.delivery.chef.co"]
   }
 }

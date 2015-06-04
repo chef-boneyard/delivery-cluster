@@ -1,11 +1,14 @@
-
-
 delivery_secrets = get_project_secrets
+environment      = node['delivery']['workspace']['stage']
+path             = node['delivery']['workspace']['repo']
+cache            = node['delivery']['workspace']['cache']
 
-directory File.join(node['delivery']['workspace']['cache'], '.ssh')
+ssh_private_key_path =  File.join(cache, '.ssh', "chef-delivery-cluster")
+ssh_public_key_path  =  File.join(cache, '.ssh', "chef-delivery-cluster.pub")
 
-ssh_private_key_path =  File.join(node['delivery']['workspace']['cache'], '.ssh', "chef-delivery-cluster")
-ssh_public_key_path =  File.join(node['delivery']['workspace']['cache'], '.ssh', "chef-delivery-cluster.pub")
+directory File.join(cache, '.ssh')
+directory File.join(cache, 'aws')
+directory File.join(path, 'environments')
 
 file ssh_private_key_path do
   content delivery_secrets['private_key']
@@ -21,18 +24,15 @@ file ssh_public_key_path do
   mode '0644'
 end
 
-directory "#{node['delivery']['workspace']['repo']}/environments"
-
-template "#{node['delivery']['workspace']['repo']}/environments/aws.json" do
-  source 'aws.json.erb'
+template File.join(path, "environments/#{environment}.json") do
+  source 'environment.json.erb'
   variables(
-    :delivery_license => "#{node['delivery']['workspace']['cache']}/delivery.license"
+    :delivery_license => "#{cache}/delivery.license",
+    :environment => environment
   )
 end
 
-directory "#{node['delivery']['workspace']['cache']}/.aws"
-
-template "#{node['delivery']['workspace']['cache']}/.aws/config" do
+template File.join(cache, '.aws/config') do
   source 'aws-config.erb'
   variables(
     :aws_access_key_id => delivery_secrets['access_key_id'],
@@ -41,7 +41,7 @@ template "#{node['delivery']['workspace']['cache']}/.aws/config" do
   )
 end
 
-s3_file "#{node['delivery']['workspace']['cache']}/delivery.license" do
+s3_file File.join(cache, 'delivery.license') do
   remote_path "licenses/delivery-internal.license"
   bucket "delivery-packages"
   aws_access_key_id delivery_secrets['access_key_id']
@@ -49,56 +49,45 @@ s3_file "#{node['delivery']['workspace']['cache']}/delivery.license" do
   action :create
 end
 
+# Assemble your gem dependencies
 execute "chef exec bundle install" do
-  cwd node['delivery']['workspace']['repo']
-  action :run
+  cwd path
 end
 
+# Assemble your cookbook dependencies
 execute "chef exec bundle exec berks vendor cookbooks" do
-  cwd node['delivery']['workspace']['repo']
-  action :run
+  cwd path
 end
 
 execute "restore nodes and clients from outside workspace" do
+  cwd path
   command <<-EOF
     mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/clients clients
     mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/nodes nodes
-    mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/delivery-cluster-data-aws .chef/delivery-cluster-data-aws
-    rm -rf /var/opt/delivery/workspace/delivery-cluster-aws-cache
+    mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/delivery-cluster-data-* .chef/.
   EOF
-  cwd node['delivery']['workspace']['repo']
-  action :run
   only_if do ::File.exists?('var/opt/delivery/workspace/delivery-cluster-aws-cache/nodes') end
 end
 
-# destroy everything
-execute "chef exec bundle exec chef-client -z -o delivery-cluster::destroy_all -E aws" do
-  cwd node['delivery']['workspace']['repo']
-  environment (
-    {
-      'CHEF_ENV' => 'aws', 
-      'AWS_CONFIG_FILE' => "#{node['delivery']['workspace']['cache']}/.aws/config"
-    }
-  )
-  action :run
+# Destroy the old Delivery Cluster
+execute "chef exec bundle exec chef-client -z -o delivery-cluster::destroy_all -E #{environment}" do
+  cwd path
+  environment ({
+    'AWS_CONFIG_FILE' => "#{cache}/.aws/config"
+  })
 end
 
-execute "chef exec bundle exec chef-client -z -o delivery-cluster::setup -E aws" do
-  cwd node['delivery']['workspace']['repo']
-  environment (
-    {
-      'CHEF_ENV' => 'aws', 
-      'AWS_CONFIG_FILE' => "#{node['delivery']['workspace']['cache']}/.aws/config"
-    }
-  )
-  action :run
+# Create a new Delivery Cluster
+execute "chef exec bundle exec chef-client -z -o delivery-cluster::setup -E #{environment}" do
+  cwd path
+  environment ({
+    'AWS_CONFIG_FILE' => "#{cache}/.aws/config"
+  })
 end
 
 execute "copy the nodes and clients dir outside of workspace" do
   command <<-EOF
-    cp -r clients nodes .chef/delivery-cluster-data-aws /var/opt/delivery/workspace/delivery-cluster-aws-cache/
+    cp -r clients nodes .chef/delivery-cluster-data-* /var/opt/delivery/workspace/delivery-cluster-aws-cache/
   EOF
-  cwd node['delivery']['workspace']['repo']
-  action :run
+  cwd path
 end
-
