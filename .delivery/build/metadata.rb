@@ -8,3 +8,4 @@ version          '0.1.2'
 
 depends 'delivery-truck'
 depends 's3_file'
+depends 'delivery-red-pill'
