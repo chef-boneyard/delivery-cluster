@@ -6,7 +6,7 @@
   },
   "delivery-truck": {
     "publish": {
-        "github": "opscode-cookbooks/delivery-cluster"
+      "github": "opscode-cookbooks/delivery-cluster"
     }
   },
   "skip_phases": [
@@ -14,7 +14,9 @@
     "quality",
     "deploy",
     "smoke",
-    "functional",
-    "provision"
-  ]
+    "functional"
+  ],
+  "build_nodes": {
+    "provision": ["name:builder-2.delivery.chef.co"]
+  }
 }
