@@ -77,7 +77,7 @@ class Chef
       def delivery_in_parallel(name = nil, &block)
         name ||= delivery_in_parallel_name
         recipe = self
-        declare_resource(:delivery_in_parallel_name, name, caller[0]) do
+        declare_resource(:delivery_in_parallel, name, caller[0]) do
           from_recipe recipe
           instance_eval(&block)
         end
