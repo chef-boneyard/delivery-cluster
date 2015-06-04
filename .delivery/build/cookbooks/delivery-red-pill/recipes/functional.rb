@@ -1,0 +1,25 @@
+#
+# Cookbook Name:: delivery-red-pill
+# Recipe:: functional
+#
+# Copyright (c) 2015 The Authors, All Rights Reserved.
+include_recipe 'delivery-truck::provision'
+
+if node['delivery']['change']['pipeline'] == 'master'
+  delivery_change_db node['delivery']['change']['change_id'] do
+    action :download
+  end
+
+  ## Monitor pipeline acceptance stages for completion.
+  delivery_in_parallel do
+    matrix = node['delivery-red-pill']['acceptance']['matrix']
+    for vector in matrix do
+      build_cookbook_wait_for_stage "Wait for #{node['delivery']['change']['stage']} case #{phase}" do
+        change_id lazy { node.run_state['delivery']['change']['data']['spawned_changes'][vector] }
+        stage node['delivery']['change']['stage']
+      end
+    end
+  end
+else
+  include_recipe "delivery-red-pill::_include_build_cb_recipe"
+end
