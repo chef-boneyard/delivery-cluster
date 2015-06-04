@@ -1,5 +1,5 @@
 delivery_secrets = get_project_secrets
-environment      = node['delivery']['workspace']['stage']
+environment      = node['delivery']['change']['stage']
 path             = node['delivery']['workspace']['repo']
 cache            = node['delivery']['workspace']['cache']
 
