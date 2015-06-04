@@ -59,35 +59,42 @@ execute "chef exec bundle exec berks vendor cookbooks" do
   cwd path
 end
 
-execute "restore nodes and clients from outside workspace" do
-  cwd path
-  command <<-EOF
-    mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/clients clients
-    mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/nodes nodes
-    mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/delivery-cluster-data-* .chef/.
-  EOF
-  only_if do ::File.exists?('var/opt/delivery/workspace/delivery-cluster-aws-cache/nodes') end
-end
+begin
+  execute "restore nodes and clients from outside workspace" do
+    cwd path
+    command <<-EOF
+      mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/clients clients
+      mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/nodes nodes
+      mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/delivery-cluster-data-* .chef/.
+    EOF
+    only_if do ::File.exists?('var/opt/delivery/workspace/delivery-cluster-aws-cache/nodes') end
+  end
 
-# Destroy the old Delivery Cluster
-execute "chef exec bundle exec chef-client -z -o delivery-cluster::destroy_all -E #{environment}" do
-  cwd path
-  environment ({
-    'AWS_CONFIG_FILE' => "#{cache}/.aws/config"
-  })
-end
+  # Destroy the old Delivery Cluster
+  execute "chef exec bundle exec chef-client -z -o delivery-cluster::destroy_all -E #{environment}" do
+    cwd path
+    environment ({
+      'AWS_CONFIG_FILE' => "#{cache}/.aws/config"
+    })
+  end
 
-# Create a new Delivery Cluster
-execute "chef exec bundle exec chef-client -z -o delivery-cluster::setup -E #{environment}" do
-  cwd path
-  environment ({
-    'AWS_CONFIG_FILE' => "#{cache}/.aws/config"
-  })
-end
+  # Create a new Delivery Cluster
+  execute "chef exec bundle exec chef-client -z -o delivery-cluster::setup -E #{environment}" do
+    cwd path
+    environment ({
+      'AWS_CONFIG_FILE' => "#{cache}/.aws/config"
+    })
+  end
 
-execute "copy the nodes and clients dir outside of workspace" do
-  command <<-EOF
-    cp -r clients nodes .chef/delivery-cluster-data-* /var/opt/delivery/workspace/delivery-cluster-aws-cache/
-  EOF
-  cwd path
+  # Print the Delivery credentials
+  ruby_block 'print-delivery-credentials' do
+    block do
+      puts File.read(File.join(path, '.chef/delivery-cluster-data-#{environment}/#{environment}.creds'))
+    end
+  end
+ensure
+  execute "copy the nodes and clients dir outside of workspace" do
+    command "cp -r clients nodes .chef/delivery-cluster-data-* /var/opt/delivery/workspace/delivery-cluster-aws-cache/"
+    cwd path
+  end
 end
