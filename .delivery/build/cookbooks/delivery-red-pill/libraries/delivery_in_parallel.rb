@@ -41,7 +41,7 @@ class Chef
       attribute :from_recipe
       attribute :max_simultaneous, :kind_of => [ Integer ]
 
-      self.resource_name = :d_in_parallel
+      self.resource_name = :delivery_in_parallel
 
       def initialize(name, run_context=nil)
         super
@@ -75,7 +75,7 @@ class Chef
       end
 
       def delivery_in_parallel(name = nil, &block)
-        name ||= d_in_parallel_name
+        name ||= delivery_in_parallel_name
         recipe = self
         declare_resource(:delivery_in_parallel_name, name, caller[0]) do
           from_recipe recipe
