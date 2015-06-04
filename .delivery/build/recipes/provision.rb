@@ -7,7 +7,7 @@ ssh_private_key_path =  File.join(cache, '.ssh', "chef-delivery-cluster")
 ssh_public_key_path  =  File.join(cache, '.ssh', "chef-delivery-cluster.pub")
 
 directory File.join(cache, '.ssh')
-directory File.join(cache, 'aws')
+directory File.join(cache, '.aws')
 directory File.join(path, 'environments')
 
 file ssh_private_key_path do
