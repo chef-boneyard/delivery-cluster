@@ -312,12 +312,15 @@ namespace :setup do
 end
 
 namespace :maintenance do
-  desc 'Upgrade your infrastructure'
-  task upgrade: [:clean_cache, :update] do
+  desc 'Upgrade Delivery'
+  task upgrade: [:clean_cache] do
     Rake::Task['setup:cluster'].invoke
   end
 
+  desc 'Update gem & cookbook dependencies'
   task :update do
+    msg 'Updating gems locally'
+    system 'bundle update'
     msg 'Updating cookbooks locally'
     system 'bundle exec berks update'
   end

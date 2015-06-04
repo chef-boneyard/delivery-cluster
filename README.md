@@ -48,7 +48,8 @@ rake setup:supermarket           # Create a Supermarket Server
 Maintenance Tasks
 The following tasks should be used to maintain your cluster
 rake maintenance:clean_cache  # Clean the cache
-rake maintenance:upgrade      # Upgrade your infrastructure
+rake maintenance:update       # Update gem & cookbook dependencies
+rake maintenance:upgrade      # Upgrade Delivery
 
 Destroy Tasks
 The following tasks should be used to destroy you cluster
@@ -376,9 +377,7 @@ So please don't use another AMI type.
 UPGRADE
 ========
 
-```
-$ rake maintenance:upgrade
-```
+Follow the instructions of the following document: [UPGRADE.md](UPGRADE.md)
 
 LICENSE AND AUTHORS
 ===================
