@@ -21,8 +21,8 @@ module DeliveryRedPill
     # @param [Chef::Node] Chef Node object
     # @return [String]
     def pre_change_sha(node)
+      workspace = node['delivery']['workspace']['repo']
       branch1 = node['delivery']['change']['pipeline']
-
       branch2 = node['delivery']['change']['patchset_branch']
 
       ## If we have a merge sha we need to get the commit before the merge
