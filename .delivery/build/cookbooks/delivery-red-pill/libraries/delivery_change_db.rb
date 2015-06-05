@@ -62,7 +62,7 @@ class Chef
         ::Chef_Delivery::ClientHelper.enter_client_mode_as_delivery
         node.run_state['delivery'] ||= {}
         node.run_state['delivery']['change'] ||= {}
-        node.run_state['delivery']['change']['data'] = data_bag_item('changes', change_id)
+        node.run_state['delivery']['change']['data'] ||= data_bag_item('changes', change_id)['data']
         ::Chef_Delivery::ClientHelper.leave_client_mode_as_delivery
       end
 
