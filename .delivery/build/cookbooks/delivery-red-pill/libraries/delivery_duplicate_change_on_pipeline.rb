@@ -41,11 +41,11 @@ class Chef
           end
         end
 
-        node.run_state['delivery'] = {} if !node.run_state['delivery']
-        node.run_state['delivery']['change'] = {} if !node.run_state['delivery']['change']
-        node.run_state['delivery']['change']['data'] = {} if !node.run_state['delivery']['change']['data']
-        node.run_state['delivery']['change']['data']['spawned_changes'] = {} if !node.run_state['delivery']['change']['data']['spawned_changes']
-        node.run_state['delivery']['change']['data']['spawned_changes'][pipeline] = change_id.split("%")[0] ## Clean up wierd trailing char
+        node.run_state['delivery'] ||= {}
+        node.run_state['delivery']['change'] ||= {}
+        node.run_state['delivery']['change']['data'] ||= {}
+        node.run_state['delivery']['change']['data']['spawned_changes'] ||= {}
+        node.run_state['delivery']['change']['data']['spawned_changes'][pipeline] ||= change_id.split("%")[0] ## Clean up wierd trailing char
       end
 
       def create_pipeline(node)
