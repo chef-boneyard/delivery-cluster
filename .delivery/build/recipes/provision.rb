@@ -6,6 +6,4 @@
 
 # ## By including this recipe we trigger a matrix of acceptance envs specified
 # ## in the node attribute node['delivery-red-pill']['acceptance']['matrix']
-# include_recipe "delivery-red-pill::provision"
-
-include_recipe 'build::provision_clean_aws'
+include_recipe "delivery-red-pill::provision"
