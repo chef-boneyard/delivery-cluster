@@ -14,7 +14,7 @@ if node['delivery']['change']['pipeline'] == 'master'
   delivery_in_parallel do
     matrix = node['delivery-red-pill']['acceptance']['matrix']
     for vector in matrix do
-      build_cookbook_wait_for_stage "Wait for #{node['delivery']['change']['stage']} case #{vector}" do
+      delivery_wait_for_stage "Wait for #{node['delivery']['change']['stage']} case #{vector}" do
         change_id lazy { node.run_state['delivery']['change']['data']['spawned_changes'][vector] }
         stage node['delivery']['change']['stage']
       end
