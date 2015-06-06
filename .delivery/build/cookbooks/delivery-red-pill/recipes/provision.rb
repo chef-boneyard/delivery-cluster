@@ -5,7 +5,7 @@
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 include_recipe 'delivery-truck::provision'
 
-if node['delivery']['change']['pipeline'] == 'master'
+if node['delivery']['change']['pipeline'] == 'master' && node['delivery']['change']['stage'] == 'acceptance'
   matrix = node['delivery-red-pill']['acceptance']['matrix']
 
   delivery_in_parallel do
@@ -26,6 +26,6 @@ if node['delivery']['change']['pipeline'] == 'master'
       end
     end
   end
-else
+elsif node['delivery']['change']['pipeline'] != 'master'
   include_recipe "delivery-red-pill::_include_build_cb_recipe"
 end
