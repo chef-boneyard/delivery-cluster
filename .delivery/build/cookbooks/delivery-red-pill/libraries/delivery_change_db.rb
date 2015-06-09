@@ -31,7 +31,7 @@ class Chef
 
       def create_databag
         # Create the data bag
-        DeliverySuger::ChefServer.new.with_server_config do
+        DeliverySugar::ChefServer.new.with_server_config do
           begin
             bag = Chef::DataBag.new
             bag.name('changes')
@@ -59,7 +59,7 @@ class Chef
 
       def download_databag
         ## TODO: Look at new delivery-truck syntax
-        DeliverySuger::ChefServer.new.with_server_config do
+        DeliverySugar::ChefServer.new.with_server_config do
           node.run_state['delivery'] ||= {}
           node.run_state['delivery']['change'] ||= {}
           node.run_state['delivery']['change']['data'] ||= data_bag_item('changes', change_id)['data']
