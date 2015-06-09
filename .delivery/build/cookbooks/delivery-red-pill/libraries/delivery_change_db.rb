@@ -31,39 +31,39 @@ class Chef
 
       def create_databag
         # Create the data bag
-        ::Chef_Delivery::ClientHelper.enter_client_mode_as_delivery
-        begin
-          bag = Chef::DataBag.new
-          bag.name('changes')
-          bag.create
-        rescue Net::HTTPServerException => e
-          if e.response.code == "409"
-            ::Chef::Log.info("DataBag changes already exists.")
-          else
-            raise
+        DeliverySuger::ChefServer.new.with_server_config do
+          begin
+            bag = Chef::DataBag.new
+            bag.name('changes')
+            bag.create
+          rescue Net::HTTPServerException => e
+            if e.response.code == "409"
+              ::Chef::Log.info("DataBag changes already exists.")
+            else
+              raise
+            end
           end
+
+          dbi_hash = {
+            "id"       => change_id,
+            "data" => data_hash
+          }
+
+          bag_item = Chef::DataBagItem.new
+          bag_item.data_bag('changes')
+          bag_item.raw_data = dbi_hash
+          bag_item.save
+          ::Chef::Log.info("Saved bag item #{dbi_hash} in data bag #{change_id}.")
         end
-
-        dbi_hash = {
-          "id"       => change_id,
-          "data" => data_hash
-        }
-
-        bag_item = Chef::DataBagItem.new
-        bag_item.data_bag('changes')
-        bag_item.raw_data = dbi_hash
-        bag_item.save
-        ::Chef::Log.info("Saved bag item #{dbi_hash} in data bag #{change_id}.")
-        ::Chef_Delivery::ClientHelper.leave_client_mode_as_delivery
       end
 
       def download_databag
         ## TODO: Look at new delivery-truck syntax
-        ::Chef_Delivery::ClientHelper.enter_client_mode_as_delivery
-        node.run_state['delivery'] ||= {}
-        node.run_state['delivery']['change'] ||= {}
-        node.run_state['delivery']['change']['data'] ||= data_bag_item('changes', change_id)['data']
-        ::Chef_Delivery::ClientHelper.leave_client_mode_as_delivery
+        DeliverySuger::ChefServer.new.with_server_config do
+          node.run_state['delivery'] ||= {}
+          node.run_state['delivery']['change'] ||= {}
+          node.run_state['delivery']['change']['data'] ||= data_bag_item('changes', change_id)['data']
+        end
       end
 
       def data_hash
