@@ -41,6 +41,8 @@ class Chef
       attribute :from_recipe
       attribute :max_simultaneous, :kind_of => [ Integer ]
 
+      provides :delivery_in_parallel
+
       self.resource_name = :delivery_in_parallel
 
       def initialize(name, run_context=nil)

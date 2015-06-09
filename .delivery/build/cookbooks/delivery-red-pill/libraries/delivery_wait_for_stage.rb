@@ -58,7 +58,10 @@ class Chef
       attribute :stage, :kind_of => String, :required => true
       attribute :fail_run, :kind_of => [ TrueClass, FalseClass ], :default => true
 
+      provides :delivery_wait_for_stage
+
       self.resource_name = :delivery_wait_for_stage
+
       def initialize(name, run_context=nil)
         super
         @provider = Chef::Provider::DeliveryWaitForStage
