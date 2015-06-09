@@ -1,6 +1,8 @@
 class Chef
   class Provider
     class DeliveryChangeDb < Chef::Provider::LWRPBase
+      provides :delivery_change_db
+      
       use_inline_resources
 
       action :create do
@@ -93,8 +95,6 @@ class Chef
       attribute :change_id, :kind_of => String, :name_attribute => true, :required => true
       attribute :data, :kind_of => Hash
 
-      provides :delivery_change_db
-      
       self.resource_name = :delivery_change_db
 
       def initialize(name, run_context=nil)

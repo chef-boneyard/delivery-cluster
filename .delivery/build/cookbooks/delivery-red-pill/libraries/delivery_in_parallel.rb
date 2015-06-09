@@ -5,6 +5,7 @@ require 'chef/resource/lwrp_base'
 class Chef
   class Provider
     class DeliveryInParallel < Chef::Provider::LWRPBase
+      provides :delivery_in_parallel
 
       def whyrun_supported?
         true
@@ -40,8 +41,6 @@ class Chef
       attribute :block_resources, :kind_of => [ Array ]
       attribute :from_recipe
       attribute :max_simultaneous, :kind_of => [ Integer ]
-
-      provides :delivery_in_parallel
 
       self.resource_name = :delivery_in_parallel
 

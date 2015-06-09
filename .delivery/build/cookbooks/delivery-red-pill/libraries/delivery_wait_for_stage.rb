@@ -1,6 +1,8 @@
 class Chef
   class Provider
     class DeliveryWaitForStage < Chef::Provider::LWRPBase
+      provides :delivery_wait_for_stage
+      
       use_inline_resources
 
       action :wait do
@@ -57,8 +59,6 @@ class Chef
       attribute :change_id, :kind_of => String, :name_attribute => true, :required => true
       attribute :stage, :kind_of => String, :required => true
       attribute :fail_run, :kind_of => [ TrueClass, FalseClass ], :default => true
-
-      provides :delivery_wait_for_stage
 
       self.resource_name = :delivery_wait_for_stage
 
