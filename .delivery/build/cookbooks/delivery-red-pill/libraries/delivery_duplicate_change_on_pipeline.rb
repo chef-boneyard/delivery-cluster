@@ -115,6 +115,8 @@ class Chef
       attribute :pipeline, :kind_of => [ String ], :name_attribute => true, :required => true
       attribute :auto_approve, :kind_of =>  [ TrueClass, FalseClass ]
 
+      provides :duplicate_change_on_new_pipeline
+
       self.resource_name = :duplicate_change_on_new_pipeline
 
       def initialize(name, run_context=nil)
