@@ -73,18 +73,16 @@ module DeliveryRedPill
       headers = delivery_api_auth_headers(node)
       headers["Content-Type"] = 'application/json'
       DeliverySugar::ChefServer.new.with_server_config do
-        resp = client.post(path, data, headers)
+        client.post(path, data, headers)
       end
-      resp
     end
 
     def delivery_api_get(node, path)
       client = delivery_api_client(node)
 
       DeliverySugar::ChefServer.new.with_server_config do
-        resp = client.get(path, delivery_api_auth_headers(node))
+        client.get(path, delivery_api_auth_headers(node))
       end
-      resp
     end
 
     def delivery_api_create_pipeline(node, name, base)
