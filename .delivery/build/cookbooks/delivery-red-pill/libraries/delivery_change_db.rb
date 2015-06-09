@@ -64,7 +64,7 @@ class Chef
       def download_databag
         ## TODO: Look at new delivery-truck syntax
         dbi = DeliverySugar::ChefServer.new.with_server_config do
-          data_bag_item('changes', change_id)['data']
+          data_bag_item('changes', change_id)
         end
 
         node.run_state['delivery'] ||= {}
@@ -94,6 +94,7 @@ class Chef
       attribute :data, :kind_of => Hash
 
       self.resource_name = :delivery_change_db
+
       def initialize(name, run_context=nil)
         super
         @provider = Chef::Provider::DeliveryChangeDb
