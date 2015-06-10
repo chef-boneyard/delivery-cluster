@@ -13,8 +13,7 @@
     "security",
     "quality",
     "publish",
-    "deploy",
-    "smoke"
+    "deploy"
   ],
   "build_nodes": {
     "provision": ["name:builder-2.delivery.chef.co"],
