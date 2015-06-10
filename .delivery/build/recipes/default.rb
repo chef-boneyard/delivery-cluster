@@ -4,6 +4,13 @@
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
+# Gems for our tests
+%w{watir-webdriver phantomjs}.each do |g|
+  chef_gem g do
+    compile_time true
+  end
+end
+
 include_recipe 'delivery-truck::default'
 
 # Temporal cache directory to store delivery-cluster-data
