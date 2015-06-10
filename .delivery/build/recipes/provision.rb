@@ -38,7 +38,7 @@ if node['delivery']['change']['pipeline'] != 'master'
         node.run_state['delivery']['stage']['data'] ||= {}
 
         previous_line = nil
-        list_services.stdout.each_line.chomp do |line|
+        list_services.stdout.each_line do |line|
           if previous_line =~ /^delivery-server\S+:$/
             ipaddress = line.match(/^  ipaddress:(\S+)$/)[1]
             node.run_state['delivery']['stage']['data']['servers']['delivery_server'] = ipaddress
