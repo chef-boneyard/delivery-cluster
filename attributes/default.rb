@@ -21,7 +21,7 @@
 #
 
 # Provisioning Driver
-default['delivery-cluster']['driver'] = 'aws'
+default['delivery-cluster']['driver'] = 'vagrant'
 
 # AWS Driver Attributes
 #
@@ -49,9 +49,10 @@ default['delivery_cluster']['ssh']['chef_config']             = nil
 default['delivery-cluster']['ssh']['use_private_ip_for_ssh']  = false
 
 # Vagrant Driver Attributes
-default['delivery-cluster']['vagrant']['key_file']                = nil
-default['delivery-cluster']['vagrant']['ssh_username']            = nil
-default['delivery-cluster']['vagrant']['use_private_ip_for_ssh']  = false
+default['delivery_cluster']['vagrant']['vm.box']              = 'ubuntu-14.04'
+default['delivery-cluster']['vagrant']['key_file']            = nil
+default['delivery-cluster']['vagrant']['ssh_username']        = nil
+
 
 # Azure Driver Attributes
 default['delivery-cluster']['azure']['ssh_username']            = nil

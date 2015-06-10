@@ -126,7 +126,7 @@ namespace :setup do
     puts 'Provide the following information to generate your environment.'
 
     options = Hash.new
-    puts '\nGlobal Attributes'.pink
+    puts "\nGlobal Attributes".pink
     # Environment Name
     environment = ask_for('Environment Name', 'test')
 
@@ -136,7 +136,8 @@ namespace :setup do
     end
 
     options['cluster_id']   = ask_for('Cluster ID', environment)
-    options['driver_name']  = ask_for('Driver Name', 'ssh')
+    puts "\nAvailable Drivers: [ aws | ssh | vagrant ]"
+    options['driver_name']  = ask_for('Driver Name', 'vagrant')
 
     puts "\nDriver Information [#{options['driver_name']}]".pink
     options['driver'] = Hash.new
@@ -157,6 +158,17 @@ namespace :setup do
       options['driver']['subnet_id']          = ask_for('Subnet ID', 'subnet-19ac017c')
       options['driver']['security_group_ids'] = ask_for('Security Group ID', 'sg-cbacf8ae')
       options['driver']['use_private_ip_for_ssh'] = ask_for('Use private ip for ssh?', 'yes')
+    when 'vagrant'
+      options['driver']['ssh_username']    = ask_for('SSH Username', 'vagrant')
+#      options['driver']['password']     = ask_for('SSH Password', 'vagrant')
+      options['driver']['vm_box']          = ask_for('Box Type: ', 'ubuntu-14.04')
+      options['driver']['image_url']       = ask_for('Box URL: ', 'https://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_ubuntu-14.04_chef-provisionerless.box')
+      loop do
+        puts 'Key File Not Found'.red if options['driver']['key_file']
+        options['driver']['key_file']   = ask_for('Key File',
+                                                  File.expand_path('~/.vagrant.d/insecure_private_key'))
+        break if File.exist?(options['driver']['key_file'])
+      end
     else
       puts 'ERROR: Unsupported Driver.'.red
       puts 'Available Drivers are [ ssh | aws ]'.yellow
@@ -173,7 +185,11 @@ namespace :setup do
         options['chef_server']['flavor'] = ask_for('Flavor', 'c3.xlarge')
       when 'ssh'
         options['chef_server']['host'] = ask_for('Host', '33.33.33.10')
-      end
+      when 'vagrant'
+        options['chef_server']['network'] = ask_for('Network Config', ":private_network, {:ip => '33.33.33.10'}")
+        options['chef-server']['vm_memory'] = ask_for('Memory allocation', "2048")
+        options['chef-server']['vm_cpus'] = ask_for('Cpus alotted', "2")
+       end
     end
 
     puts "\nDelivery Server".pink
@@ -194,6 +210,10 @@ namespace :setup do
       options['delivery']['flavor'] = ask_for('Flavor', 'c3.xlarge')
     when 'ssh'
       options['delivery']['host'] = ask_for('Host', '33.33.33.11')
+    when 'vagrant'
+      options['chef_server']['network'] = ask_for('Network Config', ":private_network, {:ip => '33.33.33.11'}")
+      options['chef-server']['vm_memory'] = ask_for('Memory allocation', "2048")
+      options['chef-server']['vm_cpus'] = ask_for('Cpus alotted', "2")
     end
 
     puts '\nAnalytics Server'.pink
@@ -204,6 +224,10 @@ namespace :setup do
         options['analytics']['flavor'] = ask_for('Flavor', 'c3.xlarge')
       when 'ssh'
         options['analytics']['host'] = ask_for('Host', '33.33.33.12')
+      when 'vagrant'
+        options['chef_server']['network'] = ask_for('Network Config', ":private_network, {:ip => '33.33.33.12'}")
+        options['chef-server']['vm_memory'] = ask_for('Memory allocation', "2048")
+        options['chef-server']['vm_cpus'] = ask_for('Cpus alotted', "2")
       end
     end
 
@@ -215,6 +239,8 @@ namespace :setup do
         options['supermarket']['flavor'] = ask_for('Flavor', 'c3.xlarge')
       when 'ssh'
         options['supermarket']['host'] = ask_for('Host', '33.33.33.13')
+      when 'vagrant'
+        options['chef_server']['box'] = ask_for('Box type', 'ubuntu-14.04')
       end
     end
 
@@ -229,6 +255,9 @@ namespace :setup do
         h = ask_for("Host for Build Node #{i}", "33.33.33.1#{i + 3}")
         options['builders'][i] = { 'host' => h }
       end
+    when 'vagrant'
+      h = ask_for("IP for Build Node #{i}", "33.33.33.1#{i + 3}")
+      options['builders'][i] = { 'host' => h }
     end
     if ask_for('Specify a delivery-cli artifact?', 'no')
       options['builders']['delivery-cli'] = Hash.new
