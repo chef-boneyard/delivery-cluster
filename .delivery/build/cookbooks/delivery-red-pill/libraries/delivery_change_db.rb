@@ -2,7 +2,7 @@ class Chef
   class Provider
     class DeliveryChangeDb < Chef::Provider::LWRPBase
       provides :delivery_change_db
-      
+
       use_inline_resources
 
       action :create do
@@ -23,19 +23,13 @@ class Chef
         @change_id ||= new_resource.change_id
       end
 
-      def data
-        @data ||= new_resource.data
-      end
-
-      def data_attribute
-        @data_attribute ||= new_resource.data_attribute
-      end
-
       def create_databag
+        db_name = 'delivery_changes'
+
         # Create the data bag
         begin
           bag = Chef::DataBag.new
-          bag.name('changes')
+          bag.name(db_name)
 
           DeliverySugar::ChefServer.new.with_server_config do
             bag.create
@@ -50,11 +44,12 @@ class Chef
 
         dbi_hash = {
           "id"       => change_id,
-          "data" => data_hash
+          "data" => node.run_state['delivery']['change']['data']
         }
 
+        ## TODO: Merge instead of always creating a new one?
         bag_item = Chef::DataBagItem.new
-        bag_item.data_bag('changes')
+        bag_item.data_bag(db_name)
         bag_item.raw_data = dbi_hash
 
         DeliverySugar::ChefServer.new.with_server_config do
@@ -66,20 +61,12 @@ class Chef
       def download_databag
         ## TODO: Look at new delivery-truck syntax
         dbi = DeliverySugar::ChefServer.new.with_server_config do
-          data_bag_item('changes', change_id)
+          data_bag_item(db_name, change_id)
         end
 
         node.run_state['delivery'] ||= {}
         node.run_state['delivery']['change'] ||= {}
         node.run_state['delivery']['change']['data'] ||= dbi['data']
-      end
-
-      def data_hash
-        if data
-          data
-        else
-          node.run_state['delivery']['change']['data']
-        end
       end
     end
   end
@@ -93,7 +80,6 @@ class Chef
       default_action :create
 
       attribute :change_id, :kind_of => String, :name_attribute => true, :required => true
-      attribute :data, :kind_of => Hash
 
       self.resource_name = :delivery_change_db
 
