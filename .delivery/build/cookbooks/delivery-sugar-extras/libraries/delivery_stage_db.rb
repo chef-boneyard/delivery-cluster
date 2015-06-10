@@ -116,7 +116,7 @@ class Chef
       def delivery_stage_db(name = nil, &block)
         name ||= delivery_stage_db_name
         declare_resource(:delivery_stage_db, name, caller[0]) do
-          instance_eval(&block)
+          instance_eval(&block) if block_given?
         end
       end
     end
