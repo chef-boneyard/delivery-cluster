@@ -40,14 +40,14 @@ if node['delivery']['change']['pipeline'] != 'master'
         previous_line = nil
         list_services.stdout.each_line.chomp do |line|
           if previous_line =~ /^delivery-server\S+:$/
-            ipaddress = line.match(/^  ipaddress:(\S+)$/])[1]
+            ipaddress = line.match(/^  ipaddress:(\S+)$/)[1]
             node.run_state['delivery']['stage']['data']['servers']['delivery_server'] = ipaddress
           elsif previous_line =~ /^build-node\S+:/
             ipaddress = line.match(/^  ipaddress:(\S+)$/)[1]
             node.run_state['delivery']['stage']['data']['servers']['build_nodes'] ||= []
             node.run_state['delivery']['stage']['data']['servers']['build_nodes'] << ipaddress
           elsif line =~ /^chef_server_url.*$/
-            ipaddress = line.match(/^chef_server_url\s+'(\S+)'$/)
+            ipaddress = line.match(/^chef_server_url\s+'(\S+)'$/)[1]
             node.run_state['delivery']['stage']['data']['servers']['chef_server'] = ipaddress
           end
           previous_line = line
@@ -58,5 +58,3 @@ if node['delivery']['change']['pipeline'] != 'master'
 
   delivery_stage_db
 end
-
-noide.run_state[del][stage][data] = {"services" => {"chef_server_url"}
