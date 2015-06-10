@@ -49,9 +49,16 @@ default['delivery_cluster']['ssh']['chef_config']             = nil
 default['delivery-cluster']['ssh']['use_private_ip_for_ssh']  = false
 
 # Vagrant Driver Attributes
-default['delivery_cluster']['vagrant']['vm.box']              = 'ubuntu-14.04'
 default['delivery-cluster']['vagrant']['key_file']            = nil
+default['delivery-cluster']['vagrant']['prefix']              = nil
 default['delivery-cluster']['vagrant']['ssh_username']        = nil
+default['delivery_cluster']['vagrant']['vm_box']              = nil
+default['delivery_cluster']['Vagrant']['image_url']           = nil
+default['delivery_cluster']['Vagrant']['vm_memory']           = nil
+default['delivery_cluster']['Vagrant']['vm_cpus']             = nil
+default['delivery_cluster']['vagrant']['network']             = nil
+default['delivery-cluster']['vagrant']['key_file']            = nil
+default['delivery_cluster']['vagrant']['chef_config']         = nil
 
 
 # Azure Driver Attributes
