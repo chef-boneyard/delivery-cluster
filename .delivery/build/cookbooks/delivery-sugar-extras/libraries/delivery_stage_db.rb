@@ -20,8 +20,6 @@ class Chef
       private
 
       def create_databag
-        db_name = 'delivery_stages'
-
         # Create the data bag
         begin
           bag = Chef::DataBag.new
@@ -64,10 +62,14 @@ class Chef
         node.run_state['delivery']['stage']['data'] ||= dbi['data']
       end
 
+      def db_name
+        @db_name ||= 'delivery_stages'  
+      end
+
       def dbi_id
         @dbi_id if @dbi_id
 
-        DeliverySugarExtras::Helpers.add_all_change_data_to_node(node)
+        ::DeliverySugarExtras::Helpers.add_all_change_data_to_node(node)
 
         change = node['delivery']['change']
 

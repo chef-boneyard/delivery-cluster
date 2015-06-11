@@ -48,7 +48,7 @@ if node['delivery']['change']['pipeline'] != 'master'
             node.run_state['delivery']['stage']['data']['servers']['build_nodes'] ||= []
             node.run_state['delivery']['stage']['data']['servers']['build_nodes'] << ipaddress
           elsif line =~ /^chef_server_url.*$/
-            ipaddress = line.match(/^chef_server_url\s+'(\S+)'$/)[1]
+            ipaddress = URI(line.match(/^chef_server_url\s+'(\S+)'$/)[1]).host
             node.run_state['delivery']['stage']['data']['servers']['chef_server'] = ipaddress
           end
           previous_line = line
