@@ -51,7 +51,6 @@ module DeliveryCluster
         @vm_box                 = @node['delivery-cluster'][driver]['vm_box'] if @node['delivery-cluster'][driver]['vm_box']
         @image_url              = @node['delivery-cluster'][driver]['image_url'] if @node['delivery-cluster'][driver]['image_url']
         @vm_hostname            = @node['delivery-cluster'][driver]['vm_hostname'] if @node['delivery-cluster'][driver]['vm_hostname']
-        @synced_folder          = @node['delivery-cluster'][driver]['synced_folder'] if @node['delivery-cluster'][driver]['synced_folder']
         @network                = @node['delivery-cluster'][driver]['network'] if @node['delivery-cluster'][driver]['network']
         @vm_mem                 = @node['delivery-cluster'][driver]['vm_memory'] if @node['delivery-cluster'][driver]['vm_memory']
         @vm_cpus                = @node['delivery-cluster'][driver]['vm_cpus'] if @node['delivery-cluster'][driver]['vm_cpus']
@@ -76,12 +75,13 @@ module DeliveryCluster
             'vm.box_url' => @image_url,
             'vm.hostname' => @vm_hostname,
           },
-          vagrant_config: @vagrant_config,
-          use_private_ip_for_ssh: @use_private_ip_for_ssh,
-          options: {
-            prefix: @prefix
+          vagrant_config: @vagrant_config, # memory and cpu, required
+          transport_options: {
+            options: {
+              prefix: @prefix
             }
-          }
+          },
+          use_private_ip_for_ssh: @use_private_ip_for_ssh
         }
       end
 
