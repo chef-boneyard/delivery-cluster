@@ -3,12 +3,14 @@
 # Recipe:: deploy
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
+environment = node['delivery']['change']['stage']
+
 template "Update Environment Template" do
   path File.join(path, "environments/#{environment}.json")
   source 'environment.json.erb'
   variables(
     :delivery_license => "#{cache}/delivery.license",
-    :delivery_version => "latest"
+    :delivery_version => "latest",
     :environment => environment
   )
 end

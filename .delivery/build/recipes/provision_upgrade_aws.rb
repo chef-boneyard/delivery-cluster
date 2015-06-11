@@ -6,6 +6,8 @@
 chef_gem "chef-rewind"
 require 'chef/rewind'
 
+environment = node['delivery']['change']['stage']
+
 execute "Restore Provisioning Bits" do
   cwd path
   command <<-EOF
