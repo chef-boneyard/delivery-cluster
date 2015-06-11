@@ -36,14 +36,15 @@ if node['delivery']['change']['pipeline'] != 'master'
         node.run_state['delivery'] ||= {}
         node.run_state['delivery']['stage'] ||= {}
         node.run_state['delivery']['stage']['data'] ||= {}
+        node.run_state['delivery']['stage']['data']['servers'] ||= {}
 
         previous_line = nil
         list_services.stdout.each_line do |line|
           if previous_line =~ /^delivery-server\S+:$/
-            ipaddress = line.match(/^  ipaddress:(\S+)$/)[1]
+            ipaddress = line.match(/^  ipaddress: (\S+)$/)[1]
             node.run_state['delivery']['stage']['data']['servers']['delivery_server'] = ipaddress
           elsif previous_line =~ /^build-node\S+:/
-            ipaddress = line.match(/^  ipaddress:(\S+)$/)[1]
+            ipaddress = line.match(/^  ipaddress: (\S+)$/)[1]
             node.run_state['delivery']['stage']['data']['servers']['build_nodes'] ||= []
             node.run_state['delivery']['stage']['data']['servers']['build_nodes'] << ipaddress
           elsif line =~ /^chef_server_url.*$/
