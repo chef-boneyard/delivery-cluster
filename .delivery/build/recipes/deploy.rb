@@ -6,11 +6,11 @@
 chef_gem "chef-rewind"
 require 'chef/rewind'
 
-if node['delivery']['change']['pipeline'] == 'upgrade_aws'
-   && node['delivery']['change']['stage'] == 'acceptance'
-   cluster_name     = "#{node['delivery']['change']['stage']}_#{node['delivery']['change']['pipeline']}"
-   path             = node['delivery']['workspace']['repo']
-   cache            = node['delivery']['workspace']['cache']
+if node['delivery']['change']['pipeline'] == 'upgrade_aws' &&
+  node['delivery']['change']['stage'] == 'acceptance'
+  cluster_name     = "#{node['delivery']['change']['stage']}_#{node['delivery']['change']['pipeline']}"
+  path             = node['delivery']['workspace']['repo']
+  cache            = node['delivery']['workspace']['cache']
 
   execute "Restore Provisioning Bits" do
     cwd path
