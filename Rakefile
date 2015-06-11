@@ -159,10 +159,11 @@ namespace :setup do
       options['driver']['security_group_ids'] = ask_for('Security Group ID', 'sg-cbacf8ae')
       options['driver']['use_private_ip_for_ssh'] = ask_for('Use private ip for ssh?', 'yes')
     when 'vagrant'
-      options['driver']['ssh_username']    = ask_for('SSH Username', 'vagrant')
-#      options['driver']['password']     = ask_for('SSH Password', 'vagrant')
-      options['driver']['vm_box']          = ask_for('Box Type: ', 'opscode-ubuntu-14.04')
-      options['driver']['image_url']       = ask_for('Box URL: ', 'https://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_ubuntu-14.04_chef-provisionerless.box')
+      options['driver']['ssh_username']           = ask_for('SSH Username', 'vagrant')
+#      options['driver']['password']               = ask_for('SSH Password', 'vagrant')
+      options['driver']['vm_box']                 = ask_for('Box Type: ', 'opscode-ubuntu-14.04')
+      options['driver']['image_url']              = ask_for('Box URL: ', 'https://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_ubuntu-14.04_chef-provisionerless.box')
+      options['driver']['use_private_ip_for_ssh'] = ask_for('Use private ip for ssh?', 'yes')
       loop do
         puts 'Key File Not Found'.red if options['driver']['key_file']
         options['driver']['key_file']   = ask_for('Key File',
@@ -367,6 +368,7 @@ namespace :maintenance do
   desc 'Clean the cache'
   task :clean_cache do
     FileUtils.rm_rf('.chef/local-mode-cache')
+    FileUtils.rm_rf('.chef/vms')
     FileUtils.rm_rf('cookbooks/')
   end
 end

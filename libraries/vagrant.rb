@@ -71,6 +71,7 @@ module DeliveryCluster
       attr_accessor :auth_methods
       attr_accessor :bootstrap_proxy
       attr_accessor :chef_config
+      attr_accessor :use_private_ip_for_ssh
 
       # Create a new Provisioning Driver Abstraction
       #
@@ -79,21 +80,22 @@ module DeliveryCluster
         require 'chef/provisioning/vagrant_driver'
 
         fail "Attributes not implemented (node['delivery-cluster'][#{driver}])" unless node['delivery-cluster'][driver]
-        @node            = node
-        @prefix          = 'sudo '
-        @vm_box          = @node['delivery-cluster'][driver]['vm_box'] if @node['delivery-cluster'][driver]['vm_box']
-        @image_url       = @node['delivery-cluster'][driver]['image_url'] if @node['delivery-cluster'][driver]['image_url']
-        @vm_hostname     = @node['delivery-cluster'][driver]['vm_hostname'] if @node['delivery-cluster'][driver]['vm_hostname']
-        @synced_folder   = @node['delivery-cluster'][driver]['synced_folder'] if @node['delivery-cluster'][driver]['synced_folder']
-        @network         = @node['delivery-cluster'][driver]['network'] if @node['delivery-cluster'][driver]['network']
-        @vm_mem          = @node['delivery-cluster'][driver]['vm_memory'] if @node['delivery-cluster'][driver]['vm_memory']
-        @vm_cpus         = @node['delivery-cluster'][driver]['vm_cpus'] if @node['delivery-cluster'][driver]['vm_cpus']
-        @auth_methods    = @node['delivery-cluster'][driver]['auth_methods'] if @node['delivery-cluster'][driver]['auth_methods']
-        @port            = @node['delivery-cluster'][driver]['ssh_port'] if @node['delivery-cluster'][driver]['ssh_port']
-        @prefix          = @node['delivery-cluster'][driver]['prefix'] if @node['delivery-cluster'][driver]['prefix']
-        @key_file        = @node['delivery-cluster'][driver]['key_file'] if @node['delivery-cluster'][driver]['key_file']
-        @bootstrap_proxy = @node['delivery-cluster'][driver]['bootstrap_proxy'] if @node['delivery-cluster'][driver]['bootstrap_proxy']
-        @chef_config     = @node['delivery-cluster'][driver]['chef_config'] if @node['delivery-cluster'][driver]['chef_config']
+        @node                   = node
+        @prefix                 = 'sudo '
+        @vm_box                 = @node['delivery-cluster'][driver]['vm_box'] if @node['delivery-cluster'][driver]['vm_box']
+        @image_url              = @node['delivery-cluster'][driver]['image_url'] if @node['delivery-cluster'][driver]['image_url']
+        @vm_hostname            = @node['delivery-cluster'][driver]['vm_hostname'] if @node['delivery-cluster'][driver]['vm_hostname']
+        @synced_folder          = @node['delivery-cluster'][driver]['synced_folder'] if @node['delivery-cluster'][driver]['synced_folder']
+        @network                = @node['delivery-cluster'][driver]['network'] if @node['delivery-cluster'][driver]['network']
+        @vm_mem                 = @node['delivery-cluster'][driver]['vm_memory'] if @node['delivery-cluster'][driver]['vm_memory']
+        @vm_cpus                = @node['delivery-cluster'][driver]['vm_cpus'] if @node['delivery-cluster'][driver]['vm_cpus']
+        @auth_methods           = @node['delivery-cluster'][driver]['auth_methods'] if @node['delivery-cluster'][driver]['auth_methods']
+        @port                   = @node['delivery-cluster'][driver]['ssh_port'] if @node['delivery-cluster'][driver]['ssh_port']
+        @prefix                 = @node['delivery-cluster'][driver]['prefix'] if @node['delivery-cluster'][driver]['prefix']
+        @key_file               = @node['delivery-cluster'][driver]['key_file'] if @node['delivery-cluster'][driver]['key_file']
+        @bootstrap_proxy        = @node['delivery-cluster'][driver]['bootstrap_proxy'] if @node['delivery-cluster'][driver]['bootstrap_proxy']
+        @chef_config            = @node['delivery-cluster'][driver]['chef_config'] if @node['delivery-cluster'][driver]['chef_config']
+        @use_private_ip_for_ssh = @node['delivery-cluster'][driver]['use_private_ip_for_ssh'] if @node['delivery-cluster'][driver]['use_private_ip_for_ssh']
         fail 'You should not specify both key_file and password.' if @password && @key_file
       end
 
@@ -110,12 +112,13 @@ module DeliveryCluster
             'vm.box' => @vm_box,
             'vm.hostname' => @vm_hostname,
           },
-          vagrant_config: @vagrant_config,
+          vagrant_config: @vagrant_config, # memory and cpu, required
           transport_options: {
             ssh_options: {
               port: @port,
               auth_methods: @auth_methods
             },
+            use_private_ip_for_ssh: @use_private_ip_for_ssh,
             options: {
               prefix: @prefix
             }
@@ -161,7 +164,11 @@ module DeliveryCluster
         # @param node [Chef::Node]
         # @return [String] an ipaddress
         def ipaddress(node)
-          node['ipaddress']
+          if @use_private_ip_for_ssh
+            node[:network][:interfaces][:eth1][:addresses].detect{|k,v| v[:family] == "inet" }.first
+          else
+            node['ipaddress']
+          end
         end
       end
     end
