@@ -26,7 +26,7 @@ end
 
 include_recipe "build::provision_clean_aws"
 
-unwind "execute[Create Environment Template]"
+unwind "execute[Destroy the old Delivery Cluster]"
 
 rewind "template[Create Environment Template]" do
   variables(
