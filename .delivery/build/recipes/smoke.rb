@@ -33,10 +33,12 @@ if node['delivery']['change']['pipeline'] != 'master'
         end
       end
 
-      servers = ::Chef.node.run_state['delivery']['stage']['data']['servers']
+      delivery_details = ::Chef.node.run_state['delivery']['stage']['data']['cluster_details']['delivery']
+      chef_details = ::Chef.node.run_state['delivery']['stage']['data']['cluster_details']['chef_server']
+      #build_node_details = ::Chef.node.run_state['delivery']['stage']['data']['cluster_details']['build_nodes']
 
       describe 'Chef Server' do
-        before { @browser.goto "http:://#{servers['chef_server']}" }
+        before { @browser.goto chef_details['url'] }
 
         it "login page is available" do
           expect(@browser.url).not_to eql("about:blank")
@@ -52,7 +54,7 @@ if node['delivery']['change']['pipeline'] != 'master'
         end
 
         it "login page is available" do
-          @browser.goto servers['delivery_server']
+          @browser.goto delivery_details['url']
           expect(@browser.url).not_to eql("about:blank")
         end
       end

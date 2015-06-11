@@ -6,6 +6,10 @@
 chef_gem "chef-rewind"
 require 'chef/rewind'
 
+cluster_name = "#{node['delivery']['change']['stage']}_#{node['delivery']['change']['pipeline']}"
+cache = node['delivery']['workspace']['cache']
+path = node['delivery']['workspace']['repo']
+
 execute "Restore Provisioning Bits" do
   cwd path
   command <<-EOF
@@ -28,6 +32,6 @@ rewind "template[Create Environment Template]" do
   variables(
     :delivery_license => "#{cache}/delivery.license",
     :delivery_version => "0.3.73",
-    :environment => environment
+    :cluster_name => cluster_name
   )
 end

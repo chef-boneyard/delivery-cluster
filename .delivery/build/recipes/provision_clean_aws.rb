@@ -4,7 +4,7 @@
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 delivery_secrets = get_project_secrets
-environment      = node['delivery']['change']['stage']
+cluster_name     = "#{node['delivery']['change']['stage']}_#{node['delivery']['change']['pipeline']}"
 path             = node['delivery']['workspace']['repo']
 cache            = node['delivery']['workspace']['cache']
 
@@ -30,12 +30,12 @@ file ssh_public_key_path do
 end
 
 template "Create Environment Template" do
-  path File.join(path, "environments/#{environment}.json")
+  path File.join(path, "environments/#{cluster_name}.json")
   source 'environment.json.erb'
   variables(
     :delivery_license => "#{cache}/delivery.license",
     :delivery_version => "latest",
-    :environment => environment
+    :cluster_name => cluster_name
   )
 end
 
@@ -80,7 +80,7 @@ execute "Destroy the old Delivery Cluster" do
     mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/nodes nodes
     mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/trusted_certs .chef/.
     mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/delivery-cluster-data-* .chef/.
-    chef exec bundle exec chef-client -z -o delivery-cluster::destroy_all -E #{environment} > #{cache}/delivery-cluster-destroy-all.log
+    chef exec bundle exec chef-client -z -o delivery-cluster::destroy_all -E #{cluster_name} > #{cache}/delivery-cluster-destroy-all.log
   EOF
   environment ({
     'AWS_CONFIG_FILE' => "#{cache}/.aws/config"
@@ -97,7 +97,7 @@ end
 execute "Create a new Delivery Cluster" do
   cwd path
   command <<-EOF
-    chef exec bundle exec chef-client -z -o delivery-cluster::setup -E #{environment} -l auto > #{cache}/delivery-cluster-setup.log
+    chef exec bundle exec chef-client -z -o delivery-cluster::setup -E #{cluster_name} -l auto > #{cache}/delivery-cluster-setup.log
     cp -r clients nodes .chef/delivery-cluster-data-* .chef/trusted_certs /var/opt/delivery/workspace/delivery-cluster-aws-cache/
   EOF
   environment ({
@@ -108,7 +108,7 @@ end
 # Print the Delivery Credentials
 ruby_block 'print-delivery-credentials' do
   block do
-    puts File.read(File.join(path, ".chef/delivery-cluster-data-#{environment}/#{environment}.creds"))
+    puts File.read(File.join(path, ".chef/delivery-cluster-data-#{cluster_name}/#{cluster_name}.creds"))
   end
 end
 
@@ -123,20 +123,22 @@ ruby_block "Get Services" do
       node.run_state['delivery'] ||= {}
       node.run_state['delivery']['stage'] ||= {}
       node.run_state['delivery']['stage']['data'] ||= {}
-      node.run_state['delivery']['stage']['data']['servers'] ||= {}
+      node.run_state['delivery']['stage']['data']['cluster_details'] ||= {}
 
       previous_line = nil
       list_services.stdout.each_line do |line|
         if previous_line =~ /^delivery-server\S+:$/
           ipaddress = line.match(/^  ipaddress: (\S+)$/)[1]
-          node.run_state['delivery']['stage']['data']['servers']['delivery_server'] = ipaddress
+          node.run_state['delivery']['stage']['data']['cluster_details']['delivery'] ||= {}
+          node.run_state['delivery']['stage']['data']['cluster_details']['delivery']['url'] = ipaddress
         elsif previous_line =~ /^build-node\S+:/
           ipaddress = line.match(/^  ipaddress: (\S+)$/)[1]
-          node.run_state['delivery']['stage']['data']['servers']['build_nodes'] ||= []
-          node.run_state['delivery']['stage']['data']['servers']['build_nodes'] << ipaddress
+          node.run_state['delivery']['stage']['data']['cluster_details']['build_nodes'] ||= []
+          node.run_state['delivery']['stage']['data']['cluster_details']['build_nodes'] << ipaddress
         elsif line =~ /^chef_server_url.*$/
           ipaddress = URI(line.match(/^chef_server_url\s+'(\S+)'$/)[1]).host
-          node.run_state['delivery']['stage']['data']['servers']['chef_server'] = ipaddress
+          node.run_state['delivery']['stage']['data']['build_nodes']['chef_server'] ||= {}
+          node.run_state['delivery']['stage']['data']['build_nodes']['chef_server']['url'] = ipaddress
         end
         previous_line = line
       end
