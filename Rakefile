@@ -60,7 +60,7 @@ class DeliveryEnvironment
     }
   end
 
-  def get_binding
+  def do_binding
     binding
   end
 end
@@ -77,7 +77,7 @@ def render_environment(environment, options)
 
   env_file = File.open("environments/#{environment}.json", 'w+')
   env_file << ERB.new(DeliveryEnvironment.template)
-    .result(DeliveryEnvironment.new(environment, options).get_binding)
+    .result(DeliveryEnvironment.new(environment, options).do_binding)
   env_file.close
 
   puts File.read("environments/#{environment}.json")
