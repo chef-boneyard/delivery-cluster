@@ -24,8 +24,6 @@ class Chef
       end
 
       def create_databag
-        db_name = 'delivery_changes'
-
         # Create the data bag
         begin
           bag = Chef::DataBag.new
@@ -67,6 +65,10 @@ class Chef
         node.run_state['delivery'] ||= {}
         node.run_state['delivery']['change'] ||= {}
         node.run_state['delivery']['change']['data'] ||= dbi['data']
+      end
+
+      def db_name
+        'delivery_changes'
       end
     end
   end
