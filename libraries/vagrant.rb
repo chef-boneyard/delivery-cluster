@@ -19,37 +19,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-require 'chef/provisioning/driver'
-require 'chef/provisioning/vagrant_driver'
-
-class Chef::Provisioning::VagrantDriver::Driver < Chef::Provisioning::Driver
-  def create_vm_file(action_handler, vm_name, vm_file_path, machine_options)
-    # Determine contents of vm file
-    vm_file_content = "Vagrant.configure('2') do |outer_config|\n"
-    vm_file_content << "  outer_config.vm.define #{vm_name.inspect} do |config|\n"
-    merged_vagrant_options = { 'vm.hostname' => vm_name }
-    if machine_options[:vagrant_options]
-      merged_vagrant_options = Cheffish::MergedConfig.new(machine_options[:vagrant_options], merged_vagrant_options)
-    end
-    merged_vagrant_options.each_pair do |key, value|
-      if key == 'vm.network'
-        vm_file_content << "    config.#{key}(" + value + ")\n"
-      else
-        vm_file_content << "    config.#{key} = #{value.inspect}\n"
-      end
-    end
-    vm_file_content << machine_options[:vagrant_config] if machine_options[:vagrant_config]
-    vm_file_content << "  end\nend\n"
-
-    # Set up vagrant file
-    Chef::Provisioning.inline_resource(action_handler) do
-      file vm_file_path do
-        content vm_file_content
-        action :create
-      end
-    end
-  end
-end
 
 module DeliveryCluster
   module Provisioning
@@ -63,12 +32,9 @@ module DeliveryCluster
       attr_accessor :vm_box
       attr_accessor :image_url
       attr_accessor :vm_hostname
-      attr_accessor :auth_methods
       attr_accessor :network
       attr_accessor :vm_mem
       attr_accessor :vm_cpus
-      attr_accessor :port
-      attr_accessor :auth_methods
       attr_accessor :bootstrap_proxy
       attr_accessor :chef_config
       attr_accessor :use_private_ip_for_ssh
@@ -89,9 +55,6 @@ module DeliveryCluster
         @network                = @node['delivery-cluster'][driver]['network'] if @node['delivery-cluster'][driver]['network']
         @vm_mem                 = @node['delivery-cluster'][driver]['vm_memory'] if @node['delivery-cluster'][driver]['vm_memory']
         @vm_cpus                = @node['delivery-cluster'][driver]['vm_cpus'] if @node['delivery-cluster'][driver]['vm_cpus']
-        @auth_methods           = @node['delivery-cluster'][driver]['auth_methods'] if @node['delivery-cluster'][driver]['auth_methods']
-        @port                   = @node['delivery-cluster'][driver]['ssh_port'] if @node['delivery-cluster'][driver]['ssh_port']
-        @prefix                 = @node['delivery-cluster'][driver]['prefix'] if @node['delivery-cluster'][driver]['prefix']
         @key_file               = @node['delivery-cluster'][driver]['key_file'] if @node['delivery-cluster'][driver]['key_file']
         @bootstrap_proxy        = @node['delivery-cluster'][driver]['bootstrap_proxy'] if @node['delivery-cluster'][driver]['bootstrap_proxy']
         @chef_config            = @node['delivery-cluster'][driver]['chef_config'] if @node['delivery-cluster'][driver]['chef_config']
@@ -110,17 +73,13 @@ module DeliveryCluster
           },
           vagrant_options: {
             'vm.box' => @vm_box,
+            'vm.box_url' => @image_url,
             'vm.hostname' => @vm_hostname,
           },
-          vagrant_config: @vagrant_config, # memory and cpu, required
-          transport_options: {
-            ssh_options: {
-              port: @port,
-              auth_methods: @auth_methods
-            },
-            use_private_ip_for_ssh: @use_private_ip_for_ssh,
-            options: {
-              prefix: @prefix
+          vagrant_config: @vagrant_config,
+          use_private_ip_for_ssh: @use_private_ip_for_ssh,
+          options: {
+            prefix: @prefix
             }
           }
         }
@@ -135,20 +94,34 @@ module DeliveryCluster
         # @param component [String] component name
         # @param count [Integer] component number
         # @return [Array] specific machine_options for the specific component
-        def specific_machine_options(component, _count = nil)
+        def specific_machine_options(component, count = nil)
           return [] unless @node['delivery-cluster'][component]
           options = []
-          options << { vagrant_options: { 'vm.hostname' => @node['delivery-cluster'][component]['vm_hostname'] } } if @node['delivery-cluster'][component]['vm_hostname']
-          options << { vagrant_options: { 'vm.box' => @node['delivery-cluster'][component]['vm_box'] } } if @node['delivery-cluster'][component]['vm_box']
-          options << { vagrant_options: { 'vm.box_url' => @node['delivery-cluster'][component]['image_url'] } } if @node['delivery-cluster'][component]['image_url']
-          options << { vagrant_options: { 'vm.network' => @node['delivery-cluster'][component]['network'] } } if @node['delivery-cluster'][component]['network']
-          options << { vagrant_config:<<-ENDCONFIG
-          config.vm.provider :virtualbox do |v|
-            v.customize ["modifyvm", :id,'--memory', #{@node['delivery-cluster'][component]['vm_memory']}]
-            v.customize ["modifyvm", :id, '--cpus', #{@node['delivery-cluster'][component]['vm_cpus']}]
+          if count
+            options << { vagrant_options: { 'vm.hostname' => @node['delivery-cluster'][component][count.to_s]['vm_hostname'] } } if @node['delivery-cluster'][component][count.to_s]['vm_hostname']
+            options << { vagrant_options: { 'vm.box' => @node['delivery-cluster'][component][count.to_s]['vm_box'] } } if @node['delivery-cluster'][component][count.to_s]['vm_box']
+            options << { vagrant_options: { 'vm.box_url' => @node['delivery-cluster'][component][count.to_s]['image_url'] } } if @node['delivery-cluster'][component][count.to_s]['image_url']
+            options << { vagrant_config:<<-ENDCONFIG
+            config.vm.network(#{@node['delivery-cluster'][component][count.to_s]['network']})
+            config.vm.provider :virtualbox do |v|
+              v.customize ["modifyvm", :id,'--memory', #{@node['delivery-cluster'][component][count.to_s]['vm_memory']}]
+              v.customize ["modifyvm", :id, '--cpus', #{@node['delivery-cluster'][component][count.to_s]['vm_cpus']}]
+            end
+            ENDCONFIG
+                       }
+          else
+            options << { vagrant_options: { 'vm.hostname' => @node['delivery-cluster'][component]['vm_hostname'] } } if @node['delivery-cluster'][component]['vm_hostname']
+            options << { vagrant_options: { 'vm.box' => @node['delivery-cluster'][component]['vm_box'] } } if @node['delivery-cluster'][component]['vm_box']
+            options << { vagrant_options: { 'vm.box_url' => @node['delivery-cluster'][component]['image_url'] } } if @node['delivery-cluster'][component]['image_url']
+            options << { vagrant_config:<<-ENDCONFIG
+            config.vm.network(#{@node['delivery-cluster'][component]['network']})
+            config.vm.provider :virtualbox do |v|
+              v.customize ["modifyvm", :id,'--memory', #{@node['delivery-cluster'][component]['vm_memory']}]
+              v.customize ["modifyvm", :id, '--cpus', #{@node['delivery-cluster'][component]['vm_cpus']}]
+            end
+            ENDCONFIG
+                       }
           end
-          ENDCONFIG
-                     }
           options
         end
 

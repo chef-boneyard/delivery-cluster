@@ -266,9 +266,9 @@ namespace :setup do
       1.upto(options['builders']['count'].to_i) do |i|
         h = ask_for("Host for Build Node #{i}", ":private_network, {:ip => 33.33.33.1#{i + 3}}")
         options['builders'][i] = { 'network' => h }
+        options['builders']['vm_memory'] = ask_for('Memory allocation', "2048")
+        options['builders']['vm_cpus'] = ask_for('Cpus alotted', "2")
       end
-      options['builders']['vm_memory'] = ask_for('Memory allocation', "2048")
-      options['builders']['vm_cpus'] = ask_for('Cpus alotted', "2")
     end
     if ask_for('Specify a delivery-cli artifact?', 'no')
       options['builders']['delivery-cli'] = Hash.new
@@ -368,7 +368,6 @@ namespace :maintenance do
   desc 'Clean the cache'
   task :clean_cache do
     FileUtils.rm_rf('.chef/local-mode-cache')
-    FileUtils.rm_rf('.chef/vms')
     FileUtils.rm_rf('cookbooks/')
   end
 end
