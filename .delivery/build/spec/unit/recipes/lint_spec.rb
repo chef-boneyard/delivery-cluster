@@ -6,7 +6,7 @@
 
 require 'spec_helper'
 
-describe 'build::deploy_clean_aws' do
+describe 'build::lint' do
 
   context 'When all attributes are default, on an unspecified platform' do
 

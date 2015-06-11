@@ -6,7 +6,7 @@
 
 require 'spec_helper'
 
-describe 'build::functional_extra_case' do
+describe 'build::syntax' do
 
   context 'When all attributes are default, on an unspecified platform' do
 

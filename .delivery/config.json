@@ -12,11 +12,11 @@
   "skip_phases": [
     "security",
     "quality",
-    "publish",
-    "deploy"
+    "publish"
   ],
   "build_nodes": {
     "provision": ["name:builder-2.delivery.chef.co"],
+    "deploy": ["name:builder-2.delivery.chef.co"],
     "functional": ["name:builder* NOT name:builder-2.delivery.chef.co"]
   }
 }
