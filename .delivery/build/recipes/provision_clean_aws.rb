@@ -29,10 +29,12 @@ file ssh_public_key_path do
   mode '0644'
 end
 
-template File.join(path, "environments/#{environment}.json") do
+template "Create Environment Template" do
+  path File.join(path, "environments/#{environment}.json")
   source 'environment.json.erb'
   variables(
     :delivery_license => "#{cache}/delivery.license",
+    :delivery_version => "latest",
     :environment => environment
   )
 end
@@ -109,3 +111,37 @@ ruby_block 'print-delivery-credentials' do
     puts File.read(File.join(path, ".chef/delivery-cluster-data-#{environment}/#{environment}.creds"))
   end
 end
+
+ruby_block "Get Services" do
+  block do
+    list_services = Mixlib::ShellOut.new("rake info:list_core_services",
+                                         :cwd => node['delivery']['workspace']['repo'])
+
+    list_services.run_command
+
+    if list_services.stdout
+      node.run_state['delivery'] ||= {}
+      node.run_state['delivery']['stage'] ||= {}
+      node.run_state['delivery']['stage']['data'] ||= {}
+      node.run_state['delivery']['stage']['data']['servers'] ||= {}
+
+      previous_line = nil
+      list_services.stdout.each_line do |line|
+        if previous_line =~ /^delivery-server\S+:$/
+          ipaddress = line.match(/^  ipaddress: (\S+)$/)[1]
+          node.run_state['delivery']['stage']['data']['servers']['delivery_server'] = ipaddress
+        elsif previous_line =~ /^build-node\S+:/
+          ipaddress = line.match(/^  ipaddress: (\S+)$/)[1]
+          node.run_state['delivery']['stage']['data']['servers']['build_nodes'] ||= []
+          node.run_state['delivery']['stage']['data']['servers']['build_nodes'] << ipaddress
+        elsif line =~ /^chef_server_url.*$/
+          ipaddress = URI(line.match(/^chef_server_url\s+'(\S+)'$/)[1]).host
+          node.run_state['delivery']['stage']['data']['servers']['chef_server'] = ipaddress
+        end
+        previous_line = line
+      end
+    end
+  end
+end
+
+delivery_stage_db

@@ -6,7 +6,7 @@
 
 require 'spec_helper'
 
-describe 'build::deploy_extra_case' do
+describe 'build::unit' do
 
   context 'When all attributes are default, on an unspecified platform' do
 
