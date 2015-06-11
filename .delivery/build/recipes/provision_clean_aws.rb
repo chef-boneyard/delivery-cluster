@@ -137,8 +137,8 @@ ruby_block "Get Services" do
           node.run_state['delivery']['stage']['data']['cluster_details']['build_nodes'] << ipaddress
         elsif line =~ /^chef_server_url.*$/
           ipaddress = URI(line.match(/^chef_server_url\s+'(\S+)'$/)[1]).host
-          node.run_state['delivery']['stage']['data']['build_nodes']['chef_server'] ||= {}
-          node.run_state['delivery']['stage']['data']['build_nodes']['chef_server']['url'] = ipaddress
+          node.run_state['delivery']['stage']['data']['cluster_details']['chef_server'] ||= {}
+          node.run_state['delivery']['stage']['data']['cluster_details']['chef_server']['url'] = ipaddress
         end
         previous_line = line
       end

@@ -20,7 +20,7 @@ if node['delivery']['change']['pipeline'] == 'master' && node['delivery']['chang
 
   delivery_in_parallel do
     for vector in matrix do
-      delivery_wait_for_stage "Wait for stage: #{node['delivery']['change']['stage']} on pipeline: #{vector}" do
+      delivery_wait_for_stage "Wait for stage: build on pipeline: #{vector}" do
         change_id lazy { node.run_state['delivery']['change']['data']['spawned_changes'][vector] }
         stage 'build'
       end
