@@ -51,7 +51,7 @@ class Chef
         DeliverySugar::ChefServer.new.with_server_config do
           bag_item.save
         end
-        ::Chef::Log.info("Saved bag item #{dbi_id} in data bag #{stage}.")
+        ::Chef::Log.info("Saved bag item #{dbi_id} in data bag #{db_name}.")
       end
 
       def download_databag
