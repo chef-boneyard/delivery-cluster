@@ -43,7 +43,8 @@ if node['delivery']['change']['pipeline'] != 'master'
       end
 
       describe 'Delivery Server' do
-        it "deployed version is #{delivery_version}" do
+        it "the status page is available" do
+        #it "deployed version is #{delivery_version}" do
           @browser.goto "#{servers['delivery_server']}/status/version"
           expect(@browser.url).not_to eql("about:blank")
           #expect(@browser.text).to include("delivery #{delivery_version}")
