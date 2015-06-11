@@ -1,11 +1,11 @@
 {
-  "name": "<%= @environment %>",
-  "description": "Delivery Cluster Environment - <%= @environment %>",
+  "name": "<%= @cluster_name %>",
+  "description": "Delivery Cluster cluster_name - <%= @cluster_name %>",
   "json_class": "Chef::Environment",
   "chef_type": "environment",
   "override_attributes": {
     "delivery-cluster": {
-      "id": "<%= @environment %>",
+      "id": "<%= @cluster_name %>",
       "driver": "aws",
       "aws": {
         "key_name": "chef-delivery-cluster",
@@ -16,13 +16,13 @@
         "use_private_ip_for_ssh": true
       },
       "chef-server": {
-        "organization": "<%= @environment %>",
+        "organization": "<%= @cluster_name %>",
         "existing": false,
         "flavor": "c3.xlarge"
       },
       "delivery": {
         "version": "<%= @delivery_version %>",
-        "enterprise": "<%= @environment %>",
+        "enterprise": "<%= @cluster_name %>",
         "artifactory": false,
         "license_file": "<%= @delivery_license %>",
         "flavor": "c3.xlarge"
