@@ -6,8 +6,9 @@
 chef_gem "chef-rewind"
 require 'chef/rewind'
 
-cluster_name = "#{node['delivery']['change']['stage']}_#{node['delivery']['change']['pipeline']}"
-path = node['delivery']['workspace']['repo']
+cluster_name     = "#{node['delivery']['change']['stage']}_#{node['delivery']['change']['pipeline']}"
+path             = node['delivery']['workspace']['repo']
+cache            = node['delivery']['workspace']['cache']
 delivery_version = ::DeliverySugarExtras::Helpers.get_delivery_versions(node)[1]
 
 include_recipe "build::provision_clean_aws"
