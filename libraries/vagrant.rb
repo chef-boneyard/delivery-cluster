@@ -62,6 +62,7 @@ module DeliveryCluster
       attr_accessor :prefix
       attr_accessor :vm_box
       attr_accessor :image_url
+      attr_accessor :vm_hostname
       attr_accessor :auth_methods
       attr_accessor :network
       attr_accessor :vm_mem
@@ -82,8 +83,9 @@ module DeliveryCluster
         @prefix          = 'sudo '
         @vm_box          = @node['delivery-cluster'][driver]['vm_box'] if @node['delivery-cluster'][driver]['vm_box']
         @image_url       = @node['delivery-cluster'][driver]['image_url'] if @node['delivery-cluster'][driver]['image_url']
+        @vm_hostname     = @node['delivery-cluster'][driver]['vm_hostname'] if @node['delivery-cluster'][driver]['vm_hostname']
         @synced_folder   = @node['delivery-cluster'][driver]['synced_folder'] if @node['delivery-cluster'][driver]['synced_folder']
-        @private_network = @node['delivery-cluster'][driver]['network'] if @node['delivery-cluster'][driver]['network']
+        @network         = @node['delivery-cluster'][driver]['network'] if @node['delivery-cluster'][driver]['network']
         @vm_mem          = @node['delivery-cluster'][driver]['vm_memory'] if @node['delivery-cluster'][driver]['vm_memory']
         @vm_cpus         = @node['delivery-cluster'][driver]['vm_cpus'] if @node['delivery-cluster'][driver]['vm_cpus']
         @auth_methods    = @node['delivery-cluster'][driver]['auth_methods'] if @node['delivery-cluster'][driver]['auth_methods']
@@ -106,10 +108,7 @@ module DeliveryCluster
           },
           vagrant_options: {
             'vm.box' => @vm_box,
-            'vm.box_url' => @image_url,
-            'vm.network' => [
-              @network
-            ]
+            'vm.hostname' => @vm_hostname,
           },
           vagrant_config: @vagrant_config,
           transport_options: {
@@ -125,6 +124,10 @@ module DeliveryCluster
       end
 
         # Create a array of machine_options specifics to a component
+        # We also inject optional configuration parameters into this
+        # hash instead of forcing all parameters. Specifically
+        #
+        # 'vm.network' and 'vm.box_url'
         #
         # @param component [String] component name
         # @param count [Integer] component number
@@ -132,15 +135,16 @@ module DeliveryCluster
         def specific_machine_options(component, _count = nil)
           return [] unless @node['delivery-cluster'][component]
           options = []
+          options << { vagrant_options: { 'vm.hostname' => @node['delivery-cluster'][component]['vm_hostname'] } } if @node['delivery-cluster'][component]['vm_hostname']
           options << { vagrant_options: { 'vm.box' => @node['delivery-cluster'][component]['vm_box'] } } if @node['delivery-cluster'][component]['vm_box']
           options << { vagrant_options: { 'vm.box_url' => @node['delivery-cluster'][component]['image_url'] } } if @node['delivery-cluster'][component]['image_url']
           options << { vagrant_options: { 'vm.network' => @node['delivery-cluster'][component]['network'] } } if @node['delivery-cluster'][component]['network']
           options << { vagrant_config:<<-ENDCONFIG
-            config.vm.provider 'virtualbox' do |v|
-              v.customize ["modifyvm", :id,'--memory', #{@node['delivery-cluster'][component]['vm_memory']}]
-              v.customize ["modifyvm", :id, '--cpus', #{@node['delivery-cluster'][component]['vm_cpus']}]
-            end
-            ENDCONFIG
+          config.vm.provider :virtualbox do |v|
+            v.customize ["modifyvm", :id,'--memory', #{@node['delivery-cluster'][component]['vm_memory']}]
+            v.customize ["modifyvm", :id, '--cpus', #{@node['delivery-cluster'][component]['vm_cpus']}]
+          end
+          ENDCONFIG
                      }
           options
         end

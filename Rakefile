@@ -161,7 +161,7 @@ namespace :setup do
     when 'vagrant'
       options['driver']['ssh_username']    = ask_for('SSH Username', 'vagrant')
 #      options['driver']['password']     = ask_for('SSH Password', 'vagrant')
-      options['driver']['vm_box']          = ask_for('Box Type: ', 'ubuntu-14.04')
+      options['driver']['vm_box']          = ask_for('Box Type: ', 'opscode-ubuntu-14.04')
       options['driver']['image_url']       = ask_for('Box URL: ', 'https://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_ubuntu-14.04_chef-provisionerless.box')
       loop do
         puts 'Key File Not Found'.red if options['driver']['key_file']
@@ -171,7 +171,7 @@ namespace :setup do
       end
     else
       puts 'ERROR: Unsupported Driver.'.red
-      puts 'Available Drivers are [ ssh | aws ]'.yellow
+      puts 'Available Drivers are [ vagrant | aws | ssh ]'.yellow
       exit 1
     end
 
@@ -186,9 +186,10 @@ namespace :setup do
       when 'ssh'
         options['chef_server']['host'] = ask_for('Host', '33.33.33.10')
       when 'vagrant'
+        options['chef_server']['vm_hostname'] = 'chef.example.com'
         options['chef_server']['network'] = ask_for('Network Config', ":private_network, {:ip => '33.33.33.10'}")
-        options['chef-server']['vm_memory'] = ask_for('Memory allocation', "2048")
-        options['chef-server']['vm_cpus'] = ask_for('Cpus alotted', "2")
+        options['chef_server']['vm_memory'] = ask_for('Memory allocation', "2048")
+        options['chef_server']['vm_cpus'] = ask_for('Cpus alotted', "2")
        end
     end
 
@@ -211,9 +212,10 @@ namespace :setup do
     when 'ssh'
       options['delivery']['host'] = ask_for('Host', '33.33.33.11')
     when 'vagrant'
-      options['chef_server']['network'] = ask_for('Network Config', ":private_network, {:ip => '33.33.33.11'}")
-      options['chef-server']['vm_memory'] = ask_for('Memory allocation', "2048")
-      options['chef-server']['vm_cpus'] = ask_for('Cpus alotted', "2")
+      options['delivery']['vm_hostname'] = 'delivery.example.com'
+      options['delivery']['network'] = ask_for('Network Config', ":private_network, {:ip => '33.33.33.11'}")
+      options['delivery']['vm_memory'] = ask_for('Memory allocation', "2048")
+      options['delivery']['vm_cpus'] = ask_for('Cpus alotted', "2")
     end
 
     puts '\nAnalytics Server'.pink
@@ -225,9 +227,10 @@ namespace :setup do
       when 'ssh'
         options['analytics']['host'] = ask_for('Host', '33.33.33.12')
       when 'vagrant'
-        options['chef_server']['network'] = ask_for('Network Config', ":private_network, {:ip => '33.33.33.12'}")
-        options['chef-server']['vm_memory'] = ask_for('Memory allocation', "2048")
-        options['chef-server']['vm_cpus'] = ask_for('Cpus alotted', "2")
+        options['analytics']['vm_hostname'] = 'analytics.example.com'
+        options['analytics']['network'] = ask_for('Network Config', ":private_network, {:ip => '33.33.33.12'}")
+        options['analytics']['vm_memory'] = ask_for('Memory allocation', "2048")
+        options['analytics']['vm_cpus'] = ask_for('Cpus alotted', "2")
       end
     end
 
@@ -240,7 +243,10 @@ namespace :setup do
       when 'ssh'
         options['supermarket']['host'] = ask_for('Host', '33.33.33.13')
       when 'vagrant'
-        options['chef_server']['box'] = ask_for('Box type', 'ubuntu-14.04')
+        options['supermarket']['vm_hostname'] = 'analytics.example.com'
+        options['supermarket']['network'] = ask_for('Network Config', ":private_network, {:ip => '33.33.33.12'}")
+        options['supermarket']['vm_memory'] = ask_for('Memory allocation', "2048")
+        options['supermarket']['vm_cpus'] = ask_for('Cpus alotted', "2")
       end
     end
 
@@ -256,8 +262,12 @@ namespace :setup do
         options['builders'][i] = { 'host' => h }
       end
     when 'vagrant'
-      h = ask_for("IP for Build Node #{i}", "33.33.33.1#{i + 3}")
-      options['builders'][i] = { 'host' => h }
+      1.upto(options['builders']['count'].to_i) do |i|
+        h = ask_for("Host for Build Node #{i}", ":private_network, {:ip => 33.33.33.1#{i + 3}}")
+        options['builders'][i] = { 'network' => h }
+      end
+      options['builders']['vm_memory'] = ask_for('Memory allocation', "2048")
+      options['builders']['vm_cpus'] = ask_for('Cpus alotted', "2")
     end
     if ask_for('Specify a delivery-cli artifact?', 'no')
       options['builders']['delivery-cli'] = Hash.new
