@@ -7,31 +7,15 @@ chef_gem "chef-rewind"
 require 'chef/rewind'
 
 cluster_name = "#{node['delivery']['change']['stage']}_#{node['delivery']['change']['pipeline']}"
-cache = node['delivery']['workspace']['cache']
 path = node['delivery']['workspace']['repo']
-
-execute "Restore Provisioning Bits" do
-  cwd path
-  command <<-EOF
-    mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/clients clients
-    mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/nodes nodes
-    mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/trusted_certs .chef/.
-    mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/delivery-cluster-data-* .chef/.
-  EOF
-  environment ({
-    'AWS_CONFIG_FILE' => "#{cache}/.aws/config"
-  })
-  only_if do ::File.exists?('var/opt/delivery/workspace/delivery-cluster-aws-cache/nodes') end
-end
+delivery_version = ::DeliverySugarExtras::Helpers.get_delivery_versions(node)[1]
 
 include_recipe "build::provision_clean_aws"
-
-unwind "execute[Destroy the old Delivery Cluster]"
 
 rewind "template[Create Environment Template]" do
   variables(
     :delivery_license => "#{cache}/delivery.license",
-    :delivery_version => "0.3.73",
+    :delivery_version => delivery_version,
     :cluster_name => cluster_name
   )
 end
