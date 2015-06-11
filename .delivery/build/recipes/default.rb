@@ -4,14 +4,15 @@
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
-# Gems for our tests
+include_recipe 'delivery-sugar-extras::default'
+include_recipe 'delivery-red-pill::default'
+include_recipe 'delivery-truck::default'
+
 %w{watir-webdriver phantomjs}.each do |g|
   chef_gem g do
     compile_time true
   end
 end
-
-include_recipe 'delivery-truck::default'
 
 # Temporal cache directory to store delivery-cluster-data
 directory "/var/opt/delivery/workspace/delivery-cluster-aws-cache" do
