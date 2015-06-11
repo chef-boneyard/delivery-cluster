@@ -4,8 +4,8 @@
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
-if node['delivery']['change']['pipeline'] != 'master'
-   && node['delivery']['change']['stage'] == 'acceptance'
+if node['delivery']['change']['pipeline'] != 'master' &&
+  node['delivery']['change']['stage'] == 'acceptance'
   delivery_stage_db do
     action :download
   end
