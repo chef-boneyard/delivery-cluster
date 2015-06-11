@@ -32,7 +32,7 @@ if node['delivery']['change']['pipeline'] != 'master'
         end
       end
 
-      servers = node.run_state['delivery']['stage']['data']['servers']
+      servers = ::Chef.node.run_state['delivery']['stage']['data']['servers']
 
       describe 'Chef Server' do
         before { @browser.goto "http:://#{servers['chef_server']}" }
