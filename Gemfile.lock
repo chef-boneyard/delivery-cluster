@@ -10,6 +10,15 @@ GIT
       retryable (~> 2.0.1)
 
 GIT
+  remote: https://github.com/chef/chef-provisioning-vagrant.git
+  revision: a8d364b96ff44a0e1c03572d3ea317b8eab13300
+  ref: test-delivery-cluster-using-vagrant
+  specs:
+    chef-provisioning-vagrant (0.8.3)
+      chef
+      chef-provisioning
+
+GIT
   remote: https://github.com/chef/chef-provisioning.git
   revision: 91f5046840eca5a24796956a580931e3479ce5fd
   ref: master
@@ -279,5 +288,6 @@ DEPENDENCIES
   chef-provisioning!
   chef-provisioning-aws!
   chef-provisioning-ssh
+  chef-provisioning-vagrant!
   chef-vault
   kitchen-vagrant (~> 0.16.0)

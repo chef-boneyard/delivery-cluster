@@ -101,26 +101,27 @@ module DeliveryCluster
             options << { vagrant_options: { 'vm.hostname' => @node['delivery-cluster'][component][count.to_s]['vm_hostname'] } } if @node['delivery-cluster'][component][count.to_s]['vm_hostname']
             options << { vagrant_options: { 'vm.box' => @node['delivery-cluster'][component][count.to_s]['vm_box'] } } if @node['delivery-cluster'][component][count.to_s]['vm_box']
             options << { vagrant_options: { 'vm.box_url' => @node['delivery-cluster'][component][count.to_s]['image_url'] } } if @node['delivery-cluster'][component][count.to_s]['image_url']
-            options << { vagrant_config:<<-ENDCONFIG
-            config.vm.network(#{@node['delivery-cluster'][component][count.to_s]['network']})
-            config.vm.provider :virtualbox do |v|
-              v.customize ["modifyvm", :id,'--memory', #{@node['delivery-cluster'][component][count.to_s]['vm_memory']}]
-              v.customize ["modifyvm", :id, '--cpus', #{@node['delivery-cluster'][component][count.to_s]['vm_cpus']}]
-            end
-            ENDCONFIG
-                       }
+            options << { vagrant_options: { 'vm.network' => @node['delivery-cluster'][component][count.to_s]['network'] } } if @node['delivery-cluster'][component][count.to_s]['network']
+            options << { vagrant_config:<<-ENDCONFIG.gsub(/^ {10}/, "")
+              config.vm.network(#{@node['delivery-cluster'][component][count.to_s]['network']})
+              config.vm.provider :virtualbox do |v|
+                v.customize ["modifyvm", :id,'--memory', #{@node['delivery-cluster'][component][count.to_s]['vm_memory']}]
+                v.customize ["modifyvm", :id, '--cpus', #{@node['delivery-cluster'][component][count.to_s]['vm_cpus']}]
+              end
+              ENDCONFIG
+            }
           else
             options << { vagrant_options: { 'vm.hostname' => @node['delivery-cluster'][component]['vm_hostname'] } } if @node['delivery-cluster'][component]['vm_hostname']
             options << { vagrant_options: { 'vm.box' => @node['delivery-cluster'][component]['vm_box'] } } if @node['delivery-cluster'][component]['vm_box']
             options << { vagrant_options: { 'vm.box_url' => @node['delivery-cluster'][component]['image_url'] } } if @node['delivery-cluster'][component]['image_url']
-            options << { vagrant_config:<<-ENDCONFIG
-            config.vm.network(#{@node['delivery-cluster'][component]['network']})
-            config.vm.provider :virtualbox do |v|
-              v.customize ["modifyvm", :id,'--memory', #{@node['delivery-cluster'][component]['vm_memory']}]
-              v.customize ["modifyvm", :id, '--cpus', #{@node['delivery-cluster'][component]['vm_cpus']}]
-            end
-            ENDCONFIG
-                       }
+            options << { vagrant_options: { 'vm.network' => @node['delivery-cluster'][component]['network'] } } if @node['delivery-cluster'][component]['network']
+            options << { vagrant_config:<<-ENDCONFIG.gsub(/^ {10}/, "")
+              config.vm.provider :virtualbox do |v|
+                v.customize ["modifyvm", :id,'--memory', #{@node['delivery-cluster'][component]['vm_memory']}]
+                v.customize ["modifyvm", :id, '--cpus', #{@node['delivery-cluster'][component]['vm_cpus']}]
+              end
+              ENDCONFIG
+            }
           end
           options
         end
