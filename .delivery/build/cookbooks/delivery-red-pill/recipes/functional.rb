@@ -13,9 +13,11 @@ if node['delivery']['change']['pipeline'] == 'master' && node['delivery']['chang
   ## Monitor pipeline acceptance stages for completion.
   delivery_in_parallel do
     matrix = node['delivery-red-pill']['acceptance']['matrix']
-    for vector in matrix do
+    ## If you do not use .ech here the lazy evals get all messed up and evaluate
+    ## each iteration as if it was the last.
+    matrix.each do |vector|
       delivery_wait_for_stage "Wait for #{node['delivery']['change']['stage']} case #{vector}" do
-        change_id lazy { node.run_state['delivery']['change']['data']['spawned_changes'][vector] }
+        change_id lazy { node.run_state['delivery']['change']['data']['spawned_changes']["#{vector}"] }
         stage node['delivery']['change']['stage']
       end
     end

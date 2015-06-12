@@ -9,7 +9,9 @@ if node['delivery']['change']['pipeline'] == 'master' && node['delivery']['chang
   matrix = node['delivery-red-pill']['acceptance']['matrix']
 
   delivery_in_parallel do
-    for vector in matrix do
+    ## If you do not use .ech here the lazy evals get all messed up and evaluate
+    ## each iteration as if it was the last.
+    matrix.each do |vector|
       delivery_duplicate_change_on_pipeline vector do
         auto_approve true
       end
@@ -19,7 +21,9 @@ if node['delivery']['change']['pipeline'] == 'master' && node['delivery']['chang
   delivery_change_db node['delivery']['change']['change_id']
 
   delivery_in_parallel do
-    for vector in matrix do
+    ## If you do not use .ech here the lazy evals get all messed up and evaluate
+    ## each iteration as if it was the last.
+    matrix.each do |vector|
       delivery_wait_for_stage "Wait for stage: build on pipeline: #{vector}" do
         change_id lazy { node.run_state['delivery']['change']['data']['spawned_changes'][vector] }
         stage 'build'
