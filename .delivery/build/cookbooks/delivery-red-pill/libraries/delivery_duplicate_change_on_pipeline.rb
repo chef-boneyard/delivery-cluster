@@ -10,11 +10,11 @@ class Chef
       end
 
       def pipeline
-        new_resource.pipeline
+        @pipeline ||= new_resource.pipeline
       end
 
       def auto_approve
-        new_resource.auto_approve
+        @auto_approve ||= new_resource.auto_approve
       end
 
       action :duplicate do
