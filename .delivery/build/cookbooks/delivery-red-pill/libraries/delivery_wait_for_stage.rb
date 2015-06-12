@@ -2,7 +2,7 @@ class Chef
   class Provider
     class DeliveryWaitForStage < Chef::Provider::LWRPBase
       provides :delivery_wait_for_stage
-      
+
       use_inline_resources
 
       action :wait do
@@ -14,15 +14,15 @@ class Chef
       private
 
       def change_id
-        @change_id ||= new_resource.change_id
+        new_resource.change_id
       end
 
       def stage
-        @stage ||= new_resource.stage
+        new_resource.stage
       end
 
       def fail_run
-        @fail_run ||= new_resource.fail_run
+        new_resource.fail_run
       end
 
       def wait_for_stage
