@@ -3,7 +3,7 @@
 # Recipe:: functional
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
-include_recipe 'delivery-truck::provision'
+include_recipe 'delivery-truck::functional'
 
 if node['delivery']['change']['pipeline'] == 'master' && node['delivery']['change']['stage'] == 'acceptance'
   delivery_change_db node['delivery']['change']['change_id'] do
