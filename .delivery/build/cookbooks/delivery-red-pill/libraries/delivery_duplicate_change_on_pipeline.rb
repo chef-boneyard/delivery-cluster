@@ -2,7 +2,7 @@ class Chef
   class Provider
     class DeliveryDuplicateChangeOnPipeline < Chef::Provider::LWRPBase
       require 'thread'
-      @semephore = Mutex.new
+      @@semaphore = Mutex.new
 
       provides :delivery_duplicate_change_on_pipeline
 
@@ -32,7 +32,7 @@ class Chef
         ### Duplicate change on pipelines
         #### Add delivery remote do delivery cli will work.
         add_delivery_remote(node)
-        change_web_url = @semaphore.synchronize do
+        change_web_url = @@semaphore.synchronize do
           create_change_on_pipeline(node)
         end
         change_id = change_web_url.split('/').last
