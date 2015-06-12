@@ -2,6 +2,7 @@ class Chef
   class Provider
     class DeliveryDuplicateChangeOnPipeline < Chef::Provider::LWRPBase
       require 'thread'
+      @@semephore = Mutex.new
 
       provides :delivery_duplicate_change_on_pipeline
 
@@ -17,11 +18,6 @@ class Chef
 
       def auto_approve
         @auto_approve ||= new_resource.auto_approve
-      end
-
-      def initialize(name, run_context=nil)
-        super
-        @@semephore ||= Mutex.new
       end
 
       action :duplicate do
