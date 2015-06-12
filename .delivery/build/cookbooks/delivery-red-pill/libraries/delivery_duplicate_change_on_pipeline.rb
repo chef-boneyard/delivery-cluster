@@ -2,7 +2,7 @@ class Chef
   class Provider
     class DeliveryDuplicateChangeOnPipeline < Chef::Provider::LWRPBase
       provides :delivery_duplicate_change_on_pipeline
-      
+
       use_inline_resources
 
       def whyrun_supported?
@@ -10,11 +10,11 @@ class Chef
       end
 
       def pipeline
-        @pipeline ||= new_resource.pipeline
+        new_resource.pipeline
       end
 
       def auto_approve
-        @auto_approve ||= new_resource.auto_approve
+        new_resource.auto_approve
       end
 
       action :duplicate do
