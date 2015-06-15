@@ -56,9 +56,18 @@ else
     type value_for_platform_family(debian: 'deb', rhel: 'rpm')
   end
 
-  package 'delivery' do
-    action :upgrade
-    notifies :run, 'execute[reconfigure delivery]'
+  delivery_version = node['delivery-cluster']['delivery']['version']
+  if delivery_version == 'latest'
+    package 'delivery' do
+      action :upgrade
+      notifies :run, 'execute[reconfigure delivery]'
+    end
+  else
+    package 'delivery' do
+      version delivery_version
+      action :install
+      notifies :run, 'execute[reconfigure delivery]'
+    end
   end
 end
 
