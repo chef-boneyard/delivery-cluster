@@ -143,9 +143,10 @@ ruby_block "Get Services" do
         previous_line = line
       end
       ## Note: There is a temporal issue here where a new artifact could be promoted
-      ## between provsioning and this call.
+      ## between provsioning and this call. We also need to unwind the addition of '-1'
+      ## tot he version number we do in this helper function. Ahrg!!! Artifactory.
       delivery_version = ::DeliverySugarExtras::Helpers.get_delivery_versions(node)[0]
-      node.run_state['delivery']['stage']['data']['cluster_details']['delivery']['version'] = delivery_version
+      node.run_state['delivery']['stage']['data']['cluster_details']['delivery']['version'] = delivery_version[0,delivery_version.index('-', -2)]
     end
   end
 end
