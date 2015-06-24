@@ -60,7 +60,6 @@ default['delivery_cluster']['vagrant']['network']             = nil
 default['delivery-cluster']['vagrant']['key_file']            = nil
 default['delivery_cluster']['vagrant']['chef_config']         = nil
 
-
 # Azure Driver Attributes
 default['delivery-cluster']['azure']['ssh_username']            = nil
 default['delivery-cluster']['azure']['use_private_ip_for_ssh']  = false

@@ -310,11 +310,11 @@ module DeliveryCluster
       #
       @delivery_artifact ||= begin
         artifact = get_delivery_artifact(
-                      node['delivery-cluster']['delivery']['version'],
-                      component_node('delivery')['platform'],
-                      component_node('delivery')['platform_version'],
-                      node['delivery-cluster']['delivery']['pass-through'] ? nil : cluster_data_dir
-                    )
+          node['delivery-cluster']['delivery']['version'],
+          component_node('delivery')['platform'],
+          component_node('delivery')['platform_version'],
+          node['delivery-cluster']['delivery']['pass-through'] ? nil : cluster_data_dir
+        )
 
         delivery_artifact = {
           'version'  => artifact['version'],

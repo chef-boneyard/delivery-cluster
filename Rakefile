@@ -125,7 +125,7 @@ namespace :setup do
     msg 'Gathering Cluster Information'
     puts 'Provide the following information to generate your environment.'
 
-    options = Hash.new
+    options = {}
     puts "\nGlobal Attributes".pink
     # Environment Name
     environment = ask_for('Environment Name', 'test')
@@ -140,7 +140,7 @@ namespace :setup do
     options['driver_name']  = ask_for('Driver Name', 'vagrant')
 
     puts "\nDriver Information [#{options['driver_name']}]".pink
-    options['driver'] = Hash.new
+    options['driver'] = {}
     case options['driver_name']
     when 'ssh'
       options['driver']['ssh_username'] = ask_for('SSH Username', 'vagrant')
@@ -160,7 +160,6 @@ namespace :setup do
       options['driver']['use_private_ip_for_ssh'] = ask_for('Use private ip for ssh?', 'yes')
     when 'vagrant'
       options['driver']['ssh_username']           = ask_for('SSH Username', 'vagrant')
-#      options['driver']['password']               = ask_for('SSH Password', 'vagrant')
       options['driver']['vm_box']                 = ask_for('Box Type: ', 'opscode-centos-6.6')
       options['driver']['image_url']              = ask_for('Box URL: ', 'https://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.6_chef-provisionerless.box')
       options['driver']['use_private_ip_for_ssh'] = ask_for('Use private ip for ssh?', 'yes')
@@ -177,7 +176,7 @@ namespace :setup do
     end
 
     puts "\nChef Server".pink
-    options['chef_server'] = Hash.new
+    options['chef_server'] = {}
     options['chef_server']['organization'] = ask_for('Organization Name', environment)
     options['chef_server']['existing']     = ask_for('Use existing chef-server?', 'no')
     unless options['chef_server']['existing']
@@ -189,13 +188,13 @@ namespace :setup do
       when 'vagrant'
         options['chef_server']['vm_hostname'] = 'chef.example.com'
         options['chef_server']['network'] = ask_for('Network Config', ":private_network, {:ip => '33.33.33.10'}")
-        options['chef_server']['vm_memory'] = ask_for('Memory allocation', "2048")
-        options['chef_server']['vm_cpus'] = ask_for('Cpus alotted', "2")
+        options['chef_server']['vm_memory'] = ask_for('Memory allocation', '2048')
+        options['chef_server']['vm_cpus'] = ask_for('Cpus alotted', '2')
        end
     end
 
     puts "\nDelivery Server".pink
-    options['delivery'] = Hash.new
+    options['delivery'] = {}
     options['delivery']['version']      = ask_for('Package Version', 'latest')
     options['delivery']['enterprise']   = ask_for('Enterprise Name', environment)
     options['delivery']['artifactory']  = ask_for('Use chef artifactory?', 'no')
@@ -215,13 +214,13 @@ namespace :setup do
     when 'vagrant'
       options['delivery']['vm_hostname'] = 'delivery.example.com'
       options['delivery']['network'] = ask_for('Network Config', ":private_network, {:ip => '33.33.33.11'}")
-      options['delivery']['vm_memory'] = ask_for('Memory allocation', "2048")
-      options['delivery']['vm_cpus'] = ask_for('Cpus alotted', "2")
+      options['delivery']['vm_memory'] = ask_for('Memory allocation', '2048')
+      options['delivery']['vm_cpus'] = ask_for('Cpus alotted', '2')
     end
 
     puts "\nAnalytics Server".pink
     if ask_for('Enable Analytics?', 'no')
-      options['analytics'] = Hash.new
+      options['analytics'] = {}
       case options['driver_name']
       when 'aws'
         options['analytics']['flavor'] = ask_for('Flavor', 'c3.xlarge')
@@ -230,14 +229,14 @@ namespace :setup do
       when 'vagrant'
         options['analytics']['vm_hostname'] = 'analytics.example.com'
         options['analytics']['network'] = ask_for('Network Config', ":private_network, {:ip => '33.33.33.12'}")
-        options['analytics']['vm_memory'] = ask_for('Memory allocation', "2048")
-        options['analytics']['vm_cpus'] = ask_for('Cpus alotted', "2")
+        options['analytics']['vm_memory'] = ask_for('Memory allocation', '2048')
+        options['analytics']['vm_cpus'] = ask_for('Cpus alotted', '2')
       end
     end
 
     puts "\nSupermarket Server".pink
     if ask_for('Enable Supermarket?', 'no')
-      options['supermarket'] = Hash.new
+      options['supermarket'] = {}
       case options['driver_name']
       when 'aws'
         options['supermarket']['flavor'] = ask_for('Flavor', 'c3.xlarge')
@@ -246,13 +245,13 @@ namespace :setup do
       when 'vagrant'
         options['supermarket']['vm_hostname'] = 'analytics.example.com'
         options['supermarket']['network'] = ask_for('Network Config', ":private_network, {:ip => '33.33.33.12'}")
-        options['supermarket']['vm_memory'] = ask_for('Memory allocation', "2048")
-        options['supermarket']['vm_cpus'] = ask_for('Cpus alotted', "2")
+        options['supermarket']['vm_memory'] = ask_for('Memory allocation', '2048')
+        options['supermarket']['vm_cpus'] = ask_for('Cpus alotted', '2')
       end
     end
 
     puts "\nBuild Nodes".pink
-    options['builders'] = Hash.new
+    options['builders'] = {}
     options['builders']['count'] = ask_for('Number of Build Nodes', '1')
     case options['driver_name']
     when 'aws'
@@ -266,12 +265,12 @@ namespace :setup do
       1.upto(options['builders']['count'].to_i) do |i|
         h = ask_for("Host for Build Node #{i}", ":private_network, {:ip => '33.33.33.1#{i + 3}'}")
         options['builders'][i] = { 'network' => h }
-        options['builders']['vm_memory'] = ask_for('Memory allocation', "2048")
-        options['builders']['vm_cpus'] = ask_for('Cpus alotted', "2")
+        options['builders']['vm_memory'] = ask_for('Memory allocation', '2048')
+        options['builders']['vm_cpus'] = ask_for('Cpus alotted', '2')
       end
     end
     if ask_for('Specify a delivery-cli artifact?', 'no')
-      options['builders']['delivery-cli'] = Hash.new
+      options['builders']['delivery-cli'] = {}
       options['builders']['delivery-cli']['artifact'] = ask_for('Delivery-cli Artifact: ')
       options['builders']['delivery-cli']['checksum'] = ask_for('Delivery-cli Checksum: ')
     end
