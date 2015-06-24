@@ -83,22 +83,8 @@ representative.**
 You will need to have the `delivery.license` file present on your provisioner
 node or local workstation.
 
-#### 2) Provisioning infrastructure [SSH/Kitchen]
 
-You can provision your infrastructure on your prefered provider. We will use
-[KichenCI](http://kitchen.ci/) for the easy setup so you can get familiar.
-
-Depending on the resources you have on your workstation we recommend you to
-create the minimum number of instances (3):
-
-```
-$ export KITCHEN_YAML=.kitchen.ssh.yml
-$ kitchen create chef-server
-$ kitchen create delivery-server
-$ kitchen create build-node1
-```
-
-#### 3) Create an environment
+#### 2) Create an environment
 
 Use the `rake` task `generate_env` to generate an environment file.
 
@@ -110,7 +96,7 @@ $ rake setup:generate_env
 
 Do not forget to `export` your new environment.
 
-#### 4) Provision your Delivery Cluster
+#### 3) Provision your Delivery Cluster
 
 ```
 $ rake setup:cluster
@@ -157,11 +143,83 @@ $ rake setup:supermarket
 
 Available Provisioning Methods
 ------------
-This cookbook uses [chef-provisioning](https://github.com/chef/chef-provisioning) to manipulate the infrastructure acting as the orchestrator, it uses the default driver `aws` but you can switch drivers by modifying the attribute `['delivery-cluster']['driver']`
+This cookbook uses [chef-provisioning](https://github.com/chef/chef-provisioning) to manipulate the infrastructure acting as the orchestrator, it uses the default driver `vagrant` but you can switch drivers by modifying the attribute `['delivery-cluster']['driver']`
 
 The available drivers that you can use are:
 
-### AWS Driver [Default]
+### Vagrant Driver [Default]
+This driver will provision the Delivery cluster locally using [Vagrant](https://www.vagrantup.com/).
+As such, you MUST have vagrant installed for this to function.
+
+The `rake setup:generate_env` task will generate this for you.
+
+If you edit this config by hand, you MUST provide:
+
+1. `vm_memory` and `vm_cpus`.
+2. `vm_box`.
+3. `network` configuration.
+
+Here is an example of the environment file using the vagrant driver.
+```json
+{
+  "name": "test",
+  "description": "Delivery Cluster Environment",
+  "json_class": "Chef::Environment",
+  "chef_type": "environment",
+  "override_attributes": {
+    "delivery-cluster": {
+      "id": "test",
+      "driver": "vagrant",
+      "vagrant": {
+        "ssh_username": "vagrant",
+        "key_file": "/Users/username/.vagrant.d/insecure_private_key",
+        "vm_box": "opscode-centos-6.6",
+        "image_url": "https://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.6_chef-provisionerless.box",
+        "use_private_ip_for_ssh": true
+      },
+      "chef-server": {
+        "organization": "test",
+        "existing": false,
+        "vm_hostname": "chef.example.com",
+        "network": ":private_network, {ip: '33.33.33.10'}",
+        "vm_memory": "2048",
+        "vm_cpus": "2"
+      },
+      "delivery": {
+        "version": "latest",
+        "enterprise": "test",
+        "artifactory": false,
+        "license_file": "/Users/username/delivery.license",
+        "vm_hostname": "delivery.example.com",
+        "network": ":private_network, {ip: '33.33.33.11'}",
+        "vm_memory": "2048",
+        "vm_cpus": "2"
+      },
+      "supermarket": {
+        "vm_hostname": "supermarket.example.com",
+        "network": ":private_network, {ip: '33.33.33.13'}",
+        "vm_memory": "2048",
+        "vm_cpus": "2"
+      },
+      "builders": {
+        "count": "1",
+        "1": {
+          "network": ":private_network, {ip: '33.33.33.14'}",
+          "vm_memory": "2048",
+          "vm_cpus": "2"
+        },
+        "delivery-cli": {
+          "artifact": "https://delivery-packages.s3.amazonaws.com/cli/delivery-cli-20150408004719-1.x86_64.rpm",
+          "checksum": "fa1f1724482182a9461c21a692b88ecc97e016b8307bd28834c2828eca702e6c"
+        }
+      }
+    }
+  }
+}
+```
+
+
+### AWS Driver
 This driver will provision the infrastructure in Amazon Ec2.
 
 You MUST configure your `~/.aws/config` file like this:

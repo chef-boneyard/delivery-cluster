@@ -161,8 +161,8 @@ namespace :setup do
     when 'vagrant'
       options['driver']['ssh_username']           = ask_for('SSH Username', 'vagrant')
 #      options['driver']['password']               = ask_for('SSH Password', 'vagrant')
-      options['driver']['vm_box']                 = ask_for('Box Type: ', 'opscode-ubuntu-14.04')
-      options['driver']['image_url']              = ask_for('Box URL: ', 'https://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_ubuntu-14.04_chef-provisionerless.box')
+      options['driver']['vm_box']                 = ask_for('Box Type: ', 'opscode-centos-6.6')
+      options['driver']['image_url']              = ask_for('Box URL: ', 'https://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.6_chef-provisionerless.box')
       options['driver']['use_private_ip_for_ssh'] = ask_for('Use private ip for ssh?', 'yes')
       loop do
         puts 'Key File Not Found'.red if options['driver']['key_file']
@@ -219,7 +219,7 @@ namespace :setup do
       options['delivery']['vm_cpus'] = ask_for('Cpus alotted', "2")
     end
 
-    puts '\nAnalytics Server'.pink
+    puts "\nAnalytics Server".pink
     if ask_for('Enable Analytics?', 'no')
       options['analytics'] = Hash.new
       case options['driver_name']
@@ -264,7 +264,7 @@ namespace :setup do
       end
     when 'vagrant'
       1.upto(options['builders']['count'].to_i) do |i|
-        h = ask_for("Host for Build Node #{i}", ":private_network, {:ip => 33.33.33.1#{i + 3}}")
+        h = ask_for("Host for Build Node #{i}", ":private_network, {:ip => '33.33.33.1#{i + 3}'}")
         options['builders'][i] = { 'network' => h }
         options['builders']['vm_memory'] = ask_for('Memory allocation', "2048")
         options['builders']['vm_cpus'] = ask_for('Cpus alotted', "2")
@@ -280,7 +280,7 @@ namespace :setup do
 
     render_environment(environment, options)
 
-    puts '\nExport your new environment by executing:'.yellow
+    puts "\nExport your new environment by executing:".yellow
     puts "  # export CHEF_ENV=#{environment.green}\n"
   end
 

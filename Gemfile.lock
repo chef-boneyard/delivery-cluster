@@ -19,8 +19,8 @@ GIT
 
 GIT
   remote: https://github.com/chef/chef-provisioning-vagrant.git
-  revision: 2499045e93543526e86d5aa65bcde0bf88db7272
-  ref: afiune/dont-remember-convergence-strategy
+  revision: 3be28a070cfb3b83829def948aff5cccec23629e
+  ref: master
   specs:
     chef-provisioning-vagrant (0.8.4)
       chef
@@ -282,3 +282,6 @@ DEPENDENCIES
   chef-provisioning-vagrant!
   chef-vault
   kitchen-vagrant (~> 0.16.0)
+
+BUNDLED WITH
+   1.10.3
