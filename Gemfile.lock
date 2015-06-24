@@ -10,35 +10,40 @@ GIT
       retryable (~> 2.0.1)
 
 GIT
-  remote: https://github.com/chef/chef-provisioning-vagrant.git
-  revision: a8d364b96ff44a0e1c03572d3ea317b8eab13300
-  ref: test-delivery-cluster-using-vagrant
+  remote: https://github.com/chef/chef-provisioning-ssh.git
+  revision: 6f9814b7d2a69de5ba694d5282f8c5280c4c9412
+  ref: master
   specs:
-    chef-provisioning-vagrant (0.8.3)
+    chef-provisioning-ssh (0.0.9)
+      chef-provisioning
+
+GIT
+  remote: https://github.com/chef/chef-provisioning-vagrant.git
+  revision: 2499045e93543526e86d5aa65bcde0bf88db7272
+  ref: afiune/dont-remember-convergence-strategy
+  specs:
+    chef-provisioning-vagrant (0.8.4)
       chef
       chef-provisioning
 
 GIT
   remote: https://github.com/chef/chef-provisioning.git
-  revision: 91f5046840eca5a24796956a580931e3479ce5fd
+  revision: ac770060c77e0c44f281d6f5a990f24ea877818a
   ref: master
   specs:
-    chef-provisioning (1.1.1)
+    chef-provisioning (1.3.0.dev.0)
       chef (>= 11.16.4)
       cheffish (~> 1.1)
       inifile (~> 2.0)
       net-scp (~> 1.0)
       net-ssh (~> 2.0)
       net-ssh-gateway (~> 1.2.0)
-      winrm (~> 1.2.0)
+      winrm (~> 1.3)
 
 GEM
   remote: https://rubygems.org/
   specs:
     addressable (2.3.8)
-    akami (1.3.0)
-      gyoku (>= 0.4.0)
-      nokogiri
     artifactory (2.2.1)
     aws-sdk-v1 (1.64.0)
       json (~> 1.4)
@@ -75,8 +80,8 @@ GEM
     celluloid-io (0.16.2)
       celluloid (>= 0.16.0)
       nio4r (>= 1.1.0)
-    chef (12.2.1)
-      chef-zero (~> 4.0)
+    chef (12.3.0)
+      chef-zero (~> 4.1)
       diff-lcs (~> 1.2, >= 1.2.4)
       erubis (~> 2.7)
       ffi-yajl (>= 1.2, < 3.0)
@@ -97,18 +102,16 @@ GEM
       rspec_junit_formatter (~> 0.2.0)
       serverspec (~> 2.7)
       specinfra (~> 2.10)
-    chef-provisioning-ssh (0.0.7)
-      chef-provisioning
     chef-vault (2.5.0)
-    chef-zero (4.2.1)
+    chef-zero (4.2.3)
       ffi-yajl (>= 1.1, < 3.0)
       hashie (~> 2.0)
       mixlib-log (~> 1.3)
       rack
       uuidtools (~> 2.1)
-    cheffish (1.1.2)
+    cheffish (1.2)
       chef (~> 12.1)
-      chef-zero (~> 4.0)
+      chef-zero (~> 4.2)
     cleanroom (1.0.0)
     coderay (1.1.0)
     dep-selector-libgecode (1.0.2)
@@ -120,9 +123,9 @@ GEM
     faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.8)
-    ffi-yajl (2.1.0)
+    ffi-yajl (2.2.0)
       libyajl2 (~> 1.2)
-    gssapi (1.0.3)
+    gssapi (1.2.0)
       ffi (>= 1.0.1)
     gyoku (1.3.1)
       builder (>= 2.1.2)
@@ -130,8 +133,6 @@ GEM
     highline (1.7.2)
     hitimes (1.2.2)
     httpclient (2.6.0.1)
-    httpi (0.9.7)
-      rack
     inifile (2.0.2)
     ipaddress (0.8.0)
     json (1.8.2)
@@ -143,16 +144,16 @@ GEM
       little-plugger (>= 1.1.3)
       multi_json (>= 1.8.4)
     method_source (0.8.2)
-    mime-types (2.4.3)
+    mime-types (2.6.1)
     mini_portile (0.6.2)
     minitar (0.5.4)
     mixlib-authentication (1.3.0)
       mixlib-log
     mixlib-cli (1.5.0)
-    mixlib-config (2.1.0)
+    mixlib-config (2.2.1)
     mixlib-log (1.6.0)
-    mixlib-shellout (2.0.1)
-    multi_json (1.11.0)
+    mixlib-shellout (2.1.0)
+    multi_json (1.11.1)
     multipart-post (2.0.0)
     net-http-persistent (2.9.4)
     net-scp (1.2.1)
@@ -166,12 +167,12 @@ GEM
     nio4r (1.1.0)
     nokogiri (1.6.6.2)
       mini_portile (~> 0.6.0)
-    nori (1.1.5)
+    nori (2.6.0)
     octokit (3.8.0)
       sawyer (~> 0.6.0, >= 0.5.3)
-    ohai (8.2.0)
+    ohai (8.5.0)
       ffi (~> 1.9)
-      ffi-yajl (>= 1.1, < 3.0)
+      ffi-yajl (~> 2.2)
       ipaddress
       mime-types (~> 2.0)
       mixlib-cli
@@ -186,7 +187,7 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
-    rack (1.6.0)
+    rack (1.6.4)
     rake (10.4.2)
     retryable (2.0.1)
     ridley (4.1.2)
@@ -206,50 +207,41 @@ GEM
       retryable (>= 2.0.0)
       semverse (~> 1.1)
       varia_model (~> 0.4)
-    rspec (3.2.0)
-      rspec-core (~> 3.2.0)
-      rspec-expectations (~> 3.2.0)
-      rspec-mocks (~> 3.2.0)
-    rspec-core (3.2.3)
-      rspec-support (~> 3.2.0)
-    rspec-expectations (3.2.1)
+    rspec (3.3.0)
+      rspec-core (~> 3.3.0)
+      rspec-expectations (~> 3.3.0)
+      rspec-mocks (~> 3.3.0)
+    rspec-core (3.3.1)
+      rspec-support (~> 3.3.0)
+    rspec-expectations (3.3.0)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.2.0)
+      rspec-support (~> 3.3.0)
     rspec-its (1.2.0)
       rspec-core (>= 3.0.0)
       rspec-expectations (>= 3.0.0)
-    rspec-mocks (3.2.1)
+    rspec-mocks (3.3.1)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.2.0)
-    rspec-support (3.2.2)
-    rspec_junit_formatter (0.2.0)
+      rspec-support (~> 3.3.0)
+    rspec-support (3.3.0)
+    rspec_junit_formatter (0.2.3)
       builder (< 4)
-      rspec (>= 2, < 4)
-      rspec-core (!= 2.12.0)
-    rubyntlm (0.1.1)
+      rspec-core (>= 2, < 4, != 2.12.0)
+    rubyntlm (0.4.0)
     safe_yaml (1.0.4)
-    savon (0.9.5)
-      akami (~> 1.0)
-      builder (>= 2.1.2)
-      gyoku (>= 0.4.0)
-      httpi (~> 0.9)
-      nokogiri (>= 1.4.0)
-      nori (~> 1.0)
-      wasabi (~> 1.0)
     sawyer (0.6.0)
       addressable (~> 2.3.5)
       faraday (~> 0.8, < 0.10)
     semverse (1.2.1)
-    serverspec (2.14.1)
+    serverspec (2.19.0)
       multi_json
       rspec (~> 3.0)
       rspec-its
-      specinfra (~> 2.25)
+      specinfra (~> 2.35)
     slop (3.6.0)
     solve (1.2.1)
       dep_selector (~> 1.0)
       semverse (~> 1.1)
-    specinfra (2.30.0)
+    specinfra (2.36.4)
       net-scp
       net-ssh
     systemu (2.6.5)
@@ -266,15 +258,14 @@ GEM
     varia_model (0.4.0)
       buff-extensions (~> 1.0)
       hashie (>= 2.0.2, < 3.0.0)
-    wasabi (1.0.0)
-      nokogiri (>= 1.4.0)
-    winrm (1.2.0)
-      gssapi (~> 1.0.0)
+    winrm (1.3.3)
+      builder (>= 2.1.2)
+      gssapi (~> 1.2)
+      gyoku (~> 1.0)
       httpclient (~> 2.2, >= 2.2.0.2)
       logging (~> 1.6, >= 1.6.1)
-      nokogiri (~> 1.5)
-      rubyntlm (~> 0.1.1)
-      savon (= 0.9.5)
+      nori (~> 2.0)
+      rubyntlm (~> 0.4.0)
       uuidtools (~> 2.1.2)
     wmi-lite (1.0.0)
 
@@ -287,7 +278,7 @@ DEPENDENCIES
   chef (~> 12.0)
   chef-provisioning!
   chef-provisioning-aws!
-  chef-provisioning-ssh
+  chef-provisioning-ssh!
   chef-provisioning-vagrant!
   chef-vault
   kitchen-vagrant (~> 0.16.0)
