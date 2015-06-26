@@ -25,3 +25,32 @@ require 'chefspec/berkshelf'
 
 TOPDIR = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 $LOAD_PATH << File.expand_path(File.dirname(__FILE__))
+
+# Include all our libraries
+Dir['libraries/*.rb'].each { |f| require File.expand_path(f) }
+
+# Provisioning Drivers Data
+module SharedDriverData
+  extend RSpec::SharedContext
+
+  let(:ssh_data) {
+    {
+      'ssh_username' => 'ubuntu',
+      'prefix' => 'gksudo ',
+      'key_file' => '/Users/afiune/.vagrant.d/insecure_private_key',
+      'bootstrap_proxy' => 'http://my-proxy.com/',
+      'chef_config' => "http_proxy 'http://my-proxy.com/'\nno_proxy 'localhost'"
+    }
+  }
+
+  let(:vagrant_driver) {[]}
+
+  let(:aws_driver) {[]}
+end
+
+RSpec.configure do |config|
+  config.include SharedDriverData
+  config.filter_run_excluding :ignore => true
+  config.platform = 'ubuntu'
+  config.version = '14.04'
+end

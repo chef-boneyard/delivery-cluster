@@ -20,3 +20,8 @@ directory "/var/opt/delivery/workspace/delivery-cluster-aws-cache" do
   owner node['delivery_builder']['build_user']
   group node['delivery_builder']['build_user']
 end
+
+# Installing chef-provisioning-ssh for testing purposes
+chef_gem 'chef-provisioning-ssh' do
+  action :install
+end
