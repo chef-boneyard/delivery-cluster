@@ -282,6 +282,3 @@ DEPENDENCIES
   chef-provisioning-vagrant!
   chef-vault
   kitchen-vagrant (~> 0.16.0)
-
-BUNDLED WITH
-   1.10.3

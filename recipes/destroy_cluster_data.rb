@@ -23,7 +23,7 @@
 # Delete Link "delivery-cluster-data"
 link File.join(current_dir, '.chef', 'delivery-cluster-data') do
   action :delete
-  only_if "test -L #{File.join(current_dir, '.chef', 'delivery-cluster-data')}"
+  only_if { cluster_data_dir_link? }
 end
 
 # Delete "cluster_data_dir" directory

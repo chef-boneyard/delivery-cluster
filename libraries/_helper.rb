@@ -35,6 +35,10 @@ module DeliveryCluster
       Chef::Config.chef_repo_path
     end
 
+    def cluster_data_dir_link?
+      File.symlink?(File.join(current_dir, '.chef', 'delivery-cluster-data'))
+    end
+
     def cluster_data_dir
       File.join(current_dir, '.chef', "delivery-cluster-data-#{delivery_cluster_id}")
     end
