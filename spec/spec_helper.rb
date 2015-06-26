@@ -45,7 +45,19 @@ module SharedDriverData
 
   let(:vagrant_driver) {}
 
-  let(:aws_driver) {}
+  let(:aws_driver) do
+    {
+      'flavor' => 'c3.xlarge',
+      'image_id' => 'ami-3d50120d',
+      'key_name' => 'afiune',
+      'subnet_id' => 'subnet-19ac017c',
+      'ssh_username' => "ubuntu",
+      'security_group_ids' => "sg-cbacf8ae",
+      'use_private_ip_for_ssh' => true,
+      'bootstrap_proxy' => 'http://my-proxy.com/',
+      'chef_config' => "http_proxy 'http://my-proxy.com/'\nno_proxy 'localhost'"
+    }
+  end
 end
 
 # Common shared data

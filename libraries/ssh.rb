@@ -20,6 +20,8 @@
 # limitations under the License.
 #
 
+require_relative '_base'
+
 module DeliveryCluster
   module Provisioning
     # Ssh class for SsH Provisioning Driver
