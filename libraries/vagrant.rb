@@ -20,6 +20,8 @@
 # limitations under the License.
 #
 
+require_relative '_base'
+
 module DeliveryCluster
   module Provisioning
     # Vagrant class for vb Provisioning Driver
@@ -57,6 +59,7 @@ module DeliveryCluster
         @key_file               = @node['delivery-cluster'][driver]['key_file'] if @node['delivery-cluster'][driver]['key_file']
         @bootstrap_proxy        = @node['delivery-cluster'][driver]['bootstrap_proxy'] if @node['delivery-cluster'][driver]['bootstrap_proxy']
         @chef_config            = @node['delivery-cluster'][driver]['chef_config'] if @node['delivery-cluster'][driver]['chef_config']
+        @use_private_ip_for_ssh = false
         @use_private_ip_for_ssh = @node['delivery-cluster'][driver]['use_private_ip_for_ssh'] if @node['delivery-cluster'][driver]['use_private_ip_for_ssh']
         fail 'You should not specify both key_file and password.' if @password && @key_file
       end

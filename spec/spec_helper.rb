@@ -43,7 +43,18 @@ module SharedDriverData
     }
   end
 
-  let(:vagrant_driver) {}
+  let(:vagrant_driver) do
+    {
+      'vm_box' => 'opscode-ubuntu-14.04',
+      'image_url' => 'https://opscode-bento.com/opscode_ubuntu-14.04.box',
+      'vm_memory' => '2048',
+      'vm_cpus' => '2',
+      'key_file' => '/Users/afiune/.vagrant.d/insecure_private_key',
+      'use_private_ip_for_ssh' => false,
+      'bootstrap_proxy' => 'http://my-proxy.com/',
+      'chef_config' => "http_proxy 'http://my-proxy.com/'\nno_proxy 'localhost'"
+    }
+  end
 
   let(:aws_driver) do
     {
@@ -51,8 +62,8 @@ module SharedDriverData
       'image_id' => 'ami-3d50120d',
       'key_name' => 'afiune',
       'subnet_id' => 'subnet-19ac017c',
-      'ssh_username' => "ubuntu",
-      'security_group_ids' => "sg-cbacf8ae",
+      'ssh_username' => 'ubuntu',
+      'security_group_ids' => 'sg-cbacf8ae',
       'use_private_ip_for_ssh' => true,
       'bootstrap_proxy' => 'http://my-proxy.com/',
       'chef_config' => "http_proxy 'http://my-proxy.com/'\nno_proxy 'localhost'"

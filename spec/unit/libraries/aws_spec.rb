@@ -54,18 +54,18 @@ describe DeliveryCluster::Provisioning::Aws do
     it 'returns the right machine_options:Hash' do
       expect(aws_object.machine_options).to eq(
         convergence_options: {
-            bootstrap_proxy: aws_driver['bootstrap_proxy'],
-            chef_config: aws_driver['chef_config']
-          },
-          bootstrap_options: {
-            instance_type:      aws_driver['flavor'],
-            key_name:           aws_driver['key_name'],
-            subnet_id:          aws_driver['subnet_id'],
-            security_group_ids: aws_driver['security_group_ids']
-          },
-          ssh_username:           aws_driver['ssh_username'],
-          image_id:               aws_driver['image_id'],
-          use_private_ip_for_ssh: aws_driver['use_private_ip_for_ssh']
+          bootstrap_proxy: aws_driver['bootstrap_proxy'],
+          chef_config: aws_driver['chef_config']
+        },
+        bootstrap_options: {
+          instance_type:      aws_driver['flavor'],
+          key_name:           aws_driver['key_name'],
+          subnet_id:          aws_driver['subnet_id'],
+          security_group_ids: aws_driver['security_group_ids']
+        },
+        ssh_username:           aws_driver['ssh_username'],
+        image_id:               aws_driver['image_id'],
+        use_private_ip_for_ssh: aws_driver['use_private_ip_for_ssh']
       )
     end
 
