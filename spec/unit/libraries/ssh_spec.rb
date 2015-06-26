@@ -33,7 +33,7 @@ describe DeliveryCluster::Provisioning::Ssh do
 
   context 'when driver attributes are NOT implemented' do
     it 'raise an error' do
-      expect{ssh_object}.to raise_error(RuntimeError)
+      expect { ssh_object }.to raise_error(RuntimeError)
     end
   end
 
@@ -51,23 +51,23 @@ describe DeliveryCluster::Provisioning::Ssh do
     end
 
     it 'returns the right machine_options:Hash' do
-      expect(ssh_object.machine_options).to eq({
-          convergence_options: {
-            bootstrap_proxy: ssh_data['bootstrap_proxy'],
-            chef_config: ssh_data['chef_config']
+      expect(ssh_object.machine_options).to eq(
+        convergence_options: {
+          bootstrap_proxy: ssh_data['bootstrap_proxy'],
+          chef_config: ssh_data['chef_config']
+        },
+        transport_options: {
+          username: ssh_data['ssh_username'],
+          ssh_options: {
+            user: ssh_data['ssh_username'],
+            password: nil,
+            keys: [ssh_data['key_file']]
           },
-          transport_options: {
-            username: ssh_data['ssh_username'],
-            ssh_options: {
-              user: ssh_data['ssh_username'],
-              password: nil,
-              keys: [ssh_data['key_file']]
-            },
-            options: {
-              prefix: ssh_data['prefix']
-            }
+          options: {
+            prefix: ssh_data['prefix']
           }
-        })
+        }
+      )
     end
 
     context 'and we specify both password and key_file' do
@@ -76,7 +76,7 @@ describe DeliveryCluster::Provisioning::Ssh do
       end
 
       it 'raise an error' do
-        expect{ssh_object}.to raise_error(RuntimeError)
+        expect { ssh_object }.to raise_error(RuntimeError)
       end
     end
   end

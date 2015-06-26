@@ -33,7 +33,7 @@ Dir['libraries/*.rb'].each { |f| require File.expand_path(f) }
 module SharedDriverData
   extend RSpec::SharedContext
 
-  let(:ssh_data) {
+  let(:ssh_data) do
     {
       'ssh_username' => 'ubuntu',
       'prefix' => 'gksudo ',
@@ -41,16 +41,44 @@ module SharedDriverData
       'bootstrap_proxy' => 'http://my-proxy.com/',
       'chef_config' => "http_proxy 'http://my-proxy.com/'\nno_proxy 'localhost'"
     }
-  }
+  end
 
-  let(:vagrant_driver) {[]}
+  let(:vagrant_driver) {}
 
-  let(:aws_driver) {[]}
+  let(:aws_driver) {}
+end
+
+# Common shared data
+module SharedCommonData
+  extend RSpec::SharedContext
+
+  let(:cluster_data) do
+    {
+      'id' => 'chefspec',
+      'chef-server' => {
+        'organization' => '',
+        'existing' => false
+      },
+      'delivery' => {
+        'version' => 'latest',
+        'enterprise' => 'chefspec',
+        'artifactory' => false,
+        'license_file' => '/Users/afiune/delivery.license'
+      },
+      'builders' => {
+        'count' => '3',
+        '1' => {},
+        '2' => {},
+        '3' => {}
+      }
+    }
+  end
 end
 
 RSpec.configure do |config|
   config.include SharedDriverData
-  config.filter_run_excluding :ignore => true
+  config.include SharedCommonData
+  config.filter_run_excluding ignore: true
   config.platform = 'ubuntu'
   config.version = '14.04'
 end

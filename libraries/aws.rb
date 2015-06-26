@@ -24,7 +24,6 @@ require_relative '_base'
 
 module DeliveryCluster
   module Provisioning
-
     # AWS class for AWS Provisioning Driver
     #
     # Specify all the methods a Provisioning Driver should implement

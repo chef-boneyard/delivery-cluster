@@ -21,4 +21,4 @@ Style/CyclomaticComplexity:
   Max: 15
 
 Metrics/AbcSize:
-  Max: 100
+  Max: 110
