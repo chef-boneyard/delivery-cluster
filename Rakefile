@@ -263,10 +263,10 @@ namespace :setup do
       end
     when 'vagrant'
       1.upto(options['builders']['count'].to_i) do |i|
-        h = ask_for("Host for Build Node #{i}", ":private_network, {:ip => '33.33.33.1#{i + 3}'}")
-        options['builders'][i] = { 'network' => h }
-        options['builders']['vm_memory'] = ask_for('Memory allocation', '2048')
-        options['builders']['vm_cpus'] = ask_for('Cpus alotted', '2')
+        net = ask_for("Network for Build Node #{i}", ":private_network, {:ip => '33.33.33.1#{i + 3}'}")
+        mem = ask_for("Memory allocation for Build Node #{i}", '2048')
+        cpu = ask_for("Cpus alotted for Build Node #{i}", '2')
+        options['builders'][i] = { 'network' => net, 'vm_memory' => mem, 'vm_cpus' => cpu }
       end
     end
     if ask_for('Specify a delivery-cli artifact?', 'no')
