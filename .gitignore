@@ -5,7 +5,9 @@ data_bags/
 environments*
 workspace*
 nodes*
+.chef/vms*
 .chef/local-mode-cache
+.chef/syntaxcache
 .chef/trusted_certs
 .chef/delivery-cluster*
 .chef/keys

@@ -7,6 +7,10 @@ Metrics/MethodLength:
   CountComments: false  # count full line comments?
   Max: 50
 
+Metrics/ModuleLength:
+  CountComments: false
+  Max: 300
+
 Metrics/LineLength:
   Max: 200
 
@@ -17,4 +21,4 @@ Style/CyclomaticComplexity:
   Max: 15
 
 Metrics/AbcSize:
-  Max: 100
+  Max: 110

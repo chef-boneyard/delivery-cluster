@@ -36,7 +36,7 @@ module DeliveryCluster
       # Return the machine options to use.
       #
       # @return [Hash] the machine_options for the specific driver
-      def machine_options # rubocop:disable Lint/UnusedMethodArgument
+      def machine_options
         fail "#{self.class}#machine_options must be implemented"
       end
 
@@ -45,7 +45,7 @@ module DeliveryCluster
       # @param component [String] component name
       # @param count [Integer] component number
       # @return [Array] specific machine_options for the specific component
-      def specific_machine_options(component, count = nil) # rubocop:disable Lint/UnusedMethodArgument
+      def specific_machine_options(_component, _count = nil)
         fail "#{self.class}#specific_machine_options must be implemented"
       end
 

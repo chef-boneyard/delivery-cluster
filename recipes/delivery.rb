@@ -32,7 +32,7 @@ if node['delivery-cluster']['delivery']['artifact']
   end
 
   # Install a local/remote artifact
-  if node['delivery-cluster']['delivery']['artifact'] =~ /^\//
+  if node['delivery-cluster']['delivery']['artifact'] =~ %r{^\/}
     pkg = node['delivery-cluster']['delivery']['artifact']
   else
     remote_file pkg do

@@ -20,3 +20,10 @@ directory "/var/opt/delivery/workspace/delivery-cluster-aws-cache" do
   owner node['delivery_builder']['build_user']
   group node['delivery_builder']['build_user']
 end
+
+# Installing chef-provisioning drivers for testing purposes
+%w(ssh vagrant aws).each do |driver|
+  chef_gem "chef-provisioning-#{driver}" do
+    action :install
+  end
+end
