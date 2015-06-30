@@ -54,7 +54,8 @@ describe DeliveryCluster::Provisioning::Vagrant do
       expect(vagrant_object.machine_options).to eq(
         convergence_options: {
           bootstrap_proxy: vagrant_driver['bootstrap_proxy'],
-          chef_config: vagrant_driver['chef_config']
+          chef_config: vagrant_driver['chef_config'],
+          chef_version: vagrant_driver['chef_version']
         },
         vagrant_options: {
           'vm.box' => vagrant_driver['vm_box'],

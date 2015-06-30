@@ -54,6 +54,7 @@ module DeliveryCluster
         @subnet_id              = @node['delivery-cluster'][driver]['subnet_id'] if @node['delivery-cluster'][driver]['subnet_id']
         @bootstrap_proxy        = @node['delivery-cluster'][driver]['bootstrap_proxy'] if @node['delivery-cluster'][driver]['bootstrap_proxy']
         @chef_config            = @node['delivery-cluster'][driver]['chef_config'] if @node['delivery-cluster'][driver]['chef_config']
+        @chef_version           = @node['delivery-cluster'][driver]['chef_version'] if @node['delivery-cluster'][driver]['chef_version']
         @ssh_username           = @node['delivery-cluster'][driver]['ssh_username'] if @node['delivery-cluster'][driver]['ssh_username']
         @security_group_ids     = @node['delivery-cluster'][driver]['security_group_ids'] if @node['delivery-cluster'][driver]['security_group_ids']
         @use_private_ip_for_ssh = false
@@ -67,7 +68,8 @@ module DeliveryCluster
         opts = {
           convergence_options: {
             bootstrap_proxy: @bootstrap_proxy,
-            chef_config: @chef_config
+            chef_config: @chef_config,
+            chef_version: @chef_version
           },
           bootstrap_options: {
             instance_type:      @flavor,
