@@ -54,7 +54,8 @@ describe DeliveryCluster::Provisioning::Ssh do
       expect(ssh_object.machine_options).to eq(
         convergence_options: {
           bootstrap_proxy: ssh_data['bootstrap_proxy'],
-          chef_config: ssh_data['chef_config']
+          chef_config: ssh_data['chef_config'],
+          chef_version: ssh_data['chef_version']
         },
         transport_options: {
           username: ssh_data['ssh_username'],

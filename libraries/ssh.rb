@@ -52,6 +52,7 @@ module DeliveryCluster
         @key_file        = @node['delivery-cluster'][driver]['key_file'] if @node['delivery-cluster'][driver]['key_file']
         @bootstrap_proxy = @node['delivery-cluster'][driver]['bootstrap_proxy'] if @node['delivery-cluster'][driver]['bootstrap_proxy']
         @chef_config     = @node['delivery-cluster'][driver]['chef_config'] if @node['delivery-cluster'][driver]['chef_config']
+        @chef_version    = @node['delivery-cluster'][driver]['chef_version'] if @node['delivery-cluster'][driver]['chef_version']
         fail 'You should not specify both key_file and password.' if @password && @key_file
       end
 
@@ -62,7 +63,8 @@ module DeliveryCluster
         {
           convergence_options: {
             bootstrap_proxy: @bootstrap_proxy,
-            chef_config: @chef_config
+            chef_config: @chef_config,
+            chef_version: @chef_version
           },
           transport_options: {
             username: @ssh_username,

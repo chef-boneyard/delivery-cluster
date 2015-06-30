@@ -39,7 +39,8 @@ module SharedDriverData
       'prefix' => 'gksudo ',
       'key_file' => '/Users/afiune/.vagrant.d/insecure_private_key',
       'bootstrap_proxy' => 'http://my-proxy.com/',
-      'chef_config' => "http_proxy 'http://my-proxy.com/'\nno_proxy 'localhost'"
+      'chef_config' => "http_proxy 'http://my-proxy.com/'\nno_proxy 'localhost'",
+      'chef_version' => '12.3.0'
     }
   end
 
@@ -52,7 +53,8 @@ module SharedDriverData
       'key_file' => '/Users/afiune/.vagrant.d/insecure_private_key',
       'use_private_ip_for_ssh' => false,
       'bootstrap_proxy' => 'http://my-proxy.com/',
-      'chef_config' => "http_proxy 'http://my-proxy.com/'\nno_proxy 'localhost'"
+      'chef_config' => "http_proxy 'http://my-proxy.com/'\nno_proxy 'localhost'",
+      'chef_version' => '12.0.0'
     }
   end
 

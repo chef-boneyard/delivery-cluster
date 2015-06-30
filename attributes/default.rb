@@ -38,6 +38,7 @@ default['delivery-cluster']['aws']['image_id']                = nil
 default['delivery_cluster']['aws']['subnet_id']               = nil
 default['delivery-cluster']['aws']['bootstrap_proxy']         = ENV['HTTPS_PROXY'] || ENV['HTTP_PROXY']
 default['delivery_cluster']['aws']['chef_config']             = nil
+default['delivery_cluster']['aws']['chef_version']            = nil
 default['delivery-cluster']['aws']['use_private_ip_for_ssh']  = false
 
 # SSH Driver Attributes
@@ -46,6 +47,7 @@ default['delivery-cluster']['ssh']['prefix']                  = nil
 default['delivery-cluster']['ssh']['ssh_username']            = nil
 default['delivery-cluster']['ssh']['bootstrap_proxy']         = ENV['HTTPS_PROXY'] || ENV['HTTP_PROXY']
 default['delivery_cluster']['ssh']['chef_config']             = nil
+default['delivery_cluster']['ssh']['chef_version']            = nil
 default['delivery-cluster']['ssh']['use_private_ip_for_ssh']  = false
 
 # Vagrant Driver Attributes
@@ -59,6 +61,7 @@ default['delivery_cluster']['Vagrant']['vm_cpus']             = nil
 default['delivery_cluster']['vagrant']['network']             = nil
 default['delivery-cluster']['vagrant']['key_file']            = nil
 default['delivery_cluster']['vagrant']['chef_config']         = nil
+default['delivery_cluster']['vagrant']['chef_version']        = nil
 
 # Azure Driver Attributes
 default['delivery-cluster']['azure']['ssh_username']            = nil

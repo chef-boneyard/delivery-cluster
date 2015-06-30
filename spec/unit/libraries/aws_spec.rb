@@ -55,7 +55,8 @@ describe DeliveryCluster::Provisioning::Aws do
       expect(aws_object.machine_options).to eq(
         convergence_options: {
           bootstrap_proxy: aws_driver['bootstrap_proxy'],
-          chef_config: aws_driver['chef_config']
+          chef_config: aws_driver['chef_config'],
+          chef_version: aws_driver['chef_version']
         },
         bootstrap_options: {
           instance_type:      aws_driver['flavor'],

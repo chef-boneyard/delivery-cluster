@@ -1,3 +1,7 @@
+v0.3.1 (2015-06-30)
+-------------------
+- Expose chef_version to drivers
+
 v0.3.0 (2015-06-29)
 -------------------
 - Create CHANGELOG.md
