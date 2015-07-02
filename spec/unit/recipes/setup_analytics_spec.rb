@@ -47,7 +47,7 @@ describe 'delivery-cluster::setup_analytics' do
 
   %w( actions-source.json webui_priv.pem ).each do |analytics_file|
     it "download #{analytics_file}" do
-      expect(chef_run).to download_machine_file("/etc/opscode-analytics/#{analytics_file}" )
+      expect(chef_run).to download_machine_file("/etc/opscode-analytics/#{analytics_file}")
         .with_machine('chef-server-chefspec')
     end
   end

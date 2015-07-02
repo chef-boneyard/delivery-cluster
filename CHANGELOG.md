@@ -1,6 +1,8 @@
 v0.3.2 (2015-07-1)
 -------------------
 - [#140] Fix Supermarket Setup
+- [#141] Fix Analytics Setup
+- Add tests for Supermarket & Analytics recipes
 
 v0.3.1 (2015-06-30)
 -------------------
