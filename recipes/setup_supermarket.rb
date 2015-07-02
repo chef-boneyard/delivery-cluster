@@ -48,6 +48,9 @@ activate_supermarket
 
 # Configuring Supermarket on the Chef Server
 machine chef_server_hostname do
+  provisioning.specific_machine_options('chef-server').each do |option|
+    add_machine_options(option)
+  end
   recipe 'chef-server-12::supermarket'
   attributes lazy { chef_server_attributes }
   converge true
