@@ -27,6 +27,7 @@ require 'securerandom'
 module DeliveryCluster
   # Helper Module for general purposes
   module Helper
+<<<<<<< HEAD
     # Retrive the common cluster recipes
     #
     # This helper will return the common cluster recipes that customers specify in the
@@ -46,6 +47,9 @@ module DeliveryCluster
     def default_cluster_recipes
       ['delivery-cluster::pkg_repo_management']
     end
+=======
+    module_function
+>>>>>>> Enable module_function on DeliveryCluster::Helper
 
     def provisioning
       @provisioning ||= DeliveryCluster::Provisioning.for_driver(node['delivery-cluster']['driver'], node)
