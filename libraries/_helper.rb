@@ -396,3 +396,4 @@ end
 
 Chef::Recipe.send(:include, DeliveryCluster::Helper)
 Chef::Resource.send(:include, DeliveryCluster::Helper)
+Chef::Provider.send(:include, DeliveryCluster::Helper)

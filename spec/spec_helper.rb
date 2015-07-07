@@ -88,6 +88,7 @@ module SharedCommonData
         'version' => 'latest',
         'enterprise' => 'chefspec',
         'artifactory' => false,
+        'config' => "nginx['enable_non_ssl'] = true",
         'license_file' => '/Users/afiune/delivery.license'
       },
       'builders' => {
