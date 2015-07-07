@@ -8,4 +8,6 @@ delivery['default_search']   = "<%= @default_search %>"
 
 <% node['delivery-cluster']['delivery']['ldap'].each do |attr, value| -%>
 delivery['<%= attr %>'] = <%= value.pretty_inspect -%>
-<% end %>
+<% end -%>
+
+<%= node['delivery-cluster']['delivery']['config'] if node['delivery-cluster']['delivery']['config'] -%>

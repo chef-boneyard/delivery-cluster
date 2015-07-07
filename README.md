@@ -386,6 +386,8 @@ Specific Attributes per Machine
 | `artifactory`  | Set to `true` if you want to use Chef Artifactory. (Requires Chef VPN)|
 | `hostname`     | Hostname of your Delivery Server. |
 | `enterprise`   | A Delivery Enterprise that it will create. |
+| `ldap`         | LDAP config attributes. |
+| `config`       | Specify custom configuration for the `delivery.rb`. |
 | `fqdn`         | The Delivery FQDN to substitute the IP Address. |
 | `flavor`       | Flavor of the Chef Server. |
 | `license_file` | Absolute path to the `delivery.license` file on your provisioner node. To acquire this file, please speak with your CHEF account representative. |
