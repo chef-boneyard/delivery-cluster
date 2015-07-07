@@ -30,7 +30,7 @@ GRAPH
     chef-vault (>= 1.0.4)
   chef-vault (1.3.0)
   chef_handler (1.1.6)
-  delivery-cluster (0.3.2)
+  delivery-cluster (0.3.3)
     chef-server-12 (>= 0.0.0)
     chef-server-ingredient (>= 0.0.0)
     chef-splunk (>= 0.0.0)

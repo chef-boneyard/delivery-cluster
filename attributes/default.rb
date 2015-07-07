@@ -109,6 +109,12 @@ default['delivery-cluster']['delivery']['pass-through'] = true
 #   => ldap_attr_full_name
 default['delivery-cluster']['delivery']['ldap']        = {}
 
+# => Custom config
+#
+# Specify custom configuration for the `delivery.rb` like:
+# => default['delivery-cluster']['delivery']['config'] = "nginx['enable_non_ssl'] = true"
+default['delivery-cluster']['delivery']['config']      =  nil
+
 # Delivery Artifacts
 #
 # There are three ways you can specify the Delivery Artifact
