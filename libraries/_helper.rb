@@ -117,15 +117,6 @@ module DeliveryCluster
       component_hostname('supermarket')
     end
 
-    def component_hostname(component, prefix = nil)
-      unless node['delivery-cluster'][component]['hostname']
-        component_prefix = prefix ? prefix : "#{component}-server"
-        node.set['delivery-cluster'][component]['hostname'] = "#{component_prefix}-#{delivery_cluster_id}"
-      end
-
-      node['delivery-cluster'][component]['hostname']
-    end
-
     def delivery_builder_hostname(index)
       unless node['delivery-cluster']['builders']['hostname_prefix']
         node.set['delivery-cluster']['builders']['hostname_prefix'] = "build-node-#{delivery_cluster_id}"
@@ -167,14 +158,6 @@ module DeliveryCluster
       "#{cluster_data_dir}/splunk"
     end
 
-    def component_node(component)
-      Chef::REST.new(
-        chef_server_config[:chef_server_url],
-        chef_server_config[:options][:client_name],
-        chef_server_config[:options][:signing_key_filename]
-      ).get_rest("nodes/#{component_hostname(component)}")
-    end
-
     def chef_server_fqdn
       @chef_server_fqdn ||= begin
         chef_server_node = Chef::Node.load(chef_server_hostname)
@@ -192,13 +175,6 @@ module DeliveryCluster
 
     def supermarket_server_fqdn
       @supermarket_server_fqdn ||= component_fqdn('supermarket')
-    end
-
-    def component_fqdn(component, component_node = nil)
-      component_node = component_node ? component_node : component_node(component)
-      node['delivery-cluster'][component]['fqdn'] ||
-        node['delivery-cluster'][component]['host'] ||
-        get_ip(component_node)
     end
 
     def get_supermarket_attribute(attr)
