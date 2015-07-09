@@ -70,6 +70,19 @@ default['delivery-cluster']['azure']['use_private_ip_for_ssh']  = false
 # => The Cluster Name which will be use to define all default hostnames
 default['delivery-cluster']['id'] = nil
 
+# => Common Cluster Recipes
+#
+# Add any recipe that you need to add to the run_list of all the servers
+# of the delivery-cluster.
+#
+# As an example:
+# * We would like to aply a security policy to every server on the cluster
+#   'security_policies::lock_root_login' locks down root login
+#
+# This attribute would look like:
+# default['delivery-cluster']['common_cluster_recipes'] = ['security_policies::lock_root_login']
+default['delivery-cluster']['common_cluster_recipes'] = []
+
 # Delivery License
 # => Delivery requires a license in able to install properly. This license needs to
 #    be put on the server prior to installation of Delivery otherwise

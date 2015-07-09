@@ -66,6 +66,7 @@ end
 # Installing Sypermarket
 machine supermarket_server_hostname do
   chef_server lazy { chef_server_config }
+  common_cluster_recipes.each { |r| recipe r }
   recipe 'supermarket-omnibus-cookbook'
   attributes lazy {
     {

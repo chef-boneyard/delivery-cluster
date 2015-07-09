@@ -1,8 +1,13 @@
+v0.3.4 (2015-07-10)
+-------------------
+- Common Cluster Recipes
+- Package repository management recipe
+
 v0.3.3 (2015-07-07)
 -------------------
 - [#134] Customizable `delivery.rb`
 
-v0.3.2 (2015-07-1)
+v0.3.2 (2015-07-01)
 -------------------
 - [#140] Fix Supermarket Setup
 - [#141] Fix Analytics Setup

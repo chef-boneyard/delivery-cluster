@@ -51,6 +51,7 @@ machine chef_server_hostname do
   provisioning.specific_machine_options('chef-server').each do |option|
     add_machine_options(option)
   end
+  common_cluster_recipes.each { |r| recipe r }
   recipe 'chef-server-12::analytics'
   attributes lazy { chef_server_attributes }
   converge true

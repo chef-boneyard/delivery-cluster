@@ -101,6 +101,7 @@ end
 # converge and complete the install.
 machine delivery_server_hostname do
   chef_server lazy { chef_server_config }
+  common_cluster_recipes.each { |r| recipe r }
   recipe 'delivery-cluster::delivery'
   node['delivery-cluster']['delivery']['recipes'].each { |r| recipe r }
   files(
