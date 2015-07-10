@@ -128,6 +128,7 @@ end
 machine splunk_server_hostname do
   chef_server lazy { chef_server_config }
   chef_environment 'delivered'
+  common_cluster_recipes.each { |r| recipe r }
   recipe 'chef-splunk::server'
   attributes lazy {
     {

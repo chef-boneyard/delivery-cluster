@@ -363,6 +363,25 @@ This is an example of how to specify this information
 
 ```
 
+Global Attributes
+------------
+
+### common_cluster_recipes
+
+Add any recipe that you need to add to the run_list of all the servers
+of the delivery-cluster.
+
+As an example:
+* We would like to aply a security policy to every single server on the cluster.
+
+  `security_policies::lock_root_login` locks down root login
+
+This attribute would look like:
+
+```
+default['delivery-cluster']['common_cluster_recipes'] = ['security_policies::lock_root_login']
+```
+
 Specific Attributes per Machine
 ------------
 

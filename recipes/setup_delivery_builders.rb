@@ -34,6 +34,7 @@ machine_batch "#{node['delivery-cluster']['builders']['count']}-build-nodes" do
   1.upto(node['delivery-cluster']['builders']['count'].to_i) do |i|
     machine delivery_builder_hostname(i) do
       chef_server lazy { chef_server_config }
+      common_cluster_recipes.each { |r| recipe r }
       role 'delivery_builders'
       add_machine_options(
         convergence_options: {

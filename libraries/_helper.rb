@@ -27,6 +27,26 @@ require 'securerandom'
 module DeliveryCluster
   # Helper Module for general purposes
   module Helper
+    # Retrive the common cluster recipes
+    #
+    # This helper will return the common cluster recipes that customers specify in the
+    # attribute `['delivery-cluster']['common_cluster_recipes']` plus the ones that
+    # Chef considered as default/needed. Those recipes will be included to the run_list
+    # of all the servers of the delivery-cluster.
+    def common_cluster_recipes
+      default_cluster_recipes + node['delivery-cluster']['common_cluster_recipes']
+    end
+
+    # Retrive the default cluster recipes
+    #
+    # Return the default cluster recipes from Chef. These recipes are the ones we
+    # internally need to let delivery-cluster work properly.
+    #
+    # To add more recipes, simply include them to the array.
+    def default_cluster_recipes
+      ['delivery-cluster::pkg_repo_management']
+    end
+
     def provisioning
       @provisioning ||= DeliveryCluster::Provisioning.for_driver(node['delivery-cluster']['driver'], node)
     end
