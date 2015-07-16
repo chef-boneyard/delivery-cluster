@@ -25,7 +25,7 @@ require 'fileutils'
 require 'securerandom'
 
 module DeliveryCluster
-  # Helper Module for general purposes
+  # Helpers Module for general purposes
   module Helpers
     module_function
 
@@ -99,10 +99,6 @@ module DeliveryCluster
       component_hostname('splunk')
     end
 
-    def chef_server_hostname(node)
-      DeliveryCluster::Helpers::Component.component_hostname(node, 'chef-server')
-    end
-
     def delivery_server_hostname
       component_hostname('delivery')
     end
@@ -156,13 +152,6 @@ module DeliveryCluster
       "#{cluster_data_dir}/splunk"
     end
 
-    def chef_server_fqdn(node)
-      @chef_server_fqdn ||= begin
-        chef_server_node = Chef::Node.load(chef_server_hostname(node))
-        DeliveryCluster::Helpers::Component.component_fqdn(node, 'chef-server', chef_server_node)
-      end
-    end
-
     def delivery_server_fqdn
       @delivery_server_fqdn ||= component_fqdn('delivery')
     end
@@ -181,10 +170,6 @@ module DeliveryCluster
         JSON.parse(supermarket_file)
       end
       @supermarket[attr]
-    end
-
-    def chef_server_url(node)
-      "https://#{chef_server_fqdn(node)}/organizations/#{node['delivery-cluster']['chef-server']['organization']}"
     end
 
     def activate_splunk
@@ -229,32 +214,6 @@ module DeliveryCluster
           'supermarket' => {
             'fqdn' => supermarket_server_fqdn
           }
-        }
-      }
-    end
-
-    def chef_server_attributes
-      @chef_server_attributes = {
-        'chef-server-12' => {
-          'delivery' => { 'organization' => node['delivery-cluster']['chef-server']['organization'] },
-          'api_fqdn' => chef_server_fqdn,
-          'store_keys_databag' => false,
-          'plugin' => {
-            'opscode-reporting' => node['delivery-cluster']['chef-server']['enable-reporting']
-          }
-        }
-      }
-      @chef_server_attributes = Chef::Mixin::DeepMerge.hash_only_merge(@chef_server_attributes, analytics_server_attributes)
-      @chef_server_attributes = Chef::Mixin::DeepMerge.hash_only_merge(@chef_server_attributes, supermarket_server_attributes)
-      @chef_server_attributes
-    end
-
-    def chef_server_config(node)
-      {
-        chef_server_url: chef_server_url(node),
-        options: {
-          client_name: 'delivery',
-          signing_key_filename: "#{cluster_data_dir(node)}/delivery.pem"
         }
       }
     end
@@ -339,16 +298,6 @@ module DeliveryCluster
       end
     end
 
-    # Upload a specific cookbook to our chef-server
-    def upload_cookbook(cookbook)
-      execute "Upload Cookbook => #{cookbook}" do
-        command "knife cookbook upload #{cookbook} --cookbook-path #{Chef::Config[:cookbook_path]}"
-        environment(
-          'KNIFE_HOME' => cluster_data_dir
-        )
-        not_if "knife cookbook show #{cookbook}"
-      end
-    end
 
     # Render a knife config file that points at the new delivery cluster
     def render_knife_config
@@ -392,11 +341,8 @@ account representative.
   end
 
   # Module that exposes multiple helpers
-  module DSL
-    # Return the chef-server config
-    def chef_server_config
-      DeliveryCluster::Helpers.chef_server_config(node)
-    end
-  end
+  # module DSL
+
+  # end
 end
 
