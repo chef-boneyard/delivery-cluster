@@ -81,11 +81,15 @@ module SharedCommonData
     {
       'id' => 'chefspec',
       'chef-server' => {
-        'organization' => '',
+        'organization' => 'chefspec',
+        'fqdn' => 'chef-server.chef.io',
+        'host' => 'chef-server.chef.io',
         'existing' => false
       },
       'delivery' => {
         'version' => 'latest',
+        'fqdn' => 'delivery-server.chef.io',
+        'host' => 'delivery-server.chef.io',
         'enterprise' => 'chefspec',
         'artifactory' => false,
         'config' => "nginx['enable_non_ssl'] = true",

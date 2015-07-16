@@ -33,12 +33,12 @@ module DeliveryCluster
       #
       # @param component [String] The name of the component
       # @return node [Chef::Node] Chef Node object
-      def component_node(component)
+      def component_node(node, component)
         Chef::REST.new(
-          chef_server_config[:chef_server_url],
-          chef_server_config[:options][:client_name],
-          chef_server_config[:options][:signing_key_filename]
-        ).get_rest("nodes/#{component_hostname(component)}")
+          DeliveryCluster::Helpers.chef_server_config(node)[:chef_server_url],
+          DeliveryCluster::Helpers.chef_server_config(node)[:options][:client_name],
+          DeliveryCluster::Helpers.chef_server_config(node)[:options][:signing_key_filename]
+        ).get_rest("nodes/#{component_hostname(node, component)}")
       end
 
       # Returns the FQDN of the component
@@ -49,10 +49,10 @@ module DeliveryCluster
       # @param component_node [Chef::Node] The Chef Node object of the component
       # @return [String]
       def component_fqdn(node, component, component_node = nil)
-        component_node = component_node ? component_node : component_node(component)
+        component_node = component_node ? component_node : component_node(node, component)
         node['delivery-cluster'][component]['fqdn'] ||
           node['delivery-cluster'][component]['host'] ||
-          get_ip(component_node)
+          DeliveryCluster::Helpers.get_ip(component_node)
       end
 
       # Returns the Hostname of the component
@@ -60,12 +60,11 @@ module DeliveryCluster
       #
       # @param node [Chef::Node] Chef Node object
       # @param component [String] The name of the component
-      # @param prefix [String] The prefix of the component
       # @return [String]
-      def component_hostname(node, component, prefix = nil)
+      def component_hostname(node, component)
         unless node['delivery-cluster'][component]['hostname']
-          component_prefix = prefix ? prefix : "#{component}-server"
-          node.set['delivery-cluster'][component]['hostname'] = "#{component_prefix}-#{delivery_cluster_id}"
+          component_prefix = component.eql?('chef-server') ? 'chef-server' : "#{component}-server"
+          node.set['delivery-cluster'][component]['hostname'] = "#{component_prefix}-#{DeliveryCluster::Helpers.delivery_cluster_id(node)}"
         end
 
         node['delivery-cluster'][component]['hostname']
@@ -77,7 +76,7 @@ module DeliveryCluster
   module DSL
     # The component node object
     def component_node(component)
-      DeliveryCluster::Helpers::Component.component_node(component)
+      DeliveryCluster::Helpers::Component.component_node(node, component)
     end
 
     # The component fqdn
@@ -86,8 +85,8 @@ module DeliveryCluster
     end
 
     # The component hostname
-    def component_hostname(component, prefix = nil)
-      DeliveryCluster::Helpers::Component.component_hostname(node, component, prefix)
+    def component_hostname(component)
+      DeliveryCluster::Helpers::Component.component_hostname(node, component)
     end
   end
 end
