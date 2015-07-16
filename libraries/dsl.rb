@@ -21,9 +21,6 @@
 
 require_relative 'helpers'
 require_relative 'helpers_component'
-require_relative 'helpers_delivery'
-require_relative 'helpers_builders'
-require_relative 'helpers_chef_server'
 
 Chef::Recipe.send(:include, DeliveryCluster::DSL)
 Chef::Resource.send(:include, DeliveryCluster::DSL)

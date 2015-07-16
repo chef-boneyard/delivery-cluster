@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: delivery-cluster
-# Library:: _helper
+# Library:: helpers
 #
 # Author:: Salim Afiune (<afiune@chef.io>)
 #
@@ -26,8 +26,9 @@ require 'securerandom'
 
 module DeliveryCluster
   # Helper Module for general purposes
-  module Helper
-<<<<<<< HEAD
+  module Helpers
+    module_function
+
     # Retrive the common cluster recipes
     #
     # This helper will return the common cluster recipes that customers specify in the
@@ -47,11 +48,8 @@ module DeliveryCluster
     def default_cluster_recipes
       ['delivery-cluster::pkg_repo_management']
     end
-=======
-    module_function
->>>>>>> Enable module_function on DeliveryCluster::Helper
 
-    def provisioning
+    def provisioning(node)
       @provisioning ||= DeliveryCluster::Provisioning.for_driver(node['delivery-cluster']['driver'], node)
     end
 
@@ -63,8 +61,8 @@ module DeliveryCluster
       File.symlink?(File.join(current_dir, '.chef', 'delivery-cluster-data'))
     end
 
-    def cluster_data_dir
-      File.join(current_dir, '.chef', "delivery-cluster-data-#{delivery_cluster_id}")
+    def cluster_data_dir(node)
+      File.join(current_dir, '.chef', "delivery-cluster-data-#{delivery_cluster_id(node)}")
     end
 
     def use_private_ip_for_ssh
@@ -74,7 +72,7 @@ module DeliveryCluster
     # We will return the right IP to use depending wheter we need to
     # use the Private IP or the Public IP
     def get_ip(node)
-      provisioning.ipaddress(node)
+      provisioning(node).ipaddress(node)
     end
 
     # delivery-ctl needs to be executed with elevated privileges
@@ -88,7 +86,7 @@ module DeliveryCluster
 
     # If a cluster ID was not provided (via the attribute) we'll generate
     # a unique cluster ID and immediately save it in case the CCR fails.
-    def delivery_cluster_id
+    def delivery_cluster_id(node)
       unless node['delivery-cluster']['id']
         node.set['delivery-cluster']['id'] = "test-#{SecureRandom.hex(3)}"
         node.save
@@ -101,8 +99,8 @@ module DeliveryCluster
       component_hostname('splunk')
     end
 
-    def chef_server_hostname
-      component_hostname('chef-server', 'chef-server')
+    def chef_server_hostname(node)
+      DeliveryCluster::Helpers::Component.component_hostname(node, 'chef-server')
     end
 
     def delivery_server_hostname
@@ -158,10 +156,10 @@ module DeliveryCluster
       "#{cluster_data_dir}/splunk"
     end
 
-    def chef_server_fqdn
+    def chef_server_fqdn(node)
       @chef_server_fqdn ||= begin
-        chef_server_node = Chef::Node.load(chef_server_hostname)
-        component_fqdn('chef-server', chef_server_node)
+        chef_server_node = Chef::Node.load(chef_server_hostname(node))
+        DeliveryCluster::Helpers::Component.component_fqdn(node, 'chef-server', chef_server_node)
       end
     end
 
@@ -185,8 +183,8 @@ module DeliveryCluster
       @supermarket[attr]
     end
 
-    def chef_server_url
-      "https://#{chef_server_fqdn}/organizations/#{node['delivery-cluster']['chef-server']['organization']}"
+    def chef_server_url(node)
+      "https://#{chef_server_fqdn(node)}/organizations/#{node['delivery-cluster']['chef-server']['organization']}"
     end
 
     def activate_splunk
@@ -251,12 +249,12 @@ module DeliveryCluster
       @chef_server_attributes
     end
 
-    def chef_server_config
+    def chef_server_config(node)
       {
-        chef_server_url: chef_server_url,
+        chef_server_url: chef_server_url(node),
         options: {
           client_name: 'delivery',
-          signing_key_filename: "#{cluster_data_dir}/delivery.pem"
+          signing_key_filename: "#{cluster_data_dir(node)}/delivery.pem"
         }
       }
     end
@@ -392,8 +390,13 @@ account representative.
             "in your environment file.\n\n#{msg_delim}" if node['delivery-cluster']['delivery']['license_file'].nil?
     end
   end
+
+  # Module that exposes multiple helpers
+  module DSL
+    # Return the chef-server config
+    def chef_server_config
+      DeliveryCluster::Helpers.chef_server_config(node)
+    end
+  end
 end
 
-Chef::Recipe.send(:include, DeliveryCluster::Helper)
-Chef::Resource.send(:include, DeliveryCluster::Helper)
-Chef::Provider.send(:include, DeliveryCluster::Helper)
