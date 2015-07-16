@@ -95,6 +95,14 @@ module SharedCommonData
         'config' => "nginx['enable_non_ssl'] = true",
         'license_file' => '/Users/afiune/delivery.license'
       },
+      'analytics' => {
+        'fqdn' => 'analytics-server.chef.io',
+        'host' => 'analytics-server.chef.io'
+      },
+      'supermarket' => {
+        'fqdn' => 'supermarket-server.chef.io',
+        'host' => 'supermarket-server.chef.io'
+      },
       'builders' => {
         'count' => '3',
         '1' => {},
@@ -102,6 +110,41 @@ module SharedCommonData
         '3' => {}
       }
     }
+  end
+  let(:rest) do
+    Chef::REST.new(
+      'https://chef-server.chef.io/organizations/chefspec',
+      'delivery',
+      File.expand_path('spec/unit/mock/delivery.pem')
+    )
+  end
+  let(:chef_node) do
+    n = Chef::Node.new
+    n.default['delivery-cluster']['driver'] = 'ssh'
+    n.default['delivery-cluster']['ssh'] = {}
+    n.default['ipaddress'] = '10.1.1.1'
+    n
+  end
+  let(:delivery_node) do
+    n = Chef::Node.new
+    n.default['delivery-cluster']['driver'] = 'vagrant'
+    n.default['delivery-cluster']['vagrant'] = {}
+    n.default['ipaddress'] = '10.1.1.2'
+    n
+  end
+  let(:supermarket_node) do
+    n = Chef::Node.new
+    n.default['delivery-cluster']['driver'] = 'vagrant'
+    n.default['delivery-cluster']['vagrant'] = {}
+    n.default['ipaddress'] = '10.1.1.3'
+    n
+  end
+  let(:analytics_node) do
+    n = Chef::Node.new
+    n.default['delivery-cluster']['driver'] = 'ssh'
+    n.default['delivery-cluster']['ssh'] = {}
+    n.default['ipaddress'] = '10.1.1.4'
+    n
   end
 end
 

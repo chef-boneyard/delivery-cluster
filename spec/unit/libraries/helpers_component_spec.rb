@@ -24,27 +24,6 @@ require 'spec_helper'
 
 describe DeliveryCluster::Helpers::Component do
   let(:node) { Chef::Node.new }
-  let(:chef_node) do
-    n = Chef::Node.new
-    n.default['delivery-cluster']['driver'] = 'ssh'
-    n.default['delivery-cluster']['ssh'] = {}
-    n.default['ipaddress'] = '10.1.1.1'
-    n
-  end
-  let(:delivery_node) do
-    n = Chef::Node.new
-    n.default['delivery-cluster']['driver'] = 'vagrant'
-    n.default['delivery-cluster']['vagrant'] = {}
-    n.default['ipaddress'] = '10.1.1.2'
-    n
-  end
-  let(:rest) do
-    Chef::REST.new(
-      'https://chef-server.chef.io/organizations/chefspec',
-      'delivery',
-      File.expand_path('spec/unit/mock/delivery.pem')
-    )
-  end
   before do
     allow(Chef::Node).to receive(:load).and_return(Chef::Node.new)
     allow(Chef::REST).to receive(:new).and_return(rest)

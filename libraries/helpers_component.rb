@@ -35,9 +35,9 @@ module DeliveryCluster
       # @return node [Chef::Node] Chef Node object
       def component_node(node, component)
         Chef::REST.new(
-          DeliveryCluster::Helpers.chef_server_config(node)[:chef_server_url],
-          DeliveryCluster::Helpers.chef_server_config(node)[:options][:client_name],
-          DeliveryCluster::Helpers.chef_server_config(node)[:options][:signing_key_filename]
+          DeliveryCluster::Helpers::ChefServer.chef_server_config(node)[:chef_server_url],
+          DeliveryCluster::Helpers::ChefServer.chef_server_config(node)[:options][:client_name],
+          DeliveryCluster::Helpers::ChefServer.chef_server_config(node)[:options][:signing_key_filename]
         ).get_rest("nodes/#{component_hostname(node, component)}")
       end
 
@@ -62,6 +62,7 @@ module DeliveryCluster
       # @param component [String] The name of the component
       # @return [String]
       def component_hostname(node, component)
+        #rais unless node['delivery-cluster'][component]
         unless node['delivery-cluster'][component]['hostname']
           component_prefix = component.eql?('chef-server') ? 'chef-server' : "#{component}-server"
           node.set['delivery-cluster'][component]['hostname'] = "#{component_prefix}-#{DeliveryCluster::Helpers.delivery_cluster_id(node)}"

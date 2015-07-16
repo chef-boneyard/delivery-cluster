@@ -25,7 +25,7 @@ module DeliveryCluster
     #
     # ChefServer Module
     #
-    # This module provide helpers for Chef Server
+    # This module provides helpers related to the Chef Server Component
     module ChefServer
       module_function
 
@@ -78,7 +78,9 @@ module DeliveryCluster
       def chef_server_attributes(node)
         @chef_server_attributes = {
           'chef-server-12' => {
-            'delivery' => { 'organization' => node['delivery-cluster']['chef-server']['organization'] },
+            'delivery' => {
+              'organization' => node['delivery-cluster']['chef-server']['organization']
+            },
             'api_fqdn' => chef_server_fqdn(node),
             'store_keys_databag' => false,
             'plugin' => {
@@ -86,8 +88,14 @@ module DeliveryCluster
             }
           }
         }
-        @chef_server_attributes = Chef::Mixin::DeepMerge.hash_only_merge(@chef_server_attributes, analytics_server_attributes)
-        @chef_server_attributes = Chef::Mixin::DeepMerge.hash_only_merge(@chef_server_attributes, supermarket_server_attributes)
+        @chef_server_attributes = Chef::Mixin::DeepMerge.hash_only_merge(
+          @chef_server_attributes,
+          DeliveryCluster::Helpers.analytics_server_attributes(node)
+        )
+        @chef_server_attributes = Chef::Mixin::DeepMerge.hash_only_merge(
+          @chef_server_attributes,
+          DeliveryCluster::Helpers.supermarket_server_attributes(node)
+        )
         @chef_server_attributes
       end
 
@@ -102,7 +110,7 @@ module DeliveryCluster
           chef_server_url: chef_server_url(node),
           options: {
             client_name: 'delivery',
-            signing_key_filename: "#{cluster_data_dir(node)}/delivery.pem"
+            signing_key_filename: "#{DeliveryCluster::Helpers.cluster_data_dir(node)}/delivery.pem"
           }
         }
       end

@@ -140,12 +140,12 @@ module DeliveryCluster
       end
     end
 
-    def analytics_lock_file
-      "#{cluster_data_dir}/analytics"
+    def analytics_lock_file(node)
+      "#{cluster_data_dir(node)}/analytics"
     end
 
-    def supermarket_lock_file
-      "#{cluster_data_dir}/supermarket"
+    def supermarket_lock_file(node)
+      "#{cluster_data_dir(node)}/supermarket"
     end
 
     def splunk_lock_file
@@ -156,12 +156,12 @@ module DeliveryCluster
       @delivery_server_fqdn ||= component_fqdn('delivery')
     end
 
-    def analytics_server_fqdn
-      @analytics_server_fqdn ||= component_fqdn('analytics')
+    def analytics_server_fqdn(node)
+      @analytics_server_fqdn ||= DeliveryCluster::Helpers::Component.component_fqdn(node, 'analytics')
     end
 
-    def supermarket_server_fqdn
-      @supermarket_server_fqdn ||= component_fqdn('supermarket')
+    def supermarket_server_fqdn(node)
+      @supermarket_server_fqdn ||= DeliveryCluster::Helpers::Component.component_fqdn(node, 'supermarket')
     end
 
     def get_supermarket_attribute(attr)
@@ -188,31 +188,31 @@ module DeliveryCluster
       FileUtils.touch(supermarket_lock_file)
     end
 
-    def analytics_enabled?
-      File.exist?(analytics_lock_file)
+    def analytics_enabled?(node)
+      File.exist?(analytics_lock_file(node))
     end
 
-    def supermarket_enabled?
-      File.exist?(supermarket_lock_file)
+    def supermarket_enabled?(node)
+      File.exist?(supermarket_lock_file(node))
     end
 
-    def analytics_server_attributes
-      return {} unless analytics_enabled?
+    def analytics_server_attributes(node)
+      return {} unless analytics_enabled?(node)
       {
         'chef-server-12' => {
           'analytics' => {
-            'fqdn' => analytics_server_fqdn
+            'fqdn' => analytics_server_fqdn(node)
           }
         }
       }
     end
 
-    def supermarket_server_attributes
-      return {} unless supermarket_enabled?
+    def supermarket_server_attributes(node)
+      return {} unless supermarket_enabled?(node)
       {
         'chef-server-12' => {
           'supermarket' => {
-            'fqdn' => supermarket_server_fqdn
+            'fqdn' => supermarket_server_fqdn(node)
           }
         }
       }
