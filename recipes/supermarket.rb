@@ -1,6 +1,6 @@
 #
-# Cookbook Name:: chef-server-12
-# Recipe:: default
+# Cookbook Name:: delivery-cluster
+# Recipe:: supermarket
 #
 # Author:: Salim Afiune (<afiune@chef.io>)
 #
@@ -20,35 +20,27 @@
 # limitations under the License.
 #
 
-# Configure chef server hostname in /etc/hosts if it isn't there
 hostsfile_entry node['ipaddress'] do
   hostname node.hostname
   not_if "grep #{node.hostname} /etc/hosts"
 end
 
-directory "/etc/opscode" do
-  recursive true
+directory '/etc/supermarket' do
+  owner 'root'
+  group 'root'
+  mode '0755'
+  action :create
 end
 
-chef_ingredient 'chef-server' do
-  notifies :reconfigure, 'chef_ingredient[chef-server]'
+file '/etc/supermarket/supermarket.json' do
+  action :create
+  owner 'root'
+  group 'root'
+  mode '0644'
+  content JSON.pretty_generate(node['delivery-cluster'])
+  notifies :reconfigure, 'chef_ingredient[supermarket]'
 end
 
-template "/etc/opscode/chef-server.rb" do
-  owner "root"
-  mode "0644"
-  notifies :run, "execute[reconfigure chef]", :immediately
+chef_ingredient 'supermarket' do
+  notifies :reconfigure, 'chef_ingredient[supermarket]'
 end
-
-execute "reconfigure chef" do
-  command "chef-server-ctl reconfigure"
-  action :nothing
-end
-
-# Install Enabled Plugins
-node['chef-server-12']['plugin'].each do |feature, enabled|
-  install_plugin(feature) if enabled
-end
-
-# Delivery Setup?
-include_recipe "chef-server-12::delivery_setup" if node['chef-server-12']['delivery_setup']

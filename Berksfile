@@ -7,8 +7,8 @@ cookbook 'chef-server-12',
 
 cookbook 'hostsfile'
 
-cookbook 'chef-server-ingredient',
-  git: 'https://github.com/opscode-cookbooks/chef-server-ingredient.git',
+cookbook 'chef-ingredient',
+  git: 'https://github.com/chef-cookbooks/chef-ingredient.git',
   branch: 'master'
 
 cookbook 'packagecloud',
@@ -16,6 +16,3 @@ cookbook 'packagecloud',
 
 cookbook 'chef-splunk',
   git: 'https://github.com/chef-cookbooks/chef-splunk.git'
-
-cookbook 'supermarket-omnibus-cookbook',
-  git: 'https://github.com/irvingpop/supermarket-omnibus-cookbook.git'

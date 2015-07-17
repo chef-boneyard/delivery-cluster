@@ -63,14 +63,14 @@ machine_file '/etc/opscode/oc-id-applications/supermarket.json' do
   action :download
 end
 
-# Installing Sypermarket
+# Installing Supermarket
 machine supermarket_server_hostname do
   chef_server lazy { chef_server_config }
   common_cluster_recipes.each { |r| recipe r }
-  recipe 'supermarket-omnibus-cookbook'
+  recipe 'delivery-cluster::supermarket'
   attributes lazy {
     {
-      'supermarket_omnibus' => {
+      'delivery-cluster' => {
         'chef_server_url' => "https://#{chef_server_fqdn}",
         'chef_oauth2_app_id' => get_supermarket_attribute('uid'),
         'chef_oauth2_secret' => get_supermarket_attribute('secret'),

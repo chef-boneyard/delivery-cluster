@@ -83,7 +83,7 @@ module DeliveryCluster
             'api_fqdn' => chef_server_fqdn(node),
             'store_keys_databag' => false,
             'plugin' => {
-              'opscode-reporting' => node['delivery-cluster']['chef-server']['enable-reporting']
+              'reporting' => node['delivery-cluster']['chef-server']['enable-reporting']
             }
           }
         }

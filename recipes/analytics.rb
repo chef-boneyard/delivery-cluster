@@ -37,6 +37,6 @@ features['integration'] = #{node['delivery-cluster']['analytics']['features']}
   notifies :reconfigure, 'chef_server_ingredient[opscode-analytics]'
 end
 
-chef_server_ingredient 'opscode-analytics' do
-  notifies :reconfigure, 'chef_server_ingredient[opscode-analytics]'
+chef_ingredient 'analytics' do
+  notifies :reconfigure, 'chef_ingredient[analytics]'
 end

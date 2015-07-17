@@ -8,11 +8,10 @@ long_description 'Installs Chef Delivery, a solution for continuously ' \
 version '0.3.8'
 
 depends 'chef-server-12'
-depends 'chef-server-ingredient'
+depends 'chef-ingredient'
 depends 'git'
 depends 'apt'
 depends 'yum'
 depends 'push-jobs'
 depends 'chef-splunk'
 depends 'packagecloud'
-depends 'supermarket-omnibus-cookbook'
