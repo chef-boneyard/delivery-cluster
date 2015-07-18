@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: delivery-cluster
-# Spec:: _helper_spec
+# Spec:: helpers_spec
 #
 # Author:: Salim Afiune (<afiune@chef.io>)
 #
@@ -22,17 +22,17 @@
 
 require 'spec_helper'
 
-describe DeliveryCluster::Helper do
+describe DeliveryCluster::Helpers do
   let(:node) { Chef::Node.new }
 
   before do
     node.default['delivery-cluster'] = cluster_data
-    allow(DeliveryCluster::Helper).to receive(:node).and_return(node)
+    allow(DeliveryCluster::Helpers).to receive(:node).and_return(node)
   end
 
   context 'helper methods should let us test it' do
-    it 'should return cluster_id' do
-      expect(described_class.delivery_cluster_id).to eq 'chefspec'
+    it 'should return the cluster_id' do
+      expect(described_class.delivery_cluster_id(node)).to eq 'chefspec'
     end
   end
 end
