@@ -25,19 +25,24 @@ require 'spec_helper'
 describe DeliveryCluster::Helpers::Component do
   let(:node) { Chef::Node.new }
   before do
+    node.default['delivery-cluster'] = cluster_data
     allow(Chef::Node).to receive(:load).and_return(Chef::Node.new)
     allow(Chef::REST).to receive(:new).and_return(rest)
     allow_any_instance_of(Chef::REST).to receive(:get_rest)
-      .with("nodes/chef-server-chefspec")
+      .with('nodes/chef-server-chefspec')
       .and_return(chef_node)
     allow_any_instance_of(Chef::REST).to receive(:get_rest)
-      .with("nodes/delivery-server-chefspec")
+      .with('nodes/delivery-server-chefspec')
       .and_return(delivery_node)
+    allow_any_instance_of(Chef::REST).to receive(:get_rest)
+      .with('nodes/supermarket-server-chefspec')
+      .and_return(supermarket_node)
+    allow_any_instance_of(Chef::REST).to receive(:get_rest)
+      .with('nodes/analytics-server-chefspec')
+      .and_return(analytics_node)
   end
 
   context 'when fqdn' do
-    before { node.default['delivery-cluster'] = cluster_data }
-
     context 'is speficied' do
       it 'should return chef-server component fqdn' do
         expect(described_class.component_fqdn(node, 'chef-server')).to eq cluster_data['chef-server']['fqdn']
@@ -46,12 +51,22 @@ describe DeliveryCluster::Helpers::Component do
       it 'should return delivery component fqdn' do
         expect(described_class.component_fqdn(node, 'delivery')).to eq cluster_data['delivery']['fqdn']
       end
+
+      it 'should return supermarket component fqdn' do
+        expect(described_class.component_fqdn(node, 'supermarket')).to eq cluster_data['supermarket']['fqdn']
+      end
+
+      it 'should return analytics component fqdn' do
+        expect(described_class.component_fqdn(node, 'analytics')).to eq cluster_data['analytics']['fqdn']
+      end
     end
 
     context 'is NOT speficied and host' do
       before do
         node.default['delivery-cluster']['chef-server']['fqdn'] = nil
-        node.default['delivery-cluster']['delivery']['fqdn'] = nil
+        node.default['delivery-cluster']['delivery']['fqdn']    = nil
+        node.default['delivery-cluster']['supermarket']['fqdn'] = nil
+        node.default['delivery-cluster']['analytics']['fqdn']   = nil
       end
 
       context 'does exist' do
@@ -62,12 +77,22 @@ describe DeliveryCluster::Helpers::Component do
         it 'should return delivery component host' do
           expect(described_class.component_fqdn(node, 'delivery')).to eq cluster_data['delivery']['host']
         end
+
+        it 'should return supermarket component host' do
+          expect(described_class.component_fqdn(node, 'supermarket')).to eq cluster_data['supermarket']['host']
+        end
+
+        it 'should return analytics component host' do
+          expect(described_class.component_fqdn(node, 'analytics')).to eq cluster_data['analytics']['host']
+        end
       end
 
       context 'does NOT exist' do
         before do
           node.default['delivery-cluster']['chef-server']['host'] = nil
-          node.default['delivery-cluster']['delivery']['host'] = nil
+          node.default['delivery-cluster']['delivery']['host']    = nil
+          node.default['delivery-cluster']['supermarket']['host'] = nil
+          node.default['delivery-cluster']['analytics']['host']   = nil
         end
 
         it 'should return chef-server component ip_address' do
@@ -76,6 +101,43 @@ describe DeliveryCluster::Helpers::Component do
 
         it 'should return delivery component ip_address' do
           expect(described_class.component_fqdn(node, 'delivery')).to eq '10.1.1.2'
+        end
+
+        it 'should return supermarket component ip_address' do
+          expect(described_class.component_fqdn(node, 'supermarket')).to eq '10.1.1.3'
+        end
+
+        it 'should return analytics component ip_address' do
+          expect(described_class.component_fqdn(node, 'analytics')).to eq '10.1.1.4'
+        end
+      end
+    end
+  end
+
+  context 'when `hostname` attribute' do
+    context 'is NOT configured' do
+      %w( delivery supermarket analytics ).each do |component|
+        it "should generate a hostname for #{component}" do
+          expect(described_class.component_hostname(node, component)).to eq "#{component}-server-chefspec"
+        end
+      end
+
+      it 'should generate a hostname for chef-server' do
+        expect(described_class.component_hostname(node, 'chef-server')).to eq 'chef-server-chefspec'
+      end
+    end
+
+    context 'is configured' do
+      before do
+        node.default['delivery-cluster']['chef-server']['hostname'] = 'my-cool-hostname.chef-server.com'
+        node.default['delivery-cluster']['delivery']['hostname']    = 'my-cool-hostname.delivery.com'
+        node.default['delivery-cluster']['supermarket']['hostname'] = 'my-cool-hostname.supermarket.com'
+        node.default['delivery-cluster']['analytics']['hostname']   = 'my-cool-hostname.analytics.com'
+      end
+
+      %w( chef-server delivery supermarket analytics ).each do |component|
+        it "should return our cool-#{component} hostname" do
+          expect(described_class.component_hostname(node, component)).to eq "my-cool-hostname.#{component}.com"
         end
       end
     end
