@@ -51,7 +51,6 @@ module DeliveryCluster
         DeliveryCluster::Helpers::Component.component_hostname(node, 'chef-server')
       end
 
-
       # Returns the FQDN of the Chef Server
       #
       # @param node [Chef::Node] Chef Node object
@@ -94,7 +93,7 @@ module DeliveryCluster
         )
         @chef_server_attributes = Chef::Mixin::DeepMerge.hash_only_merge(
           @chef_server_attributes,
-          DeliveryCluster::Helpers.supermarket_server_attributes(node)
+          DeliveryCluster::Helpers::Supermarket.supermarket_server_attributes(node)
         )
         @chef_server_attributes
       end

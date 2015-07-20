@@ -42,7 +42,7 @@ module DeliveryCluster
       end
 
       # Returns the FQDN of the component
-      # If the component_node is specified, we used. Otherwise we extract it
+      # If the component_node is specified, we use it. Otherwise we extract it
       #
       # @param node [Chef::Node] Chef Node object
       # @param component [String] The name of the component
@@ -62,7 +62,7 @@ module DeliveryCluster
       # @param component [String] The name of the component
       # @return [String]
       def component_hostname(node, component)
-        #rais unless node['delivery-cluster'][component]
+        fail "Attributes for component '#{component}' not found" unless node['delivery-cluster'][component]
         unless node['delivery-cluster'][component]['hostname']
           component_prefix = component.eql?('chef-server') ? 'chef-server' : "#{component}-server"
           node.set['delivery-cluster'][component]['hostname'] = "#{component_prefix}-#{DeliveryCluster::Helpers.delivery_cluster_id(node)}"

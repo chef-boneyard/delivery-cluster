@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: delivery-cluster
-# Spec:: helpers_chef_spec_spec
+# Spec:: helpers_chef_server_spec
 #
 # Author:: Salim Afiune (<afiune@chef.io>)
 #
@@ -26,12 +26,12 @@ describe DeliveryCluster::Helpers::ChefServer do
   let(:node) { Chef::Node.new }
   let(:mock_chef_server_attributes) do
     {
-        'delivery' => { 'organization' => 'chefspec' },
-        'api_fqdn' => 'chef-server.chef.io',
-        'store_keys_databag' => false,
-        'plugin' => {
-          'opscode-reporting' => true
-        }
+      'delivery' => { 'organization' => 'chefspec' },
+      'api_fqdn' => 'chef-server.chef.io',
+      'store_keys_databag' => false,
+      'plugin' => {
+        'opscode-reporting' => true
+      }
     }
   end
   let(:mock_analytics_server_attributes) do
@@ -55,10 +55,10 @@ describe DeliveryCluster::Helpers::ChefServer do
     allow(Chef::Node).to receive(:load).and_return(Chef::Node.new)
     allow(Chef::REST).to receive(:new).and_return(rest)
     allow_any_instance_of(Chef::REST).to receive(:get_rest)
-      .with("nodes/supermarket-server-chefspec")
+      .with('nodes/supermarket-server-chefspec')
       .and_return(supermarket_node)
     allow_any_instance_of(Chef::REST).to receive(:get_rest)
-      .with("nodes/analytics-server-chefspec")
+      .with('nodes/analytics-server-chefspec')
       .and_return(analytics_node)
   end
 
@@ -92,7 +92,7 @@ describe DeliveryCluster::Helpers::ChefServer do
 
   context 'when there is a supermarket server' do
     before do
-      allow(DeliveryCluster::Helpers).to receive(:supermarket_enabled?).and_return(true)
+      allow(DeliveryCluster::Helpers::Supermarket).to receive(:supermarket_enabled?).and_return(true)
     end
 
     it 'should return the chef-server attributes plus supermarket attributes' do
@@ -115,7 +115,7 @@ describe DeliveryCluster::Helpers::ChefServer do
 
     context 'AND a supermarket server (both)' do
       before do
-        allow(DeliveryCluster::Helpers).to receive(:supermarket_enabled?).and_return(true)
+        allow(DeliveryCluster::Helpers::Supermarket).to receive(:supermarket_enabled?).and_return(true)
       end
 
       it 'should return the chef-server attributes plus supermarket attributes plust analytics attributes' do
