@@ -75,15 +75,6 @@ module DeliveryCluster
       provisioning(node).ipaddress(node)
     end
 
-    # delivery-ctl needs to be executed with elevated privileges
-    def delivery_ctl
-      if node['delivery-cluster']['aws']['ssh_username'] == 'root'
-        'delivery-ctl'
-      else
-        'sudo -E delivery-ctl'
-      end
-    end
-
     # If a cluster ID was not provided (via the attribute) we'll generate
     # a unique cluster ID and immediately save it in case the CCR fails.
     def delivery_cluster_id(node)
@@ -93,22 +84,6 @@ module DeliveryCluster
       end
 
       node['delivery-cluster']['id']
-    end
-
-    def splunk_server_hostname
-      component_hostname('splunk')
-    end
-
-    def delivery_server_hostname
-      component_hostname('delivery')
-    end
-
-    def analytics_server_hostname
-      component_hostname('analytics')
-    end
-
-    def supermarket_server_hostname
-      component_hostname('supermarket')
     end
 
     def delivery_builder_hostname(index)
@@ -140,102 +115,6 @@ module DeliveryCluster
       end
     end
 
-    def analytics_lock_file(node)
-      "#{cluster_data_dir(node)}/analytics"
-    end
-
-    def supermarket_lock_file(node)
-      "#{cluster_data_dir(node)}/supermarket"
-    end
-
-    def splunk_lock_file
-      "#{cluster_data_dir}/splunk"
-    end
-
-    def delivery_server_fqdn
-      @delivery_server_fqdn ||= component_fqdn('delivery')
-    end
-
-    def analytics_server_fqdn(node)
-      @analytics_server_fqdn ||= DeliveryCluster::Helpers::Component.component_fqdn(node, 'analytics')
-    end
-
-    def supermarket_server_fqdn(node)
-      @supermarket_server_fqdn ||= DeliveryCluster::Helpers::Component.component_fqdn(node, 'supermarket')
-    end
-
-    def get_supermarket_attribute(attr)
-      @supermarket ||= begin
-        supermarket_file = File.read("#{cluster_data_dir}/supermarket.json")
-        JSON.parse(supermarket_file)
-      end
-      @supermarket[attr]
-    end
-
-    def activate_splunk
-      FileUtils.touch(splunk_lock_file)
-    end
-
-    def splunk_enabled?
-      File.exist?(splunk_lock_file)
-    end
-
-    def activate_analytics
-      FileUtils.touch(analytics_lock_file)
-    end
-
-    def activate_supermarket
-      FileUtils.touch(supermarket_lock_file)
-    end
-
-    def analytics_enabled?(node)
-      File.exist?(analytics_lock_file(node))
-    end
-
-    def supermarket_enabled?(node)
-      File.exist?(supermarket_lock_file(node))
-    end
-
-    def analytics_server_attributes(node)
-      return {} unless analytics_enabled?(node)
-      {
-        'chef-server-12' => {
-          'analytics' => {
-            'fqdn' => analytics_server_fqdn(node)
-          }
-        }
-      }
-    end
-
-    def supermarket_server_attributes(node)
-      return {} unless supermarket_enabled?(node)
-      {
-        'chef-server-12' => {
-          'supermarket' => {
-            'fqdn' => supermarket_server_fqdn(node)
-          }
-        }
-      }
-    end
-
-    def delivery_server_attributes
-      # If we want to pull down the packages from Chef Artifactory
-      if node['delivery-cluster']['delivery']['artifactory']
-        artifact = delivery_artifact
-        node.set['delivery-cluster']['delivery']['version']   = artifact['version']
-        node.set['delivery-cluster']['delivery']['artifact']  = artifact['artifact']
-        node.set['delivery-cluster']['delivery']['checksum']  = artifact['checksum']
-      end
-
-      # Configuring the chef-server url for delivery
-      node.set['delivery-cluster']['delivery']['chef_server'] = chef_server_url unless node['delivery-cluster']['delivery']['chef_server']
-
-      # Ensure we havea Delivery FQDN
-      node.set['delivery-cluster']['delivery']['fqdn'] = delivery_server_fqdn unless node['delivery-cluster']['delivery']['fqdn']
-
-      { 'delivery-cluster' => node['delivery-cluster'] }
-    end
-
     def builders_attributes
       builders_attributes = {}
 
@@ -244,60 +123,6 @@ module DeliveryCluster
 
       builders_attributes
     end
-
-    def delivery_enterprise_cmd
-      # We have introduced an additional constrain to the enterprise_ctl
-      # command that require to specify --ssh-pub-key-file param starting
-      # from the Delivery Version 0.2.52
-      cmd = <<-CMD.gsub(/\s+/, ' ').strip!
-        #{delivery_ctl} list-enterprises | grep -w ^#{node['delivery-cluster']['delivery']['enterprise']};
-        [ $? -ne 0 ] && #{delivery_ctl} create-enterprise #{node['delivery-cluster']['delivery']['enterprise']}
-      CMD
-      if node['delivery-cluster']['delivery']['version'] == 'latest' ||
-         Gem::Version.new(node['delivery-cluster']['delivery']['version']) > Gem::Version.new('0.2.52')
-        cmd << ' --ssh-pub-key-file=/etc/delivery/builder_key.pub'
-      end
-      cmd << " > /tmp/#{node['delivery-cluster']['delivery']['enterprise']}.creds || echo 1"
-    end
-
-    def delivery_artifact
-      # We will get the Delivery Package from artifactory (Require Chef VPN)
-      #
-      # Get the latest artifact:
-      # => artifact = get_delivery_artifact('latest', 'redhat', '6.5')
-      #
-      # Get specific artifact:
-      # => artifact = get_delivery_artifact('0.2.21', 'ubuntu', '12.04', '/var/tmp')
-      #
-      @delivery_artifact ||= begin
-        artifact = get_delivery_artifact(
-          node['delivery-cluster']['delivery']['version'],
-          component_node('delivery')['platform'],
-          component_node('delivery')['platform_version'],
-          node['delivery-cluster']['delivery']['pass-through'] ? nil : cluster_data_dir
-        )
-
-        delivery_artifact = {
-          'version'  => artifact['version'],
-          'checksum' => artifact['checksum']
-        }
-        # Upload Artifact to Delivery Server only if we have donwloaded the artifact
-        if artifact['local_path']
-          machine_file = Chef::Resource::MachineFile.new("/var/tmp/#{artifact['name']}", run_context)
-          machine_file.chef_server(chef_server_config)
-          machine_file.machine(node['delivery-cluster']['delivery']['hostname'])
-          machine_file.local_path(artifact['local_path'])
-          machine_file.run_action(:upload)
-
-          delivery_artifact['artifact'] = "/var/tmp/#{artifact['name']}"
-        else
-          delivery_artifact['artifact'] = artifact['uri']
-        end
-
-        delivery_artifact
-      end
-    end
-
 
     # Render a knife config file that points at the new delivery cluster
     def render_knife_config
@@ -345,4 +170,3 @@ account representative.
 
   # end
 end
-
