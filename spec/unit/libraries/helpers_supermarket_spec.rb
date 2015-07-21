@@ -113,4 +113,12 @@ describe DeliveryCluster::Helpers::Supermarket do
   it 'should activate supermarket by creating the lock file' do
     expect(described_class.activate_supermarket(node)).to eq true
   end
+
+  context 'when supermarket attributes are not set' do
+    before { node.default['delivery-cluster']['supermarket'] = nil }
+
+    it 'raise an error' do
+      expect { described_class.supermarket_server_hostname(node) }.to raise_error(RuntimeError)
+    end
+  end
 end

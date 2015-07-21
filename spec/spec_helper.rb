@@ -103,6 +103,10 @@ module SharedCommonData
         'fqdn' => 'supermarket-server.chef.io',
         'host' => 'supermarket-server.chef.io'
       },
+      'splunk' => {
+        'fqdn' => 'splunk-server.chef.io',
+        'host' => 'splunk-server.chef.io'
+      },
       'builders' => {
         'count' => '3',
         '1' => {},
@@ -144,6 +148,13 @@ module SharedCommonData
     n.default['delivery-cluster']['driver'] = 'ssh'
     n.default['delivery-cluster']['ssh'] = {}
     n.default['ipaddress'] = '10.1.1.4'
+    n
+  end
+  let(:splunk_node) do
+    n = Chef::Node.new
+    n.default['delivery-cluster']['driver'] = 'aws'
+    n.default['delivery-cluster']['aws'] = {}
+    n.default['ipaddress'] = '10.1.1.5'
     n
   end
 end

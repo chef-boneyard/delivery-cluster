@@ -40,6 +40,9 @@ describe DeliveryCluster::Helpers::Component do
     allow_any_instance_of(Chef::REST).to receive(:get_rest)
       .with('nodes/analytics-server-chefspec')
       .and_return(analytics_node)
+    allow_any_instance_of(Chef::REST).to receive(:get_rest)
+      .with('nodes/splunk-server-chefspec')
+      .and_return(splunk_node)
   end
 
   context 'when fqdn' do
@@ -59,6 +62,10 @@ describe DeliveryCluster::Helpers::Component do
       it 'should return analytics component fqdn' do
         expect(described_class.component_fqdn(node, 'analytics')).to eq cluster_data['analytics']['fqdn']
       end
+
+      it 'should return splunk component fqdn' do
+        expect(described_class.component_fqdn(node, 'splunk')).to eq cluster_data['splunk']['fqdn']
+      end
     end
 
     context 'is NOT speficied and host' do
@@ -67,6 +74,7 @@ describe DeliveryCluster::Helpers::Component do
         node.default['delivery-cluster']['delivery']['fqdn']    = nil
         node.default['delivery-cluster']['supermarket']['fqdn'] = nil
         node.default['delivery-cluster']['analytics']['fqdn']   = nil
+        node.default['delivery-cluster']['splunk']['fqdn']      = nil
       end
 
       context 'does exist' do
@@ -85,6 +93,10 @@ describe DeliveryCluster::Helpers::Component do
         it 'should return analytics component host' do
           expect(described_class.component_fqdn(node, 'analytics')).to eq cluster_data['analytics']['host']
         end
+
+        it 'should return splunk component host' do
+          expect(described_class.component_fqdn(node, 'splunk')).to eq cluster_data['splunk']['host']
+        end
       end
 
       context 'does NOT exist' do
@@ -93,6 +105,7 @@ describe DeliveryCluster::Helpers::Component do
           node.default['delivery-cluster']['delivery']['host']    = nil
           node.default['delivery-cluster']['supermarket']['host'] = nil
           node.default['delivery-cluster']['analytics']['host']   = nil
+          node.default['delivery-cluster']['splunk']['host']      = nil
         end
 
         it 'should return chef-server component ip_address' do
@@ -110,13 +123,17 @@ describe DeliveryCluster::Helpers::Component do
         it 'should return analytics component ip_address' do
           expect(described_class.component_fqdn(node, 'analytics')).to eq '10.1.1.4'
         end
+
+        it 'should return splunk component ip_address' do
+          expect(described_class.component_fqdn(node, 'splunk')).to eq '10.1.1.5'
+        end
       end
     end
   end
 
   context 'when `hostname` attribute' do
     context 'is NOT configured' do
-      %w( delivery supermarket analytics ).each do |component|
+      %w( delivery supermarket analytics splunk).each do |component|
         it "should generate a hostname for #{component}" do
           expect(described_class.component_hostname(node, component)).to eq "#{component}-server-chefspec"
         end
@@ -133,12 +150,29 @@ describe DeliveryCluster::Helpers::Component do
         node.default['delivery-cluster']['delivery']['hostname']    = 'my-cool-hostname.delivery.com'
         node.default['delivery-cluster']['supermarket']['hostname'] = 'my-cool-hostname.supermarket.com'
         node.default['delivery-cluster']['analytics']['hostname']   = 'my-cool-hostname.analytics.com'
+        node.default['delivery-cluster']['splunk']['hostname']      = 'my-cool-hostname.splunk.com'
       end
 
-      %w( chef-server delivery supermarket analytics ).each do |component|
+      %w( chef-server delivery supermarket analytics splunk ).each do |component|
         it "should return our cool-#{component} hostname" do
           expect(described_class.component_hostname(node, component)).to eq "my-cool-hostname.#{component}.com"
         end
+      end
+    end
+  end
+
+  context 'when the component attributes are not set' do
+    before do
+      node.default['delivery-cluster']['chef-server']  = nil
+      node.default['delivery-cluster']['delivery']     = nil
+      node.default['delivery-cluster']['supermarket']  = nil
+      node.default['delivery-cluster']['analytics']    = nil
+      node.default['delivery-cluster']['splunk']       = nil
+    end
+
+    %w( chef-server delivery supermarket analytics splunk ).each do |component|
+      it "raise an error for #{component}" do
+        expect { described_class.component_hostname(node, component) }.to raise_error(RuntimeError)
       end
     end
   end

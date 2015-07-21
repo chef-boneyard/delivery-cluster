@@ -104,7 +104,7 @@ describe DeliveryCluster::Helpers::ChefServer do
 
   context 'when there is a analytics server' do
     before do
-      allow(DeliveryCluster::Helpers).to receive(:analytics_enabled?).and_return(true)
+      allow(DeliveryCluster::Helpers::Analytics).to receive(:analytics_enabled?).and_return(true)
     end
 
     it 'should return the chef-server attributes plus analytics attributes' do
@@ -125,6 +125,14 @@ describe DeliveryCluster::Helpers::ChefServer do
               .merge(mock_analytics_server_attributes)
           )
       end
+    end
+  end
+
+  context 'when chef-server attributes are not set' do
+    before { node.default['delivery-cluster']['chef-server'] = nil }
+
+    it 'raise an error' do
+      expect { described_class.chef_server_hostname(node) }.to raise_error(RuntimeError)
     end
   end
 end
