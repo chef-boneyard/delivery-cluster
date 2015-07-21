@@ -61,14 +61,26 @@ module DeliveryCluster
       # @param node [Chef::Node] Chef Node object
       # @param component [String] The name of the component
       # @return [String]
-      def component_hostname(node, component)
+      def component_hostname(node, component, index = nil)
         fail "Attributes for component '#{component}' not found" unless node['delivery-cluster'][component]
-        unless node['delivery-cluster'][component]['hostname']
-          component_prefix = component.eql?('chef-server') ? 'chef-server' : "#{component}-server"
-          node.set['delivery-cluster'][component]['hostname'] = "#{component_prefix}-#{DeliveryCluster::Helpers.delivery_cluster_id(node)}"
-        end
+        if index # Do we have a number of machines of the same component
+          fail "Attributes for component '#{component}' index #{index} not found" unless node['delivery-cluster'][component][index]
+          unless node['delivery-cluster'][component][index]['hostname']
+            unless node['delivery-cluster'][component]['hostname_prefix']
+              node.set['delivery-cluster'][component]['hostname_prefix'] = "build-node-#{DeliveryCluster::Helpers.delivery_cluster_id(node)}"
+            end
+            node.set['delivery-cluster'][component][index]['hostname'] = "#{node['delivery-cluster'][component]['hostname_prefix']}-#{index}"
+          end
 
-        node['delivery-cluster'][component]['hostname']
+          node['delivery-cluster'][component][index]['hostname']
+        else
+          unless node['delivery-cluster'][component]['hostname']
+            component_prefix = component.eql?('chef-server') ? 'chef-server' : "#{component}-server"
+            node.set['delivery-cluster'][component]['hostname'] = "#{component_prefix}-#{DeliveryCluster::Helpers.delivery_cluster_id(node)}"
+          end
+
+          node['delivery-cluster'][component]['hostname']
+        end
       end
     end
   end
@@ -86,8 +98,8 @@ module DeliveryCluster
     end
 
     # The component hostname
-    def component_hostname(component)
-      DeliveryCluster::Helpers::Component.component_hostname(node, component)
+    def component_hostname(component, index = nil)
+      DeliveryCluster::Helpers::Component.component_hostname(node, component, index)
     end
   end
 end

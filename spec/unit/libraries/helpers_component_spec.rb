@@ -133,7 +133,7 @@ describe DeliveryCluster::Helpers::Component do
 
   context 'when `hostname` attribute' do
     context 'is NOT configured' do
-      %w( delivery supermarket analytics splunk).each do |component|
+      %w( delivery supermarket analytics splunk ).each do |component|
         it "should generate a hostname for #{component}" do
           expect(described_class.component_hostname(node, component)).to eq "#{component}-server-chefspec"
         end
@@ -161,6 +161,12 @@ describe DeliveryCluster::Helpers::Component do
     end
   end
 
+  it 'should return the hostname for multiple machines' do
+    1.upto(cluster_data['builders']['count'].to_i) do |index|
+      expect(described_class.component_hostname(node, 'builders', index.to_s)).to eq "build-node-chefspec-#{index}"
+    end
+  end
+
   context 'when the component attributes are not set' do
     before do
       node.default['delivery-cluster']['chef-server']  = nil
@@ -168,12 +174,18 @@ describe DeliveryCluster::Helpers::Component do
       node.default['delivery-cluster']['supermarket']  = nil
       node.default['delivery-cluster']['analytics']    = nil
       node.default['delivery-cluster']['splunk']       = nil
+      node.default['delivery-cluster']['builders']     = nil
     end
 
-    %w( chef-server delivery supermarket analytics splunk ).each do |component|
+    %w( chef-server delivery supermarket analytics splunk builders ).each do |component|
       it "raise an error for #{component}" do
         expect { described_class.component_hostname(node, component) }.to raise_error(RuntimeError)
       end
+    end
+
+    it 'and there is no index for multiple machines raise an error' do
+      node.default['delivery-cluster']['machines'] = {}
+      expect { described_class.component_hostname(node, 'machines', '1') }.to raise_error(RuntimeError)
     end
   end
 end

@@ -92,25 +92,6 @@ module DeliveryCluster
       node['delivery-cluster']['id']
     end
 
-    def delivery_builder_hostname(index)
-      unless node['delivery-cluster']['builders']['hostname_prefix']
-        node.set['delivery-cluster']['builders']['hostname_prefix'] = "build-node-#{delivery_cluster_id}"
-      end
-
-      "#{node['delivery-cluster']['builders']['hostname_prefix']}-#{index}"
-    end
-
-    def builder_private_key
-      File.read(File.join(cluster_data_dir, 'builder_key'))
-    end
-
-    def builder_run_list
-      @builder_run_list ||= begin
-        base_builder_run_list = %w( recipe[push-jobs] recipe[delivery_build] )
-        base_builder_run_list + node['delivery-cluster']['builders']['additional_run_list']
-      end
-    end
-
     # Generate or load an existing encrypted data bag secret
     def encrypted_data_bag_secret
       if File.exist?("#{cluster_data_dir}/encrypted_data_bag_secret")
@@ -119,15 +100,6 @@ module DeliveryCluster
         # Ruby's `SecureRandom` module uses OpenSSL under the covers
         SecureRandom.base64(512)
       end
-    end
-
-    def builders_attributes
-      builders_attributes = {}
-
-      # Add cli attributes if they exists.
-      builders_attributes['delivery_build'] = { 'delivery-cli' => node['delivery-cluster']['builders']['delivery-cli'] } unless node['delivery-cluster']['builders']['delivery-cli'].empty?
-
-      builders_attributes
     end
 
     # Render a knife config file that points at the new delivery cluster
