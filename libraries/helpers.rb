@@ -50,6 +50,7 @@ module DeliveryCluster
     end
 
     def provisioning(node)
+      fail "Driver not specified. (node['delivery-cluster']['driver'])" unless node['delivery-cluster']['driver']
       @provisioning ||= DeliveryCluster::Provisioning.for_driver(node['delivery-cluster']['driver'], node)
     end
 
@@ -73,6 +74,11 @@ module DeliveryCluster
     # use the Private IP or the Public IP
     def get_ip(node)
       provisioning(node).ipaddress(node)
+    end
+
+    # Extracting the username from the provisioning abstraction
+    def username(node)
+      provisioning(node).username
     end
 
     # If a cluster ID was not provided (via the attribute) we'll generate

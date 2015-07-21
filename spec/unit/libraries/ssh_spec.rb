@@ -46,6 +46,10 @@ describe DeliveryCluster::Provisioning::Ssh do
       expect(ssh_object.driver).to eq 'ssh'
     end
 
+    it 'returns the right driver username' do
+      expect(ssh_object.username).to eq 'ubuntu'
+    end
+
     it 'returns the ipaddress' do
       expect(ssh_object.ipaddress(node)).to eq '33.33.33.10'
     end

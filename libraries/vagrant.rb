@@ -150,6 +150,13 @@ module DeliveryCluster
           node['ipaddress']
         end
       end
+
+      # Return the username of the Provisioning Driver.
+      #
+      # @return [String] the username
+      def username
+        'vagrant'
+      end
     end
   end
 end

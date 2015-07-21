@@ -63,6 +63,13 @@ module DeliveryCluster
       def ipaddress(node, use_private_ip_for_ssh = false) # rubocop:disable Lint/UnusedMethodArgument
         fail "#{self.class}#ipaddress must be implemented"
       end
+
+      # Return the username of the Provisioning Driver.
+      #
+      # @return [String] the username
+      def username
+        'root'
+      end
     end
   end
 end

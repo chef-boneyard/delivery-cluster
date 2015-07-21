@@ -36,6 +36,7 @@ module DeliveryCluster
       attr_accessor :ssh_username
       attr_accessor :bootstrap_proxy
       attr_accessor :chef_config
+      alias_method :username, :ssh_username
 
       # Create a new Provisioning Driver Abstraction
       #

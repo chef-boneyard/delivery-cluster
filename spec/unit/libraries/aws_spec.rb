@@ -47,6 +47,10 @@ describe DeliveryCluster::Provisioning::Aws do
       expect(aws_object.driver).to eq 'aws'
     end
 
+    it 'returns the right driver username' do
+      expect(aws_object.username).to eq 'ubuntu'
+    end
+
     it 'returns the private_ipaddress' do
       expect(aws_object.ipaddress(node)).to eq '10.223.1.33'
     end

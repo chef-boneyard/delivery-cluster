@@ -89,7 +89,7 @@ module DeliveryCluster
         }
         @chef_server_attributes = Chef::Mixin::DeepMerge.hash_only_merge(
           @chef_server_attributes,
-          DeliveryCluster::Helpers.analytics_server_attributes(node)
+          DeliveryCluster::Helpers::Analytics.analytics_server_attributes(node)
         )
         @chef_server_attributes = Chef::Mixin::DeepMerge.hash_only_merge(
           @chef_server_attributes,

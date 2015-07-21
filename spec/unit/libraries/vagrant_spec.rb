@@ -46,6 +46,10 @@ describe DeliveryCluster::Provisioning::Vagrant do
       expect(vagrant_object.driver).to eq 'vagrant'
     end
 
+    it 'returns the right driver username' do
+      expect(vagrant_object.username).to eq 'vagrant'
+    end
+
     it 'returns the private_ipaddress' do
       expect(vagrant_object.ipaddress(node)).to eq '10.1.1.2'
     end

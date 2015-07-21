@@ -39,6 +39,7 @@ module DeliveryCluster
       attr_accessor :ssh_username
       attr_accessor :security_group_ids
       attr_accessor :use_private_ip_for_ssh
+      alias_method :username, :ssh_username
 
       # Create a new Provisioning Driver Abstraction
       #
