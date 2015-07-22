@@ -35,7 +35,7 @@ module DeliveryCluster
     # attribute `['delivery-cluster']['common_cluster_recipes']` plus the ones that
     # Chef considered as default/needed. Those recipes will be included to the run_list
     # of all the servers of the delivery-cluster.
-    def common_cluster_recipes
+    def common_cluster_recipes(node)
       default_cluster_recipes + node['delivery-cluster']['common_cluster_recipes']
     end
 
@@ -49,40 +49,70 @@ module DeliveryCluster
       ['delivery-cluster::pkg_repo_management']
     end
 
+    # Provisioning Driver Instance
+    #
+    # @param node [Chef::Node] Chef Node object
+    # @return [DeliveryCluster::Provisioning::Base] provisioning driver instance
     def provisioning(node)
       fail "Driver not specified. (node['delivery-cluster']['driver'])" unless node['delivery-cluster']['driver']
       @provisioning ||= DeliveryCluster::Provisioning.for_driver(node['delivery-cluster']['driver'], node)
     end
 
+    # The current directory PATH
+    # This is coming from the .chef/knife.rb
+    #
+    # @return [String] current directory path
     def current_dir
       Chef::Config.chef_repo_path
     end
 
+    # Cluster Data directory link
+    #
+    # @return [Bool] True if cluster directory is a link, False if not
     def cluster_data_dir_link?
       File.symlink?(File.join(current_dir, '.chef', 'delivery-cluster-data'))
     end
 
+    # Delivery Cluster data directory
+    #
+    # @param node [Chef::Node] Chef Node object
+    # @return [String] PATH of the Delivery cluster data directory
     def cluster_data_dir(node)
       File.join(current_dir, '.chef', "delivery-cluster-data-#{delivery_cluster_id(node)}")
     end
 
-    def use_private_ip_for_ssh
+    # Use the Private IP for SSH
+    #
+    # @param node [Chef::Node] Chef Node object
+    # @return [Bool] True if we need to use the private ip for ssh, False if not
+    def use_private_ip_for_ssh(node)
+      fail "Driver not specified. (node['delivery-cluster']['driver'])" unless node['delivery-cluster']['driver']
       node['delivery-cluster'][node['delivery-cluster']['driver']]['use_private_ip_for_ssh']
     end
 
-    # We will return the right IP to use depending wheter we need to
-    # use the Private IP or the Public IP
-    def get_ip(node)
-      provisioning(node).ipaddress(node)
+    # Get the IP address from the Provisioning Abstraction
+    #
+    # @param node [Chef::Node] Chef Node object
+    # @param machine_node [Chef::Node] Chef Node object of the machine we would like to get the ip
+    # @return [String] ip address
+    def get_ip(node, machine_node)
+      provisioning(node).ipaddress(machine_node)
     end
 
     # Extracting the username from the provisioning abstraction
+    #
+    # @param node [Chef::Node] Chef Node object
+    # @return [String] username
     def username(node)
       provisioning(node).username
     end
 
-    # If a cluster ID was not provided (via the attribute) we'll generate
-    # a unique cluster ID and immediately save it in case the CCR fails.
+    # Delivery Cluster ID
+    # If a cluster id was not provided (via the attribute) we'll generate
+    # a unique cluster id and immediately save it in case the CCR fails.
+    #
+    # @param node [Chef::Node] Chef Node object
+    # @return [String] cluster id
     def delivery_cluster_id(node)
       unless node['delivery-cluster']['id']
         node.set['delivery-cluster']['id'] = "test-#{SecureRandom.hex(3)}"
@@ -92,40 +122,52 @@ module DeliveryCluster
       node['delivery-cluster']['id']
     end
 
+    # Encrypted Data Bag Secret
     # Generate or load an existing encrypted data bag secret
-    def encrypted_data_bag_secret
-      if File.exist?("#{cluster_data_dir}/encrypted_data_bag_secret")
-        File.read("#{cluster_data_dir}/encrypted_data_bag_secret")
+    #
+    # @param node [Chef::Node] Chef Node object
+    # @return [String] encrypted data bag secret
+    def encrypted_data_bag_secret(node)
+      if File.exist?("#{cluster_data_dir(node)}/encrypted_data_bag_secret")
+        File.read("#{cluster_data_dir(node)}/encrypted_data_bag_secret")
       else
         # Ruby's `SecureRandom` module uses OpenSSL under the covers
         SecureRandom.base64(512)
       end
     end
 
-    # Render a knife config file that points at the new delivery cluster
-    def render_knife_config
-      template File.join(cluster_data_dir, 'knife.rb') do
-        variables lazy {
-          {
-            chef_server_url:      chef_server_url,
-            client_key:           "#{cluster_data_dir}/delivery.pem",
-            analytics_server_url: if analytics_enabled?
-                                    "https://#{analytics_server_fqdn}/organizations" \
-                                    "/#{node['delivery-cluster']['chef-server']['organization']}"
-                                  else
-                                    ''
-                                  end,
-            supermarket_site:     supermarket_enabled? ? "https://#{supermarket_server_fqdn}" : ''
-          }
-        }
-      end
+    # Generate Knife Variables
+    # to use them to create a new knife config file that will point at the new
+    # delivery cluster to facilitate its management within the `cluster_data_dir`
+    #
+    # @param node [Chef::Node] Chef Node object
+    # @return [Hash] knife variables to render a customized knife.rb
+    def knife_variables(node)
+      {
+        chef_server_url:      DeliveryCluster::Helpers::ChefServer.chef_server_url(node),
+        client_key:           "#{cluster_data_dir(node)}/delivery.pem",
+        analytics_server_url: if DeliveryCluster::Helpers::Analytics.analytics_enabled?(node)
+                                "https://#{DeliveryCluster::Helpers::Analytics.analytics_server_fqdn(node)}/organizations" \
+                                "/#{node['delivery-cluster']['chef-server']['organization']}"
+                              else
+                                ''
+                              end,
+        supermarket_site:     if DeliveryCluster::Helpers::Supermarket.supermarket_enabled?(node)
+                                "https://#{DeliveryCluster::Helpers::Supermarket.supermarket_server_fqdn(node)}"
+                              else
+                                ''
+                              end
+      }
     end
 
+    # Validate License File
     # Because Delivery requires a license, we want to make sure that the
     # user has the necessary license file on the provisioning node before we begin.
     # This method will check for the license file in the compile phase to prevent
     # any work being done if the user doesn't even have a license.
-    def validate_license_file
+    #
+    # @param node [Chef::Node] Chef Node object
+    def validate_license_file(node)
       msg_delim = '***************************************************'
 
       contact_msg = <<-END
@@ -144,7 +186,65 @@ account representative.
   end
 
   # Module that exposes multiple helpers
-  # module DSL
+  module DSL
+    # Retrive the common cluster recipes
+    def common_cluster_recipes
+      DeliveryCluster::Helpers.common_cluster_recipes(node)
+    end
 
-  # end
+    # Provisioning Driver Instance
+    def provisioning
+      DeliveryCluster::Helpers.provisioning(node)
+    end
+
+    # The current directory PATH
+    def current_dir
+      DeliveryCluster::Helpers.current_dir
+    end
+
+    # Cluster Data directory link
+    def cluster_data_dir_link?
+      DeliveryCluster::Helpers.cluster_data_dir_link?
+    end
+
+    # Delivery Cluster data directory
+    def cluster_data_dir
+      DeliveryCluster::Helpers.cluster_data_dir(node)
+    end
+
+    # Use the Private IP for SSH
+    def use_private_ip_for_ssh
+      DeliveryCluster::Helpers.use_private_ip_for_ssh(node)
+    end
+
+    # Get the IP address from the Provisioning Abstraction
+    def get_ip(machine_node)
+      DeliveryCluster::Helpers.get_ip(node, machine_node)
+    end
+
+    # Extracting the username from the provisioning abstraction
+    def username
+      DeliveryCluster::Helpers.username(node)
+    end
+
+    # Delivery Cluster ID
+    def delivery_cluster_id
+      DeliveryCluster::Helpers.delivery_cluster_id(node)
+    end
+
+    # Encrypted Data Bag Secret
+    def encrypted_data_bag_secret
+      DeliveryCluster::Helpers.encrypted_data_bag_secret(node)
+    end
+
+    # Generate Knife Variables
+    def knife_variables
+      DeliveryCluster::Helpers.knife_variables(node)
+    end
+
+    # Validate License File
+    def validate_license_file
+      DeliveryCluster::Helpers.validate_license_file(node)
+    end
+  end
 end
