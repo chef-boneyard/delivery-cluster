@@ -1,3 +1,22 @@
+v0.3.5 (2015-07-21)
+-------------------
+- Releasing Major Library Refactoring v.0.3.5
+- Modify Recipes to work with new Library Refactoring
+- Substitute aws_driver for aws_data & vagrant_driver for vagrant_data
+- Cleaning helpers.rb plus chefspecs
+- Return the username of the Provisioning Driver Abstraction
+- Create Chef specs for every single library
+- Extract Builders Methods
+- Extract Delivery Methods
+- Extract Splunk Methods
+- Extract Analytics Methods
+- Extract Supermarket Methods
+- Extract ChefServer Methods
+- Extract Component Methods
+- Helpers plus DSL Libraries
+- Create DSL Library to split Helpers Methods
+- Enable module_function on DeliveryCluster::Helper
+
 v0.3.4 (2015-07-10)
 -------------------
 - Common Cluster Recipes
