@@ -44,7 +44,7 @@ module SharedDriverData
     }
   end
 
-  let(:vagrant_driver) do
+  let(:vagrant_data) do
     {
       'vm_box' => 'opscode-ubuntu-14.04',
       'image_url' => 'https://opscode-bento.com/opscode_ubuntu-14.04.box',
@@ -58,7 +58,7 @@ module SharedDriverData
     }
   end
 
-  let(:aws_driver) do
+  let(:aws_data) do
     {
       'flavor' => 'c3.xlarge',
       'image_id' => 'ami-3d50120d',
@@ -138,8 +138,9 @@ module SharedCommonData
   end
   let(:supermarket_node) do
     n = Chef::Node.new
-    n.default['delivery-cluster']['driver'] = 'vagrant'
-    n.default['delivery-cluster']['vagrant'] = {}
+    n.default['delivery-cluster']['driver'] = 'aws'
+    n.default['delivery-cluster']['aws'] = {}
+    n.default['ec2']['local_ipv4'] = '10.1.1.3'
     n.default['ipaddress'] = '10.1.1.3'
     n
   end
@@ -152,8 +153,8 @@ module SharedCommonData
   end
   let(:splunk_node) do
     n = Chef::Node.new
-    n.default['delivery-cluster']['driver'] = 'aws'
-    n.default['delivery-cluster']['aws'] = {}
+    n.default['delivery-cluster']['driver'] = 'vagrant'
+    n.default['delivery-cluster']['vagrant'] = {}
     n.default['ipaddress'] = '10.1.1.5'
     n
   end
