@@ -90,8 +90,10 @@ file "#{cluster_data_dir}/delivery.pem" do
   mode '0644'
 end
 
-# generate a knife config file that points at the new Chef Server
-render_knife_config
+# Generate a knife config file that points at the new Chef Server
+template File.join(cluster_data_dir, 'knife.rb') do
+  variables lazy { knife_variables }
+end
 
 execute 'upload delivery cookbooks' do
   command "knife cookbook upload --all --cookbook-path #{Chef::Config[:cookbook_path]} --force"

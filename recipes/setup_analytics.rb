@@ -97,4 +97,6 @@ machine_file 'analytics-server-cert' do
 end
 
 # Add Analytics Server to the knife.rb config file
-render_knife_config
+template File.join(cluster_data_dir, 'knife.rb') do
+  variables lazy { knife_variables }
+end
