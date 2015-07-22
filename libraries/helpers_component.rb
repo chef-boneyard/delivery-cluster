@@ -49,39 +49,83 @@ module DeliveryCluster
       # @param component [String] The name of the component
       # @param component_node [Chef::Node] The Chef Node object of the component
       # @return [String]
-      def component_fqdn(node, component, component_node = nil)
-        component_node = component_node ? component_node : component_node(node, component)
+      def component_fqdn(node, component, component_node = component_node(node, component))
         node['delivery-cluster'][component]['fqdn'] ||
           node['delivery-cluster'][component]['host'] ||
           DeliveryCluster::Helpers.get_ip(node, component_node)
       end
 
       # Returns the Hostname of the component
-      # If the prefix is specified, we used. Otherwise we generate one
+      # If there is an `id` it means that this component consist in more than
+      # one machine (multiple components of the same kind)
       #
       # @param node [Chef::Node] Chef Node object
       # @param component [String] The name of the component
       # @return [String]
-      def component_hostname(node, component, index = nil)
-        fail "Attributes for component '#{component}' not found" unless node['delivery-cluster'][component]
-        if index # Do we have a number of machines of the same component
-          fail "Attributes for component '#{component}' index #{index} not found" unless node['delivery-cluster'][component][index]
-          unless node['delivery-cluster'][component][index]['hostname']
-            unless node['delivery-cluster'][component]['hostname_prefix']
-              node.set['delivery-cluster'][component]['hostname_prefix'] = "build-node-#{DeliveryCluster::Helpers.delivery_cluster_id(node)}"
-            end
-            node.set['delivery-cluster'][component][index]['hostname'] = "#{node['delivery-cluster'][component]['hostname_prefix']}-#{index}"
-          end
-
-          node['delivery-cluster'][component][index]['hostname']
+      def component_hostname(node, component, id = nil)
+        DeliveryCluster::Helpers.check_attribute?(node['delivery-cluster'][component], "node['delivery-cluster']['#{component}']")
+        if id
+          DeliveryCluster::Helpers.check_attribute?(node['delivery-cluster'][component][id], "node['delivery-cluster']['#{component}']['#{id}']")
+          multiple_component_hostname(node, component, id)
         else
-          unless node['delivery-cluster'][component]['hostname']
-            component_prefix = component.eql?('chef-server') ? 'chef-server' : "#{component}-server"
-            node.set['delivery-cluster'][component]['hostname'] = "#{component_prefix}-#{DeliveryCluster::Helpers.delivery_cluster_id(node)}"
-          end
-
-          node['delivery-cluster'][component]['hostname']
+          single_component_hostname(node, component)
         end
+      end
+
+      # Returns the Hostname of the a single component
+      # If the component does not have already a hostname we will generate one
+      # and save it
+      #
+      # @param node [Chef::Node] Chef Node object
+      # @param component [String] The name of the component
+      # @return [String] component hostname
+      def single_component_hostname(node, component)
+        unless hostname?(get_component(node, component))
+          component_prefix = component.eql?('chef-server') ? 'chef-server' : "#{component}-server"
+          node.set['delivery-cluster'][component]['hostname'] = "#{component_prefix}-#{DeliveryCluster::Helpers.delivery_cluster_id(node)}"
+        end
+
+        get_component(node, component)['hostname']
+      end
+
+      # Returns the Hostname of a multiple component with an id
+      # Where the `id` will be a pointer of one of the components that we
+      # will work with. First we validate if it has a 'hostname', if not we
+      # search for a 'hostname_prefix', but if we do not find any of them,
+      # we will generate and save them.
+      #
+      # @param node [Chef::Node] Chef Node object
+      # @param component [String] The name of the component
+      # @param id [String] The id to point to an specific component
+      # @return [String] component hostname
+      def multiple_component_hostname(node, component, id)
+        unless hostname?(get_component(node, component, id))
+          unless node['delivery-cluster'][component]['hostname_prefix']
+            node.set['delivery-cluster'][component]['hostname_prefix'] = "build-node-#{DeliveryCluster::Helpers.delivery_cluster_id(node)}"
+          end
+          node.set['delivery-cluster'][component][id]['hostname'] = "#{node['delivery-cluster'][component]['hostname_prefix']}-#{id}"
+        end
+
+        get_component(node, component, id)['hostname']
+      end
+
+      # Returns the hostname from a Hash
+      #
+      # @param component [String] The component
+      # @return [String] hostname
+      def hostname?(component)
+        component['hostname']
+      end
+
+      # Extract a component from a Chef::Node Object
+      #
+      # @param node [Chef::Node] Chef Node object
+      # @param name [String] The name of a component
+      # @param id [String] The id to point to an specific component
+      # @return [String] hostname
+      def get_component(node, name, id = nil)
+        return node['delivery-cluster'][name][id] if id
+        node['delivery-cluster'][name]
       end
     end
   end
@@ -99,8 +143,8 @@ module DeliveryCluster
     end
 
     # The component hostname
-    def component_hostname(component, index = nil)
-      DeliveryCluster::Helpers::Component.component_hostname(node, component, index)
+    def component_hostname(component, id = nil)
+      DeliveryCluster::Helpers::Component.component_hostname(node, component, id)
     end
   end
 end

@@ -34,15 +34,15 @@ describe DeliveryCluster::Helpers::Splunk do
       .and_return(splunk_node)
   end
 
-  it 'should return the splunk hostname for a machine resource' do
+  it 'return the splunk hostname for a machine resource' do
     expect(described_class.splunk_server_hostname(node)).to eq 'splunk-server-chefspec'
   end
 
-  it 'should return the splunk fqdn' do
+  it 'return the splunk fqdn' do
     expect(described_class.splunk_server_fqdn(node)).to eq 'splunk-server.chef.io'
   end
 
-  it 'should return the PATH of the splunk lock file' do
+  it 'return the PATH of the splunk lock file' do
     expect(described_class.splunk_lock_file(node)).to eq File.join(Chef::Config.chef_repo_path, '.chef', 'delivery-cluster-data-chefspec', 'splunk')
   end
 
@@ -50,7 +50,7 @@ describe DeliveryCluster::Helpers::Splunk do
     context 'is NOT enabled' do
       before { allow(File).to receive(:exist?).and_return(false) }
 
-      it 'should say that splunk component is NOT enabled' do
+      it 'say that splunk component is NOT enabled' do
         expect(described_class.splunk_enabled?(node)).to eq false
       end
     end
@@ -58,13 +58,13 @@ describe DeliveryCluster::Helpers::Splunk do
     context 'is enabled' do
       before { allow(File).to receive(:exist?).and_return(true) }
 
-      it 'should say that splunk component is enabled' do
+      it 'say that splunk component is enabled' do
         expect(described_class.splunk_enabled?(node)).to eq true
       end
     end
   end
 
-  it 'should activate splunk by creating the lock file' do
+  it 'activate splunk by creating the lock file' do
     expect(described_class.activate_splunk(node)).to eq true
   end
 

@@ -25,7 +25,9 @@ require 'fileutils'
 require 'securerandom'
 
 module DeliveryCluster
+  #
   # Helpers Module for general purposes
+  #
   module Helpers
     module_function
 
@@ -54,7 +56,7 @@ module DeliveryCluster
     # @param node [Chef::Node] Chef Node object
     # @return [DeliveryCluster::Provisioning::Base] provisioning driver instance
     def provisioning(node)
-      fail "Driver not specified. (node['delivery-cluster']['driver'])" unless node['delivery-cluster']['driver']
+      check_attribute?(node['delivery-cluster']['driver'], "node['delivery-cluster']['driver']")
       @provisioning ||= DeliveryCluster::Provisioning.for_driver(node['delivery-cluster']['driver'], node)
     end
 
@@ -86,7 +88,7 @@ module DeliveryCluster
     # @param node [Chef::Node] Chef Node object
     # @return [Bool] True if we need to use the private ip for ssh, False if not
     def use_private_ip_for_ssh(node)
-      fail "Driver not specified. (node['delivery-cluster']['driver'])" unless node['delivery-cluster']['driver']
+      check_attribute?(node['delivery-cluster']['driver'], "node['delivery-cluster']['driver']")
       node['delivery-cluster'][node['delivery-cluster']['driver']]['use_private_ip_for_ssh']
     end
 
@@ -128,11 +130,13 @@ module DeliveryCluster
     # @param node [Chef::Node] Chef Node object
     # @return [String] encrypted data bag secret
     def encrypted_data_bag_secret(node)
-      if File.exist?("#{cluster_data_dir(node)}/encrypted_data_bag_secret")
-        File.read("#{cluster_data_dir(node)}/encrypted_data_bag_secret")
-      else
-        # Ruby's `SecureRandom` module uses OpenSSL under the covers
-        SecureRandom.base64(512)
+      @encrypted_data_bag_secret ||= begin
+        if File.exist?("#{cluster_data_dir(node)}/encrypted_data_bag_secret")
+          File.read("#{cluster_data_dir(node)}/encrypted_data_bag_secret")
+        else
+          # Ruby's `SecureRandom` module uses OpenSSL under the covers
+          SecureRandom.base64(512)
+        end
       end
     end
 
@@ -168,20 +172,18 @@ module DeliveryCluster
     #
     # @param node [Chef::Node] Chef Node object
     def validate_license_file(node)
-      msg_delim = '***************************************************'
+      return unless node['delivery-cluster']['delivery']['license_file'].nil?
+      fail DeliveryCluster::Exceptions::LicenseNotFound, "node['delivery-cluster']['delivery']['license_file']"
+    end
 
-      contact_msg = <<-END
-
-#{msg_delim}
-
-Chef Delivery requires a valid license to run.
-To acquire a license, please contact your CHEF
-account representative.
-
-      END
-
-      fail "#{contact_msg}Please set `#{node['delivery-cluster']['delivery']['license_file']}`\n" \
-            "in your environment file.\n\n#{msg_delim}" if node['delivery-cluster']['delivery']['license_file'].nil?
+    # Validate Attribute
+    # As we depend on many attributes for multiple components we need a
+    # quick way to validate when they have been set or not.
+    #
+    # @param attr_value [NotNilValue] The value of the attribute we want to check
+    # @param attr_name [String] The name of the attribute
+    def check_attribute?(attr_value, attr_name)
+      fail DeliveryCluster::Exceptions::AttributeNotFound, attr_name if attr_value.nil?
     end
   end
 

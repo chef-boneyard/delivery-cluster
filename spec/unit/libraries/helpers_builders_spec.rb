@@ -33,7 +33,7 @@ describe DeliveryCluster::Helpers::Builders do
 
   context 'when the builder hostname' do
     context 'is NOT set' do
-      it 'should return the builders hostname for a machine resource' do
+      it 'return the builders hostname for a machine resource' do
         1.upto(cluster_data['builders']['count'].to_i) do |index|
           expect(described_class.delivery_builder_hostname(node, index)).to eq "build-node-chefspec-#{index}"
         end
@@ -46,7 +46,7 @@ describe DeliveryCluster::Helpers::Builders do
         node.default['delivery-cluster']['builders']['3']['hostname'] = 'my-great-build-node-3'
       end
 
-      it 'should return the specific builders hostname for a machine resource' do
+      it 'return the specific builders hostname for a machine resource' do
         expect(described_class.delivery_builder_hostname(node, '1')).to eq 'my-cool-build-node-1'
         expect(described_class.delivery_builder_hostname(node, '2')).to eq 'my-awesome-build-node-2'
         expect(described_class.delivery_builder_hostname(node, '3')).to eq 'my-great-build-node-3'
@@ -54,14 +54,14 @@ describe DeliveryCluster::Helpers::Builders do
     end
   end
 
-  it 'should not complain whether we pass an index as a number or as a string' do
+  it 'not complain whether we pass an index as a number or as a string' do
     expect(described_class.delivery_builder_hostname(node, 1)).to eq 'build-node-chefspec-1'
     expect(described_class.delivery_builder_hostname(node, '1')).to eq 'build-node-chefspec-1'
   end
 
   context 'when the builder private key' do
     context 'does NOT exist' do
-      it 'should raise an error' do
+      it 'raise an error' do
         expect { described_class.builder_private_key(node) }.to raise_error(Errno::ENOENT)
       end
     end
@@ -69,7 +69,7 @@ describe DeliveryCluster::Helpers::Builders do
     context 'does exist' do
       before { allow(File).to receive(:read).and_return(true) }
 
-      it 'should return the key' do
+      it 'return the key' do
         expect(described_class.builder_private_key(node)).to eq true
       end
     end
@@ -77,7 +77,7 @@ describe DeliveryCluster::Helpers::Builders do
 
   context 'when an additional_run_list' do
     context 'is NOT specified' do
-      it 'should return the right run_list for the builders' do
+      it 'return the right run_list for the builders' do
         expect(described_class.builder_run_list(node)).to eq %w( recipe[push-jobs] recipe[delivery_build] )
       end
     end
@@ -88,7 +88,7 @@ describe DeliveryCluster::Helpers::Builders do
         DeliveryCluster::Helpers::Builders.instance_variable_set :@builder_run_list, nil
       end
 
-      it 'should return the right run_list for the builders plus the additional run_list' do
+      it 'return the right run_list for the builders plus the additional run_list' do
         expect(described_class.builder_run_list(node)).to eq %w( recipe[push-jobs] recipe[delivery_build] recipe[awesome-cookbook] )
       end
     end

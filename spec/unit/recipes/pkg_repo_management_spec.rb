@@ -33,11 +33,11 @@ describe 'delivery-cluster::pkg_repo_management' do
       runner.converge(described_recipe)
     end
 
-    it 'should include apt cookbook' do
+    it 'include apt cookbook' do
       expect(chef_run).to include_recipe 'apt'
     end
 
-    it 'should NOT include yum cookbook' do
+    it 'NOT include yum cookbook' do
       expect(chef_run).to_not include_recipe 'yum'
     end
   end
@@ -52,15 +52,15 @@ describe 'delivery-cluster::pkg_repo_management' do
       runner.converge(described_recipe)
     end
 
-    it 'should include yum cookbook' do
+    it 'include yum cookbook' do
       expect(chef_run).to include_recipe 'yum'
     end
 
-    it 'should NOT include apt cookbook' do
+    it 'NOT include apt cookbook' do
       expect(chef_run).to_not include_recipe 'apt'
     end
 
-    it 'should clean cache at compile time' do
+    it 'clean cache at compile time' do
       expect(chef_run).to run_execute('yum clean all').at_compile_time
     end
   end
@@ -75,15 +75,15 @@ describe 'delivery-cluster::pkg_repo_management' do
       runner.converge(described_recipe)
     end
 
-    it 'should NOT include yum cookbook' do
+    it 'NOT include yum cookbook' do
       expect(chef_run).to_not include_recipe 'yum'
     end
 
-    it 'should NOT include apt cookbook' do
+    it 'NOT include apt cookbook' do
       expect(chef_run).to_not include_recipe 'apt'
     end
 
-    it 'should write log' do
+    it 'write log' do
       expect(chef_run).to write_log 'delivery-cluster-pkg-repo-update-not-handled'
     end
   end

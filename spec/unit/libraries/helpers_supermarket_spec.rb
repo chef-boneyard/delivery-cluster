@@ -52,15 +52,15 @@ describe DeliveryCluster::Helpers::Supermarket do
       .and_return(supermarket_node)
   end
 
-  it 'should return the supermarket hostname for a machine resource' do
+  it 'return the supermarket hostname for a machine resource' do
     expect(described_class.supermarket_server_hostname(node)).to eq 'supermarket-server-chefspec'
   end
 
-  it 'should return the supermarket fqdn' do
+  it 'return the supermarket fqdn' do
     expect(described_class.supermarket_server_fqdn(node)).to eq 'supermarket-server.chef.io'
   end
 
-  it 'should return the PATH of the supermarket lock file' do
+  it 'return the PATH of the supermarket lock file' do
     expect(described_class.supermarket_lock_file(node)).to eq File.join(Chef::Config.chef_repo_path, '.chef', 'delivery-cluster-data-chefspec', 'supermarket')
   end
 
@@ -68,11 +68,11 @@ describe DeliveryCluster::Helpers::Supermarket do
     context 'is NOT enabled' do
       before { allow(File).to receive(:exist?).and_return(false) }
 
-      it 'should say that supermarket component is NOT enabled' do
+      it 'say that supermarket component is NOT enabled' do
         expect(described_class.supermarket_enabled?(node)).to eq false
       end
 
-      it 'should return NO attributes' do
+      it 'return NO attributes' do
         expect(described_class.supermarket_server_attributes(node)).to eq({})
       end
     end
@@ -80,11 +80,11 @@ describe DeliveryCluster::Helpers::Supermarket do
     context 'is enabled' do
       before { allow(File).to receive(:exist?).and_return(true) }
 
-      it 'should say that supermarket component is enabled' do
+      it 'say that supermarket component is enabled' do
         expect(described_class.supermarket_enabled?(node)).to eq true
       end
 
-      it 'should return the supermarket attributes' do
+      it 'return the supermarket attributes' do
         expect(described_class.supermarket_server_attributes(node)).to eq('chef-server-12' => mock_supermarket_server_attributes)
       end
     end
@@ -92,7 +92,7 @@ describe DeliveryCluster::Helpers::Supermarket do
 
   context 'when supermarket.json' do
     context 'does NOT exist' do
-      it 'should raise and error' do
+      it 'raise and error' do
         expect { described_class.get_supermarket_attribute(node, 'uid') }.to raise_error(Errno::ENOENT)
       end
     end
@@ -100,17 +100,17 @@ describe DeliveryCluster::Helpers::Supermarket do
     context 'does exist' do
       before { allow(File).to receive(:read).and_return(mock_supermarket_json) }
 
-      it 'should return value of the uid attribute' do
+      it 'return value of the uid attribute' do
         expect(described_class.get_supermarket_attribute(node, 'uid')).to eq '768fd17555298930830180eedc8ff6ca45736a8c392bbcbe866c804efb25262d'
       end
 
-      it 'should return value of the secret attribute' do
+      it 'return value of the secret attribute' do
         expect(described_class.get_supermarket_attribute(node, 'secret')).to eq '154b8a364e60deb3d83771df9159639362cd59a60661a63f9b126e794bd95daa'
       end
     end
   end
 
-  it 'should activate supermarket by creating the lock file' do
+  it 'activate supermarket by creating the lock file' do
     expect(described_class.activate_supermarket(node)).to eq true
   end
 

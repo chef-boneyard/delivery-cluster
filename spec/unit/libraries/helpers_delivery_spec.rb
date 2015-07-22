@@ -41,15 +41,15 @@ describe DeliveryCluster::Helpers::Delivery do
       .and_return(delivery_node)
   end
 
-  it 'should return the delivery hostname for a machine resource' do
+  it 'return the delivery hostname for a machine resource' do
     expect(described_class.delivery_server_hostname(node)).to eq 'delivery-server-chefspec'
   end
 
-  it 'should return the delivery fqdn' do
+  it 'return the delivery fqdn' do
     expect(described_class.delivery_server_fqdn(node)).to eq 'delivery-server.chef.io'
   end
 
-  it 'should return the just the delivery attributes without artifactory' do
+  it 'return the just the delivery attributes without artifactory' do
     attributes = described_class.delivery_server_attributes(node)
     expect(attributes['delivery-cluster']['delivery']['version']).to eq 'latest'
     expect(attributes['delivery-cluster']['delivery']['artifact']).to eq nil
@@ -64,7 +64,7 @@ describe DeliveryCluster::Helpers::Delivery do
       allow(DeliveryCluster::Helpers::Delivery).to receive(:delivery_artifact).and_return(mock_delivery_artifact)
     end
 
-    it 'should return the right delivery attributes from artifactory' do
+    it 'return the right delivery attributes from artifactory' do
       attributes = described_class.delivery_server_attributes(node)
       expect(attributes['delivery-cluster']['delivery']['version']).to eq(mock_delivery_artifact['version'])
       expect(attributes['delivery-cluster']['delivery']['artifact']).to eq(mock_delivery_artifact['artifact'])
@@ -88,7 +88,7 @@ describe DeliveryCluster::Helpers::Delivery do
 
     context 'and Delivery version' do
       context 'is > 0.2.52 or latest' do
-        it 'should return the delivery-ctl command to create an enterprise with --ssh-pub-key-file' do
+        it 'return the delivery-ctl command to create an enterprise with --ssh-pub-key-file' do
           # Asserting for specific patterns
           enterprise_cmd = described_class.delivery_enterprise_cmd(node)
           expect(enterprise_cmd =~ /sudo -E delivery-ctl/).not_to be nil
@@ -102,7 +102,7 @@ describe DeliveryCluster::Helpers::Delivery do
       context 'is < 0.2.52' do
         before { node.default['delivery-cluster']['delivery']['version'] = '0.2.50' }
 
-        it 'should return the delivery-ctl command to create an enterprise WITHOUT --ssh-pub-key-file' do
+        it 'return the delivery-ctl command to create an enterprise WITHOUT --ssh-pub-key-file' do
           # Asserting for specific patterns
           enterprise_cmd = described_class.delivery_enterprise_cmd(node)
           expect(enterprise_cmd =~ /sudo -E delivery-ctl/).not_to be nil
@@ -115,7 +115,7 @@ describe DeliveryCluster::Helpers::Delivery do
     end
 
     context 'and the user is NOT root' do
-      it 'should return the delivery_ctl command with sudo' do
+      it 'return the delivery_ctl command with sudo' do
         expect(described_class.delivery_ctl(node)).to eq 'sudo -E delivery-ctl'
       end
     end
@@ -125,7 +125,7 @@ describe DeliveryCluster::Helpers::Delivery do
         node.default['delivery-cluster']['ssh']['ssh_username'] = 'root'
         DeliveryCluster::Helpers.instance_variable_set :@provisioning, nil
       end
-      it 'should return the delivery_ctl command without sudo' do
+      it 'return the delivery_ctl command without sudo' do
         expect(described_class.delivery_ctl(node)).to eq 'delivery-ctl'
       end
     end

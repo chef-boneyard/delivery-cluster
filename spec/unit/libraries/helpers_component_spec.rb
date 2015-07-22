@@ -47,23 +47,23 @@ describe DeliveryCluster::Helpers::Component do
 
   context 'when fqdn' do
     context 'is speficied' do
-      it 'should return chef-server component fqdn' do
+      it 'return chef-server component fqdn' do
         expect(described_class.component_fqdn(node, 'chef-server')).to eq cluster_data['chef-server']['fqdn']
       end
 
-      it 'should return delivery component fqdn' do
+      it 'return delivery component fqdn' do
         expect(described_class.component_fqdn(node, 'delivery')).to eq cluster_data['delivery']['fqdn']
       end
 
-      it 'should return supermarket component fqdn' do
+      it 'return supermarket component fqdn' do
         expect(described_class.component_fqdn(node, 'supermarket')).to eq cluster_data['supermarket']['fqdn']
       end
 
-      it 'should return analytics component fqdn' do
+      it 'return analytics component fqdn' do
         expect(described_class.component_fqdn(node, 'analytics')).to eq cluster_data['analytics']['fqdn']
       end
 
-      it 'should return splunk component fqdn' do
+      it 'return splunk component fqdn' do
         expect(described_class.component_fqdn(node, 'splunk')).to eq cluster_data['splunk']['fqdn']
       end
     end
@@ -78,23 +78,23 @@ describe DeliveryCluster::Helpers::Component do
       end
 
       context 'does exist' do
-        it 'should return chef-server component host' do
+        it 'return chef-server component host' do
           expect(described_class.component_fqdn(node, 'chef-server')).to eq cluster_data['chef-server']['host']
         end
 
-        it 'should return delivery component host' do
+        it 'return delivery component host' do
           expect(described_class.component_fqdn(node, 'delivery')).to eq cluster_data['delivery']['host']
         end
 
-        it 'should return supermarket component host' do
+        it 'return supermarket component host' do
           expect(described_class.component_fqdn(node, 'supermarket')).to eq cluster_data['supermarket']['host']
         end
 
-        it 'should return analytics component host' do
+        it 'return analytics component host' do
           expect(described_class.component_fqdn(node, 'analytics')).to eq cluster_data['analytics']['host']
         end
 
-        it 'should return splunk component host' do
+        it 'return splunk component host' do
           expect(described_class.component_fqdn(node, 'splunk')).to eq cluster_data['splunk']['host']
         end
       end
@@ -110,23 +110,23 @@ describe DeliveryCluster::Helpers::Component do
           node.default['delivery-cluster']['ssh'] = ssh_data
         end
 
-        it 'should return chef-server component ip_address' do
+        it 'return chef-server component ip_address' do
           expect(described_class.component_fqdn(node, 'chef-server')).to eq '10.1.1.1'
         end
 
-        it 'should return delivery component ip_address' do
+        it 'return delivery component ip_address' do
           expect(described_class.component_fqdn(node, 'delivery')).to eq '10.1.1.2'
         end
 
-        it 'should return supermarket component ip_address' do
+        it 'return supermarket component ip_address' do
           expect(described_class.component_fqdn(node, 'supermarket')).to eq '10.1.1.3'
         end
 
-        it 'should return analytics component ip_address' do
+        it 'return analytics component ip_address' do
           expect(described_class.component_fqdn(node, 'analytics')).to eq '10.1.1.4'
         end
 
-        it 'should return splunk component ip_address' do
+        it 'return splunk component ip_address' do
           expect(described_class.component_fqdn(node, 'splunk')).to eq '10.1.1.5'
         end
       end
@@ -136,12 +136,12 @@ describe DeliveryCluster::Helpers::Component do
   context 'when `hostname` attribute' do
     context 'is NOT configured' do
       %w( delivery supermarket analytics splunk ).each do |component|
-        it "should generate a hostname for #{component}" do
+        it "generate a hostname for #{component}" do
           expect(described_class.component_hostname(node, component)).to eq "#{component}-server-chefspec"
         end
       end
 
-      it 'should generate a hostname for chef-server' do
+      it 'generate a hostname for chef-server' do
         expect(described_class.component_hostname(node, 'chef-server')).to eq 'chef-server-chefspec'
       end
     end
@@ -156,14 +156,14 @@ describe DeliveryCluster::Helpers::Component do
       end
 
       %w( chef-server delivery supermarket analytics splunk ).each do |component|
-        it "should return our cool-#{component} hostname" do
+        it "return our cool-#{component} hostname" do
           expect(described_class.component_hostname(node, component)).to eq "my-cool-hostname.#{component}.com"
         end
       end
     end
   end
 
-  it 'should return the hostname for multiple machines' do
+  it 'return the hostname for multiple machines' do
     1.upto(cluster_data['builders']['count'].to_i) do |index|
       expect(described_class.component_hostname(node, 'builders', index.to_s)).to eq "build-node-chefspec-#{index}"
     end

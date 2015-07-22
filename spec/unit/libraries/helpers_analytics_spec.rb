@@ -42,15 +42,15 @@ describe DeliveryCluster::Helpers::Analytics do
       .and_return(analytics_node)
   end
 
-  it 'should return the analytics hostname for a machine resource' do
+  it 'return the analytics hostname for a machine resource' do
     expect(described_class.analytics_server_hostname(node)).to eq 'analytics-server-chefspec'
   end
 
-  it 'should return the analytics fqdn' do
+  it 'return the analytics fqdn' do
     expect(described_class.analytics_server_fqdn(node)).to eq 'analytics-server.chef.io'
   end
 
-  it 'should return the PATH of the analytics lock file' do
+  it 'return the PATH of the analytics lock file' do
     expect(described_class.analytics_lock_file(node)).to eq File.join(Chef::Config.chef_repo_path, '.chef', 'delivery-cluster-data-chefspec', 'analytics')
   end
 
@@ -58,11 +58,11 @@ describe DeliveryCluster::Helpers::Analytics do
     context 'is NOT enabled' do
       before { allow(File).to receive(:exist?).and_return(false) }
 
-      it 'should say that analytics component is NOT enabled' do
+      it 'say that analytics component is NOT enabled' do
         expect(described_class.analytics_enabled?(node)).to eq false
       end
 
-      it 'should return NO attributes' do
+      it 'return NO attributes' do
         expect(described_class.analytics_server_attributes(node)).to eq({})
       end
     end
@@ -70,17 +70,17 @@ describe DeliveryCluster::Helpers::Analytics do
     context 'is enabled' do
       before { allow(File).to receive(:exist?).and_return(true) }
 
-      it 'should say that analytics component is enabled' do
+      it 'say that analytics component is enabled' do
         expect(described_class.analytics_enabled?(node)).to eq true
       end
 
-      it 'should return the analytics attributes' do
+      it 'return the analytics attributes' do
         expect(described_class.analytics_server_attributes(node)).to eq('chef-server-12' => mock_analytics_server_attributes)
       end
     end
   end
 
-  it 'should activate analytics by creating the lock file' do
+  it 'activate analytics by creating the lock file' do
     expect(described_class.activate_analytics(node)).to eq true
   end
 end

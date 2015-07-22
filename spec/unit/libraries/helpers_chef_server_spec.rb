@@ -62,19 +62,19 @@ describe DeliveryCluster::Helpers::ChefServer do
       .and_return(analytics_node)
   end
 
-  it 'should return chef-server hostname for a machine resource' do
+  it 'return chef-server hostname for a machine resource' do
     expect(described_class.chef_server_hostname(node)).to eq 'chef-server-chefspec'
   end
 
-  it 'should return chef-server fqdn' do
+  it 'return chef-server fqdn' do
     expect(described_class.chef_server_fqdn(node)).to eq 'chef-server.chef.io'
   end
 
-  it 'should return chef-server url' do
+  it 'return chef-server url' do
     expect(described_class.chef_server_url(node)).to eq 'https://chef-server.chef.io/organizations/chefspec'
   end
 
-  it 'should return the chef-server configuration for a machine resource' do
+  it 'return the chef-server configuration for a machine resource' do
     expect(described_class.chef_server_config(node)).to eq(
       chef_server_url: 'https://chef-server.chef.io/organizations/chefspec',
       options: {
@@ -85,7 +85,7 @@ describe DeliveryCluster::Helpers::ChefServer do
   end
 
   context 'when there is neither supermarket server nor analytics server' do
-    it 'should return just the chef-server attributes' do
+    it 'return just the chef-server attributes' do
       expect(described_class.chef_server_attributes(node)).to eq('chef-server-12' => mock_chef_server_attributes)
     end
   end
@@ -95,7 +95,7 @@ describe DeliveryCluster::Helpers::ChefServer do
       allow(DeliveryCluster::Helpers::Supermarket).to receive(:supermarket_enabled?).and_return(true)
     end
 
-    it 'should return the chef-server attributes plus supermarket attributes' do
+    it 'return the chef-server attributes plus supermarket attributes' do
       expect(described_class.chef_server_attributes(node)).to eq(
         'chef-server-12' => mock_chef_server_attributes.merge(mock_supermarket_server_attributes)
       )
@@ -107,7 +107,7 @@ describe DeliveryCluster::Helpers::ChefServer do
       allow(DeliveryCluster::Helpers::Analytics).to receive(:analytics_enabled?).and_return(true)
     end
 
-    it 'should return the chef-server attributes plus analytics attributes' do
+    it 'return the chef-server attributes plus analytics attributes' do
       expect(described_class.chef_server_attributes(node)).to eq(
         'chef-server-12' => mock_chef_server_attributes.merge(mock_analytics_server_attributes)
       )
@@ -118,7 +118,7 @@ describe DeliveryCluster::Helpers::ChefServer do
         allow(DeliveryCluster::Helpers::Supermarket).to receive(:supermarket_enabled?).and_return(true)
       end
 
-      it 'should return the chef-server attributes plus supermarket attributes plust analytics attributes' do
+      it 'return the chef-server attributes plus supermarket attributes plust analytics attributes' do
         expect(described_class.chef_server_attributes(node)).to eq(
           'chef-server-12' => mock_chef_server_attributes
             .merge(mock_supermarket_server_attributes)
