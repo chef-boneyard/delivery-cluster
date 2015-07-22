@@ -29,9 +29,6 @@ describe DeliveryCluster::Helpers::Builders do
     allow(FileUtils).to receive(:touch).and_return(true)
     allow(Chef::Node).to receive(:load).and_return(Chef::Node.new)
     allow(Chef::REST).to receive(:new).and_return(rest)
-    # allow_any_instance_of(Chef::REST).to receive(:get_rest)
-    #   .with('nodes/splunk-server-chefspec')
-    #   .and_return(splunk_node)
   end
 
   context 'when the builder hostname' do
@@ -50,9 +47,9 @@ describe DeliveryCluster::Helpers::Builders do
       end
 
       it 'should return the specific builders hostname for a machine resource' do
-        expect(described_class.delivery_builder_hostname(node, '1')).to eq "my-cool-build-node-1"
-        expect(described_class.delivery_builder_hostname(node, '2')).to eq "my-awesome-build-node-2"
-        expect(described_class.delivery_builder_hostname(node, '3')).to eq "my-great-build-node-3"
+        expect(described_class.delivery_builder_hostname(node, '1')).to eq 'my-cool-build-node-1'
+        expect(described_class.delivery_builder_hostname(node, '2')).to eq 'my-awesome-build-node-2'
+        expect(described_class.delivery_builder_hostname(node, '3')).to eq 'my-great-build-node-3'
       end
     end
   end

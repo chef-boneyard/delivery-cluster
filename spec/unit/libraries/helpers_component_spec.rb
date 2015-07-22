@@ -106,6 +106,8 @@ describe DeliveryCluster::Helpers::Component do
           node.default['delivery-cluster']['supermarket']['host'] = nil
           node.default['delivery-cluster']['analytics']['host']   = nil
           node.default['delivery-cluster']['splunk']['host']      = nil
+          node.default['delivery-cluster']['driver'] = 'ssh'
+          node.default['delivery-cluster']['ssh'] = ssh_data
         end
 
         it 'should return chef-server component ip_address' do

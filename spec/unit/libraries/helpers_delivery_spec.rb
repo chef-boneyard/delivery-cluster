@@ -63,6 +63,7 @@ describe DeliveryCluster::Helpers::Delivery do
       node.default['delivery-cluster']['delivery']['artifactory'] = true
       allow(DeliveryCluster::Helpers::Delivery).to receive(:delivery_artifact).and_return(mock_delivery_artifact)
     end
+
     it 'should return the right delivery attributes from artifactory' do
       attributes = described_class.delivery_server_attributes(node)
       expect(attributes['delivery-cluster']['delivery']['version']).to eq(mock_delivery_artifact['version'])
@@ -93,8 +94,8 @@ describe DeliveryCluster::Helpers::Delivery do
           expect(enterprise_cmd =~ /sudo -E delivery-ctl/).not_to be nil
           expect(enterprise_cmd =~ /create-enterprise chefspec/).not_to be nil
           expect(enterprise_cmd =~ /--ssh-pub-key-file=/).not_to be nil
-          expect(enterprise_cmd =~ /\/etc\/delivery\/builder_key.pub/).not_to be nil
-          expect(enterprise_cmd =~ /\/tmp\/chefspec.creds/).not_to be nil
+          expect(enterprise_cmd =~ %r{\/etc\/delivery\/builder_key.pub}).not_to be nil
+          expect(enterprise_cmd =~ %r{\/tmp\/chefspec.creds}).not_to be nil
         end
       end
 
@@ -107,8 +108,8 @@ describe DeliveryCluster::Helpers::Delivery do
           expect(enterprise_cmd =~ /sudo -E delivery-ctl/).not_to be nil
           expect(enterprise_cmd =~ /create-enterprise chefspec/).not_to be nil
           expect(enterprise_cmd =~ /--ssh-pub-key-file=/).to be nil
-          expect(enterprise_cmd =~ /\/etc\/delivery\/builder_key.pub/).to be nil
-          expect(enterprise_cmd =~ /\/tmp\/chefspec.creds/).not_to be nil
+          expect(enterprise_cmd =~ %r{\/etc\/delivery\/builder_key.pub}).to be nil
+          expect(enterprise_cmd =~ %r{\/tmp\/chefspec.creds}).not_to be nil
         end
       end
     end
@@ -122,8 +123,7 @@ describe DeliveryCluster::Helpers::Delivery do
     context 'and the user is root' do
       before do
         node.default['delivery-cluster']['ssh']['ssh_username'] = 'root'
-        allow(DeliveryCluster::Helpers).to receive(:provisioning)
-          .and_return(DeliveryCluster::Provisioning.for_driver(node['delivery-cluster']['driver'], node))
+        DeliveryCluster::Helpers.instance_variable_set :@provisioning, nil
       end
       it 'should return the delivery_ctl command without sudo' do
         expect(described_class.delivery_ctl(node)).to eq 'delivery-ctl'

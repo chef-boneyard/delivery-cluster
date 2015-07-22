@@ -120,27 +120,32 @@ module DeliveryCluster
   module DSL
     # Return the chef-server config
     def upload_cookbook(cookbook)
-      DeliveryCluster::Helpers.ChefServer.upload_cookbook(node, cookbook)
+      DeliveryCluster::Helpers::ChefServer.upload_cookbook(node, cookbook)
+    end
+
+    # Get the Hostname of the Chef Server
+    def chef_server_hostname
+      DeliveryCluster::Helpers::ChefServer.chef_server_hostname(node)
     end
 
     # Return the chef-server config
     def chef_server_config
-      DeliveryCluster::Helpers.ChefServer.chef_server_config(node)
+      DeliveryCluster::Helpers::ChefServer.chef_server_config(node)
     end
 
     # Return the FQDN of the Chef Server
     def chef_server_fqdn
-      DeliveryCluster::Helpers.ChefServer.chef_server_fqdn(node)
+      DeliveryCluster::Helpers::ChefServer.chef_server_fqdn(node)
     end
 
     # Return the Chef Server URL of our Organization
     def chef_server_url
-      DeliveryCluster::Helpers.ChefServer.chef_server_url(node)
+      DeliveryCluster::Helpers::ChefServer.chef_server_url(node)
     end
 
     # Generate the Chef Server Attributes
     def chef_server_attributes
-      DeliveryCluster::Helpers.ChefServer.chef_server_attributes(node)
+      DeliveryCluster::Helpers::ChefServer.chef_server_attributes(node)
     end
   end
 end

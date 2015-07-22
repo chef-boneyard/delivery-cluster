@@ -91,7 +91,7 @@ module DeliveryCluster
     end
 
     # Return the run_list of the Builders
-    def builder_run_list(node)
+    def builder_run_list
       DeliveryCluster::Helpers::Builders.builder_run_list(node)
     end
   end

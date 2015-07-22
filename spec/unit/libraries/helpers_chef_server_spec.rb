@@ -76,12 +76,12 @@ describe DeliveryCluster::Helpers::ChefServer do
 
   it 'should return the chef-server configuration for a machine resource' do
     expect(described_class.chef_server_config(node)).to eq(
-        chef_server_url: 'https://chef-server.chef.io/organizations/chefspec',
-        options: {
-          client_name: 'delivery',
-          signing_key_filename: File.join(Chef::Config.chef_repo_path, '.chef', 'delivery-cluster-data-chefspec', 'delivery.pem')
-        }
-      )
+      chef_server_url: 'https://chef-server.chef.io/organizations/chefspec',
+      options: {
+        client_name: 'delivery',
+        signing_key_filename: File.join(Chef::Config.chef_repo_path, '.chef', 'delivery-cluster-data-chefspec', 'delivery.pem')
+      }
+    )
   end
 
   context 'when there is neither supermarket server nor analytics server' do
@@ -97,8 +97,8 @@ describe DeliveryCluster::Helpers::ChefServer do
 
     it 'should return the chef-server attributes plus supermarket attributes' do
       expect(described_class.chef_server_attributes(node)).to eq(
-          'chef-server-12' => mock_chef_server_attributes.merge(mock_supermarket_server_attributes)
-        )
+        'chef-server-12' => mock_chef_server_attributes.merge(mock_supermarket_server_attributes)
+      )
     end
   end
 
@@ -109,8 +109,8 @@ describe DeliveryCluster::Helpers::ChefServer do
 
     it 'should return the chef-server attributes plus analytics attributes' do
       expect(described_class.chef_server_attributes(node)).to eq(
-          'chef-server-12' => mock_chef_server_attributes.merge(mock_analytics_server_attributes)
-        )
+        'chef-server-12' => mock_chef_server_attributes.merge(mock_analytics_server_attributes)
+      )
     end
 
     context 'AND a supermarket server (both)' do
@@ -120,10 +120,10 @@ describe DeliveryCluster::Helpers::ChefServer do
 
       it 'should return the chef-server attributes plus supermarket attributes plust analytics attributes' do
         expect(described_class.chef_server_attributes(node)).to eq(
-            'chef-server-12' => mock_chef_server_attributes
-              .merge(mock_supermarket_server_attributes)
-              .merge(mock_analytics_server_attributes)
-          )
+          'chef-server-12' => mock_chef_server_attributes
+            .merge(mock_supermarket_server_attributes)
+            .merge(mock_analytics_server_attributes)
+        )
       end
     end
   end
