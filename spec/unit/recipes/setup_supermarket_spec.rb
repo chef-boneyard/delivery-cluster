@@ -31,6 +31,7 @@ describe 'delivery-cluster::setup_supermarket' do
 
   before do
     allow_any_instance_of(Chef::Recipe).to receive(:activate_supermarket).and_return(true)
+    allow_any_instance_of(Chef::Recipe).to receive(:cluster_data_dir).and_return('/tmp')
   end
 
   it 'includes _settings recipe' do
@@ -53,5 +54,9 @@ describe 'delivery-cluster::setup_supermarket' do
   it 'download supermarket-server-cert' do
     expect(chef_run).to download_machine_file('supermarket-server-cert')
       .with_machine('supermarket-server-chefspec')
+  end
+
+  it 'add supermarket to the rendered knife.rb' do
+    expect(chef_run).to create_template('/tmp/knife.rb')
   end
 end

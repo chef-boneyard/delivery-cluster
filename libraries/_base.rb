@@ -21,6 +21,7 @@
 #
 module DeliveryCluster
   module Provisioning
+    #
     # Base class for a Provisioning Abstraction.
     #
     # Specify all the methods a Provisioning Driver should implement
@@ -62,6 +63,13 @@ module DeliveryCluster
       # @return [String] an ipaddress
       def ipaddress(node, use_private_ip_for_ssh = false) # rubocop:disable Lint/UnusedMethodArgument
         fail "#{self.class}#ipaddress must be implemented"
+      end
+
+      # Return the username of the Provisioning Driver.
+      #
+      # @return [String] the username
+      def username
+        'root'
       end
     end
   end

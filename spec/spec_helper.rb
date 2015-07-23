@@ -44,7 +44,7 @@ module SharedDriverData
     }
   end
 
-  let(:vagrant_driver) do
+  let(:vagrant_data) do
     {
       'vm_box' => 'opscode-ubuntu-14.04',
       'image_url' => 'https://opscode-bento.com/opscode_ubuntu-14.04.box',
@@ -58,7 +58,7 @@ module SharedDriverData
     }
   end
 
-  let(:aws_driver) do
+  let(:aws_data) do
     {
       'flavor' => 'c3.xlarge',
       'image_id' => 'ami-3d50120d',
@@ -81,15 +81,31 @@ module SharedCommonData
     {
       'id' => 'chefspec',
       'chef-server' => {
-        'organization' => '',
+        'organization' => 'chefspec',
+        'fqdn' => 'chef-server.chef.io',
+        'host' => 'chef-server.chef.io',
         'existing' => false
       },
       'delivery' => {
         'version' => 'latest',
+        'fqdn' => 'delivery-server.chef.io',
+        'host' => 'delivery-server.chef.io',
         'enterprise' => 'chefspec',
         'artifactory' => false,
         'config' => "nginx['enable_non_ssl'] = true",
         'license_file' => '/Users/afiune/delivery.license'
+      },
+      'analytics' => {
+        'fqdn' => 'analytics-server.chef.io',
+        'host' => 'analytics-server.chef.io'
+      },
+      'supermarket' => {
+        'fqdn' => 'supermarket-server.chef.io',
+        'host' => 'supermarket-server.chef.io'
+      },
+      'splunk' => {
+        'fqdn' => 'splunk-server.chef.io',
+        'host' => 'splunk-server.chef.io'
       },
       'builders' => {
         'count' => '3',
@@ -98,6 +114,49 @@ module SharedCommonData
         '3' => {}
       }
     }
+  end
+  let(:rest) do
+    Chef::REST.new(
+      'https://chef-server.chef.io/organizations/chefspec',
+      'delivery',
+      File.expand_path('spec/unit/mock/delivery.pem')
+    )
+  end
+  let(:chef_node) do
+    n = Chef::Node.new
+    n.default['delivery-cluster']['driver'] = 'ssh'
+    n.default['delivery-cluster']['ssh'] = {}
+    n.default['ipaddress'] = '10.1.1.1'
+    n
+  end
+  let(:delivery_node) do
+    n = Chef::Node.new
+    n.default['delivery-cluster']['driver'] = 'vagrant'
+    n.default['delivery-cluster']['vagrant'] = {}
+    n.default['ipaddress'] = '10.1.1.2'
+    n
+  end
+  let(:supermarket_node) do
+    n = Chef::Node.new
+    n.default['delivery-cluster']['driver'] = 'aws'
+    n.default['delivery-cluster']['aws'] = {}
+    n.default['ec2']['local_ipv4'] = '10.1.1.3'
+    n.default['ipaddress'] = '10.1.1.3'
+    n
+  end
+  let(:analytics_node) do
+    n = Chef::Node.new
+    n.default['delivery-cluster']['driver'] = 'ssh'
+    n.default['delivery-cluster']['ssh'] = {}
+    n.default['ipaddress'] = '10.1.1.4'
+    n
+  end
+  let(:splunk_node) do
+    n = Chef::Node.new
+    n.default['delivery-cluster']['driver'] = 'vagrant'
+    n.default['delivery-cluster']['vagrant'] = {}
+    n.default['ipaddress'] = '10.1.1.5'
+    n
   end
 end
 

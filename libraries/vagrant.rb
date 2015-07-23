@@ -24,6 +24,7 @@ require_relative '_base'
 
 module DeliveryCluster
   module Provisioning
+    #
     # Vagrant class for vb Provisioning Driver
     #
     # Specify all the methods a Provisioning Driver should implement
@@ -47,7 +48,7 @@ module DeliveryCluster
       def initialize(node)
         require 'chef/provisioning/vagrant_driver'
 
-        fail "Attributes not implemented (node['delivery-cluster']['#{driver}'])" unless node['delivery-cluster'][driver]
+        DeliveryCluster::Helpers.check_attribute?(node['delivery-cluster'][driver], "node['delivery-cluster']['#{driver}']")
         @node                   = node
         @prefix                 = 'sudo '
         @vm_box                 = @node['delivery-cluster'][driver]['vm_box'] if @node['delivery-cluster'][driver]['vm_box']
@@ -103,7 +104,7 @@ module DeliveryCluster
         return [] unless @node['delivery-cluster'][component]
         options = []
         if count
-          fail "Required attributes not implemented (node['delivery-cluster']['#{driver}']['#{count}'])" unless @node['delivery-cluster'][component][count.to_s]
+          DeliveryCluster::Helpers.check_attribute?(@node['delivery-cluster'][component][count.to_s], "node['delivery-cluster']['#{driver}']['#{count}']")
           options << { vagrant_options: { 'vm.hostname' => @node['delivery-cluster'][component][count.to_s]['vm_hostname'] } } if @node['delivery-cluster'][component][count.to_s]['vm_hostname']
           options << { vagrant_options: { 'vm.box' => @node['delivery-cluster'][component][count.to_s]['vm_box'] } } if @node['delivery-cluster'][component][count.to_s]['vm_box']
           options << { vagrant_options: { 'vm.box_url' => @node['delivery-cluster'][component][count.to_s]['image_url'] } } if @node['delivery-cluster'][component][count.to_s]['image_url']
@@ -149,6 +150,13 @@ module DeliveryCluster
         else
           node['ipaddress']
         end
+      end
+
+      # Return the username of the Provisioning Driver.
+      #
+      # @return [String] the username
+      def username
+        'vagrant'
       end
     end
   end

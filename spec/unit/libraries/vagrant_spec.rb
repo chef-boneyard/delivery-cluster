@@ -39,11 +39,15 @@ describe DeliveryCluster::Provisioning::Vagrant do
 
   context 'when driver attributes are implemented' do
     before do
-      node.default['delivery-cluster']['vagrant'] = vagrant_driver
+      node.default['delivery-cluster']['vagrant'] = vagrant_data
     end
 
     it 'returns the right driver name' do
       expect(vagrant_object.driver).to eq 'vagrant'
+    end
+
+    it 'returns the right driver username' do
+      expect(vagrant_object.username).to eq 'vagrant'
     end
 
     it 'returns the private_ipaddress' do
@@ -53,22 +57,22 @@ describe DeliveryCluster::Provisioning::Vagrant do
     it 'returns the right machine_options:Hash' do
       expect(vagrant_object.machine_options).to eq(
         convergence_options: {
-          bootstrap_proxy: vagrant_driver['bootstrap_proxy'],
-          chef_config: vagrant_driver['chef_config'],
-          chef_version: vagrant_driver['chef_version']
+          bootstrap_proxy: vagrant_data['bootstrap_proxy'],
+          chef_config: vagrant_data['chef_config'],
+          chef_version: vagrant_data['chef_version']
         },
         vagrant_options: {
-          'vm.box' => vagrant_driver['vm_box'],
-          'vm.box_url' => vagrant_driver['image_url'],
-          'vm.hostname' => vagrant_driver['vm_hostname']
+          'vm.box' => vagrant_data['vm_box'],
+          'vm.box_url' => vagrant_data['image_url'],
+          'vm.hostname' => vagrant_data['vm_hostname']
         },
-        vagrant_config: vagrant_driver['vagrant_config'],
+        vagrant_config: vagrant_data['vagrant_config'],
         transport_options: {
           options: {
             prefix: 'sudo '
           }
         },
-        use_private_ip_for_ssh: vagrant_driver['use_private_ip_for_ssh']
+        use_private_ip_for_ssh: vagrant_data['use_private_ip_for_ssh']
       )
     end
   end

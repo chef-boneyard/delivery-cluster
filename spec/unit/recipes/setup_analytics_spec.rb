@@ -31,6 +31,7 @@ describe 'delivery-cluster::setup_analytics' do
 
   before do
     allow_any_instance_of(Chef::Recipe).to receive(:activate_analytics).and_return(true)
+    allow_any_instance_of(Chef::Recipe).to receive(:cluster_data_dir).and_return('/tmp')
   end
 
   it 'includes _settings recipe' do
@@ -55,5 +56,9 @@ describe 'delivery-cluster::setup_analytics' do
   it 'download analytics-server-cert' do
     expect(chef_run).to download_machine_file('analytics-server-cert')
       .with_machine('analytics-server-chefspec')
+  end
+
+  it 'add analytics to the rendered knife.rb' do
+    expect(chef_run).to create_template('/tmp/knife.rb')
   end
 end

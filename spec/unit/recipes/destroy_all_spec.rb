@@ -31,7 +31,7 @@ describe 'delivery-cluster::destroy_all' do
 
   context 'always' do
     before do
-      allow(DeliveryCluster::Helper).to receive(:is_cluster_data_dir_link?).and_return(true)
+      allow(DeliveryCluster::Helpers).to receive(:is_cluster_data_dir_link?).and_return(true)
       chef_run.converge(described_recipe)
     end
 

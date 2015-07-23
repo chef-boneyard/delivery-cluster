@@ -24,6 +24,7 @@ require_relative '_base'
 
 module DeliveryCluster
   module Provisioning
+    #
     # AWS class for AWS Provisioning Driver
     #
     # Specify all the methods a Provisioning Driver should implement
@@ -39,6 +40,7 @@ module DeliveryCluster
       attr_accessor :ssh_username
       attr_accessor :security_group_ids
       attr_accessor :use_private_ip_for_ssh
+      alias_method :username, :ssh_username
 
       # Create a new Provisioning Driver Abstraction
       #
@@ -46,7 +48,7 @@ module DeliveryCluster
       def initialize(node)
         require 'chef/provisioning/aws_driver'
 
-        fail "[#{driver}] Attributes not implemented (node['delivery-cluster']['#{driver}'])" unless node['delivery-cluster'][driver]
+        DeliveryCluster::Helpers.check_attribute?(node['delivery-cluster'][driver], "node['delivery-cluster']['#{driver}']")
         @node                   = node
         @flavor                 = @node['delivery-cluster'][driver]['flavor'] if @node['delivery-cluster'][driver]['flavor']
         @key_name               = @node['delivery-cluster'][driver]['key_name'] if @node['delivery-cluster'][driver]['key_name']

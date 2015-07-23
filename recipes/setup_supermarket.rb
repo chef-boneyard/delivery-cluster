@@ -91,4 +91,6 @@ machine_file 'supermarket-server-cert' do
 end
 
 # Add Supermarket Server to the knife.rb config file
-render_knife_config
+template File.join(cluster_data_dir, 'knife.rb') do
+  variables lazy { knife_variables }
+end

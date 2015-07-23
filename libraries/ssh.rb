@@ -24,6 +24,7 @@ require_relative '_base'
 
 module DeliveryCluster
   module Provisioning
+    #
     # Ssh class for SsH Provisioning Driver
     #
     # Specify all the methods a Provisioning Driver should implement
@@ -36,6 +37,7 @@ module DeliveryCluster
       attr_accessor :ssh_username
       attr_accessor :bootstrap_proxy
       attr_accessor :chef_config
+      alias_method :username, :ssh_username
 
       # Create a new Provisioning Driver Abstraction
       #
@@ -43,7 +45,7 @@ module DeliveryCluster
       def initialize(node)
         require 'chef/provisioning/ssh_driver'
 
-        fail "Attributes not implemented (node['delivery-cluster'][#{driver}])" unless node['delivery-cluster'][driver]
+        DeliveryCluster::Helpers.check_attribute?(node['delivery-cluster'][driver], "node['delivery-cluster']['#{driver}']")
         @node            = node
         @prefix          = 'sudo '
         @ssh_username    = @node['delivery-cluster'][driver]['ssh_username'] if @node['delivery-cluster'][driver]['ssh_username']
