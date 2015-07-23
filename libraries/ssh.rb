@@ -95,7 +95,7 @@ module DeliveryCluster
             options << { transport_options: { host: @node['delivery-cluster'][component][count.to_s]['host'] } }
           elsif @node['delivery-cluster'][component][count.to_s]['ip']
             options << { transport_options: { ip_address: @node['delivery-cluster'][component][count.to_s]['ip'] } }
-          end
+          end unless @node['delivery-cluster'][component][count.to_s]
         else
           if @node['delivery-cluster'][component]['host']
             options << { transport_options: { host: @node['delivery-cluster'][component]['host'] } }
@@ -104,6 +104,7 @@ module DeliveryCluster
           end
         end
         # Specify more specific machine_options to add
+        options
       end
 
       # Return the Provisioning Driver Name.

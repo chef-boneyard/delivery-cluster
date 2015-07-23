@@ -54,9 +54,33 @@ describe DeliveryCluster::Helpers::Builders do
     end
   end
 
-  it 'not complain whether we pass an index as a number or as a string' do
-    expect(described_class.delivery_builder_hostname(node, 1)).to eq 'build-node-chefspec-1'
-    expect(described_class.delivery_builder_hostname(node, '1')).to eq 'build-node-chefspec-1'
+  context 'when the builder specs' do
+    context 'does NOT exist' do
+      it 'not complain whether we pass an index as a number or as a string' do
+        expect(described_class.delivery_builder_hostname(node, 1)).to eq 'build-node-chefspec-1'
+        expect(described_class.delivery_builder_hostname(node, '1')).to eq 'build-node-chefspec-1'
+      end
+    end
+
+    context 'does exist' do
+      before do
+        node.default['delivery-cluster']['builders']['count'] = 3
+        node.default['delivery-cluster']['builders']['1'] = { 'hostname' => 'my-awesome-build-node-1' }
+        node.default['delivery-cluster']['builders']['2'] = { 'hostname' => 'my-awesome-build-node-2' }
+        node.default['delivery-cluster']['builders']['3'] = { 'hostname' => 'my-awesome-build-node-3' }
+      end
+
+      it 'not complain whether we pass an index as a number or as a string' do
+        expect(described_class.delivery_builder_hostname(node, 1)).to eq 'my-awesome-build-node-1'
+        expect(described_class.delivery_builder_hostname(node, '1')).to eq 'my-awesome-build-node-1'
+      end
+
+      it 'returns the right hostname for the build-nodes' do
+        1.upto(node['delivery-cluster']['builders']['count']) do |i|
+          expect(described_class.delivery_builder_hostname(node, i)).to eq "my-awesome-build-node-#{i}"
+        end
+      end
+    end
   end
 
   context 'when the builder private key' do

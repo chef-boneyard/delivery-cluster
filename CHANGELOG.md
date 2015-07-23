@@ -1,3 +1,7 @@
+v0.3.6 (2015-07-23)
+-------------------
+- Fix the necesity of specifying builders spec
+
 v0.3.5 (2015-07-21)
 -------------------
 - Releasing Major Library Refactoring v.0.3.5

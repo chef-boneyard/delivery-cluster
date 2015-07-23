@@ -108,10 +108,7 @@ module SharedCommonData
         'host' => 'splunk-server.chef.io'
       },
       'builders' => {
-        'count' => '3',
-        '1' => {},
-        '2' => {},
-        '3' => {}
+        'count' => '3'
       }
     }
   end

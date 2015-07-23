@@ -23,33 +23,88 @@
 require 'spec_helper'
 
 describe 'delivery-cluster::setup' do
-  let(:chef_run) do
-    ChefSpec::SoloRunner.new do |node|
-      node.set['delivery-cluster'] = cluster_data
-    end
-  end
-
-  context 'always' do
-    before do
-      chef_run.converge(described_recipe)
+  describe '#vagrant driver' do
+    let(:chef_run) do
+      ChefSpec::SoloRunner.new do |node|
+        node.set['delivery-cluster']            = cluster_data
+        node.set['delivery-cluster']['driver']  = 'vagrant'
+        node.set['delivery-cluster']['vagrant'] = vagrant_data
+      end
     end
 
-    includes = %w( _settings setup_chef_server setup_delivery)
+    context 'always' do
+      before do
+        DeliveryCluster::Helpers.instance_variable_set :@provisioning, nil
+        chef_run.converge(described_recipe)
+      end
 
-    includes.each do |recipename|
-      it "includes #{recipename} recipe" do
-        expect(chef_run).to include_recipe("delivery-cluster::#{recipename}")
+      includes = %w( _settings setup_chef_server setup_delivery)
+
+      includes.each do |recipename|
+        it "includes #{recipename} recipe" do
+          expect(chef_run).to include_recipe("delivery-cluster::#{recipename}")
+        end
+      end
+    end
+
+    context 'build-nodes without specs' do
+      before do
+        chef_run.node.set['delivery-cluster']['builders']['count'] = '99'
+      end
+
+      it 'raise error' do
+        expect { chef_run.converge(described_recipe) }.to raise_error(RuntimeError)
       end
     end
   end
 
-  context 'lots of build nodes without configuration' do
-    before do
-      chef_run.node.set['delivery-cluster']['builders']['count'] = '99'
+  describe '#aws driver' do
+    let(:chef_run) do
+      ChefSpec::SoloRunner.new do |node|
+        node.set['delivery-cluster']            = cluster_data
+        node.set['delivery-cluster']['driver']  = 'aws'
+        node.set['delivery-cluster']['aws']     = aws_data
+      end
     end
 
-    it 'raise error' do
-      expect { chef_run.converge(described_recipe) }.to raise_error(RuntimeError)
+    context 'always' do
+      before do
+        DeliveryCluster::Helpers.instance_variable_set :@provisioning, nil
+        chef_run.converge(described_recipe)
+      end
+
+      includes = %w( _settings setup_chef_server setup_delivery)
+
+      includes.each do |recipename|
+        it "includes #{recipename} recipe" do
+          expect(chef_run).to include_recipe("delivery-cluster::#{recipename}")
+        end
+      end
+    end
+  end
+
+  describe '#ssh driver' do
+    let(:chef_run) do
+      ChefSpec::SoloRunner.new do |node|
+        node.set['delivery-cluster']            = cluster_data
+        node.set['delivery-cluster']['driver']  = 'ssh'
+        node.set['delivery-cluster']['ssh']     = ssh_data
+      end
+    end
+
+    context 'always' do
+      before do
+        DeliveryCluster::Helpers.instance_variable_set :@provisioning, nil
+        chef_run.converge(described_recipe)
+      end
+
+      includes = %w( _settings setup_chef_server setup_delivery)
+
+      includes.each do |recipename|
+        it "includes #{recipename} recipe" do
+          expect(chef_run).to include_recipe("delivery-cluster::#{recipename}")
+        end
+      end
     end
   end
 end

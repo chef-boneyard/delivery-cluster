@@ -65,7 +65,6 @@ module DeliveryCluster
       def component_hostname(node, component, id = nil)
         DeliveryCluster::Helpers.check_attribute?(node['delivery-cluster'][component], "node['delivery-cluster']['#{component}']")
         if id
-          DeliveryCluster::Helpers.check_attribute?(node['delivery-cluster'][component][id], "node['delivery-cluster']['#{component}']['#{id}']")
           multiple_component_hostname(node, component, id)
         else
           single_component_hostname(node, component)
@@ -124,8 +123,12 @@ module DeliveryCluster
       # @param id [String] The id to point to an specific component
       # @return [String] hostname
       def get_component(node, name, id = nil)
-        return node['delivery-cluster'][name][id] if id
-        node['delivery-cluster'][name]
+        if id
+          return {} unless node['delivery-cluster'][name][id]
+          node['delivery-cluster'][name][id]
+        else
+          node['delivery-cluster'][name]
+        end
       end
     end
   end
