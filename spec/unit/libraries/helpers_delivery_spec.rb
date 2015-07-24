@@ -20,10 +20,14 @@
 # limitations under the License.
 #
 
+require 'chef/run_context'
+require 'chef/event_dispatch/dispatcher'
 require 'spec_helper'
 
 describe DeliveryCluster::Helpers::Delivery do
   let(:node) { Chef::Node.new }
+  let(:events) { Chef::EventDispatch::Dispatcher.new }
+  let(:run_context) { Chef::RunContext.new(node, {}, events) }
   let(:mock_delivery_artifact) do
     {
       'version' => '0.3.0',
@@ -62,6 +66,7 @@ describe DeliveryCluster::Helpers::Delivery do
     before do
       node.default['delivery-cluster']['delivery']['artifactory'] = true
       allow(DeliveryCluster::Helpers::Delivery).to receive(:delivery_artifact).and_return(mock_delivery_artifact)
+      allow_any_instance_of(Chef::Node).to receive(:run_context).and_return(run_context)
     end
 
     it 'return the right delivery attributes from artifactory' do

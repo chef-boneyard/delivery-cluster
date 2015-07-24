@@ -25,10 +25,10 @@ require 'net/http'
 # Artifact Helper
 #
 # Get the latest artifact without downloading the artifact:
-# => artifact = get_delivery_artifact('latest', 'redhat', '6.5')
+# => artifact = get_delivery_artifact(node, 'latest', 'redhat', '6.5')
 #
 # Get specific artifact and also download the artifact locally:
-# => artifact = get_delivery_artifact('0.2.21', 'ubuntu', '12.04', '/var/tmp')
+# => artifact = get_delivery_artifact(node, '0.2.21', 'ubuntu', '12.04', '/var/tmp')
 #
 # Will Return:
 # {
@@ -41,11 +41,11 @@ require 'net/http'
 #
 # NOTE: If you do not specify a `tmp_dir` it will not download the artifact
 #       so there will be no `local_path` in the returned value
-def get_delivery_artifact(version = 'latest', platform = 'ubuntu', platform_version = '14.04', tmp_dir = nil)
+def get_delivery_artifact(node, version = 'latest', platform = 'ubuntu', platform_version = '14.04', tmp_dir = nil)
   # Yup! We must validate access to Chef VPN
-  validate_vpn
+  Chef::Application.fatal! 'You need to connect to the VPN to build your delivery-cluster!' unless validate_vpn
 
-  artifactory_gem = Chef::Resource::ChefGem.new('artifactory', run_context)
+  artifactory_gem = Chef::Resource::ChefGem.new('artifactory', node.run_context)
   artifactory_gem.run_action(:install)
   require 'artifactory'
 
@@ -83,7 +83,7 @@ def get_delivery_artifact(version = 'latest', platform = 'ubuntu', platform_vers
   if tmp_dir
     latest_delivery = "#{tmp_dir}/#{File.basename(artifact.uri)}"
 
-    remote_file = Chef::Resource::RemoteFile.new(latest_delivery, run_context)
+    remote_file = Chef::Resource::RemoteFile.new(latest_delivery, node.run_context)
     remote_file.source(artifact.download_uri)
     remote_file.run_action(:create)
 
@@ -108,7 +108,7 @@ def supported_platforms_format(platform, platform_version)
         'version' => '6'
       }
     else
-      Chef::Log.fatal("Unsupported Platform Version: #{platform_version}")
+      Chef::Application.fatal!("Unsupported Platform Version: #{platform_version}")
     end
   when 'ubuntu'
     if platform_version.to_s == '12.04' || platform_version.to_s == '14.04'
@@ -117,10 +117,10 @@ def supported_platforms_format(platform, platform_version)
         'version' => platform_version
       }
     else
-      Chef::Log.fatal("Unsupported Platform Version: #{platform_version}")
+      Chef::Application.fatal!("Unsupported Platform Version: #{platform_version}")
     end
   else
-    Chef::Log.fatal("Unsupported Platform: #{platform}")
+    Chef::Application.fatal!("Unsupported Platform: #{platform}")
   end
 end
 
@@ -133,6 +133,6 @@ def validate_vpn
   begin
     http.get '/'
   rescue ::Timeout::Error
-    Chef::Application.fatal! 'You need to connect to the VPN to build your delivery-cluster!'
+    false
   end
 end

@@ -81,6 +81,7 @@ module DeliveryCluster
       def delivery_artifact(node)
         @delivery_artifact ||= begin
           artifact = get_delivery_artifact(
+            node,
             node['delivery-cluster']['delivery']['version'],
             DeliveryCluster::Helpers::Component.component_node(node, 'delivery')['platform'],
             DeliveryCluster::Helpers::Component.component_node(node, 'delivery')['platform_version'],
