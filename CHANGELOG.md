@@ -1,6 +1,7 @@
 v0.3.6 (2015-07-23)
 -------------------
-- Fix the necesity of specifying builders spec
+- Fix the necessity of specifying builders spec
+- Fix Artifactory functionality plus chefspecs
 
 v0.3.5 (2015-07-21)
 -------------------

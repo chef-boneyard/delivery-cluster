@@ -66,7 +66,6 @@ describe DeliveryCluster::Helpers::Delivery do
     before do
       node.default['delivery-cluster']['delivery']['artifactory'] = true
       allow(DeliveryCluster::Helpers::Delivery).to receive(:delivery_artifact).and_return(mock_delivery_artifact)
-      allow_any_instance_of(Chef::Node).to receive(:run_context).and_return(run_context)
     end
 
     it 'return the right delivery attributes from artifactory' do

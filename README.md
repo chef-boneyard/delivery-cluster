@@ -81,14 +81,14 @@ not have a license key, you can request one from your CHEF account
 representative.**
 
 You will need to have the `delivery.license` file present on your provisioner
-node or local workstation.
+node or local workstation and specify it on the next step.
 
 
 #### 2) Create an environment
 
 Use the `rake` task `generate_env` to generate an environment file.
 
-**Use the defaults by pressing <enter> on all of the questions.**
+**Use the defaults by pressing <enter> on all of the questions with the exception of the delivery.license.**
 
 ```
 $ rake setup:generate_env
