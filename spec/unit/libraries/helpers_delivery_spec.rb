@@ -20,10 +20,14 @@
 # limitations under the License.
 #
 
+require 'chef/run_context'
+require 'chef/event_dispatch/dispatcher'
 require 'spec_helper'
 
 describe DeliveryCluster::Helpers::Delivery do
   let(:node) { Chef::Node.new }
+  let(:events) { Chef::EventDispatch::Dispatcher.new }
+  let(:run_context) { Chef::RunContext.new(node, {}, events) }
   let(:mock_delivery_artifact) do
     {
       'version' => '0.3.0',

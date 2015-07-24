@@ -185,8 +185,7 @@ describe DeliveryCluster::Helpers::Component do
       end
     end
 
-    it 'and there is no index for multiple machines raise an error' do
-      node.default['delivery-cluster']['machines'] = {}
+    it 'raise an error when you try to access a multiple_component_hostname' do
       expect { described_class.component_hostname(node, 'machines', '1') }.to raise_error(RuntimeError)
     end
   end
