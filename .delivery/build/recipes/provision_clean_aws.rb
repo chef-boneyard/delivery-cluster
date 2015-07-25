@@ -94,10 +94,21 @@ end
 # HERE: we are copying the data after we create the Delivery Cluster
 #
 # TODO: We need to figure a better way to do this
+#       Translate this into ruby code
+# WORKAROUND: There are many problems that we can fix in chef-provisioning
+#             so we will try to re-run the automation three times before fail
 execute "Create a new Delivery Cluster" do
   cwd path
   command <<-EOF
-    chef exec bundle exec chef-client -z -o delivery-cluster::setup -E #{cluster_name} -l auto > #{cache}/delivery-cluster-setup.log
+    for i in 1 2 3; do
+      chef exec bundle exec chef-client -z -o delivery-cluster::setup -E #{cluster_name} -l info > #{cache}/delivery-cluster-setup.log
+      exitcode=$?
+      if [ ${exitcode} -eq 0 ]; then
+        break
+      else
+        echo "$i) chef-zero failed with exitcode: $exitcode" >> #{cache}/delivery-cluster-setup.err
+      fi
+    done
     cp -r clients nodes .chef/delivery-cluster-data-* .chef/trusted_certs /var/opt/delivery/workspace/delivery-cluster-aws-cache/
   EOF
   environment ({
@@ -118,6 +129,8 @@ ruby_block "Get Services" do
                                          :cwd => node['delivery']['workspace']['repo'])
 
     list_services.run_command
+    # Print Services
+    puts list_services.stdout
 
     if list_services.stdout
       node.run_state['delivery'] ||= {}
