@@ -73,7 +73,7 @@ To switch your environment run:
 Easy Setup
 ------------
 
-The easiest way to setup a Delivery Cluster is to follow these four steps:
+The easiest way to setup a Delivery Cluster is to follow these five steps:
 
 #### 1) Download your Delivery license key
 Delivery requires a valid license to activate successfully. **If you do
@@ -95,6 +95,20 @@ $ rake setup:generate_env
 ```
 
 Do not forget to `export` your new environment.
+
+#### 3) Install Bundler or use the ChefDK ruby environment as your system Ruby
+
+If you are using ChefDK (recommended path), you can set your system Ruby temporarily using the following command
+
+```
+$ eval "$(chef shell-init SHELL_NAME)"
+```
+
+If you do not wish to use ChefDK, you must install Bundler into your system Ruby gems
+
+```
+$ gem install bundler
+```
 
 #### 3) Provision your Delivery Cluster
 
