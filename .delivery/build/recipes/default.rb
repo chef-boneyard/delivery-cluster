@@ -16,7 +16,7 @@ include_recipe 'delivery-red-pill::default'
 include_recipe 'delivery-truck::default'
 
 # Temporal cache directory to store delivery-cluster-data
-directory "/var/opt/delivery/workspace/delivery-cluster-aws-cache" do
+directory backup_dir do
   owner node['delivery_builder']['build_user']
   group node['delivery_builder']['build_user']
 end

@@ -4,7 +4,7 @@ maintainer_email 'you@example.com'
 license          'all_rights'
 description      'Installs/Configures build'
 long_description 'Installs/Configures build'
-version          '0.1.4'
+version          '0.1.5'
 
 depends 'delivery-truck'
 depends 's3_file'

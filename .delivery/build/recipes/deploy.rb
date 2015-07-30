@@ -12,18 +12,10 @@ if node['delivery']['change']['pipeline'] == 'upgrade_aws' &&
   path             = node['delivery']['workspace']['repo']
   cache            = node['delivery']['workspace']['cache']
 
-  execute "Restore Provisioning Bits" do
-    cwd path
-    command <<-EOF
-      mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/clients clients
-      mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/nodes nodes
-      mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/trusted_certs .chef/.
-      mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/delivery-cluster-data-* .chef/.
-    EOF
-    environment ({
-      'AWS_CONFIG_FILE' => "#{cache}/.aws/config"
-    })
-    only_if do ::File.exists?('var/opt/delivery/workspace/delivery-cluster-aws-cache/nodes') end
+  ruby_block 'Restore Provisioning Bits' do
+    block do
+      restore_cluster_data(path)
+    end
   end
 
   include_recipe "build::provision_clean_aws"

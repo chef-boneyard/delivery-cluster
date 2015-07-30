@@ -56,79 +56,102 @@ s3_file File.join(cache, 'delivery.license') do
   action :create
 end
 
-# Assemble your gem dependencies
-execute "chef exec bundle install" do
-  cwd path
-end
-
-# Assemble your cookbook dependencies
-execute "chef exec bundle exec berks vendor cookbooks" do
-  cwd path
+# Install all the prerequisites on the build-node
+#
+# Here we are assambling our gem and cookbook dependencies, when this
+# command runs, the delivery-cluster cookbook converts into a monolitic
+# chef-repo that has cookbooks/ environments/ nodes/ clients/ etc.
+ruby_block 'Setup Prerequisites' do
+  block do
+    puts shell_out!("rake setup:prerequisites", :cwd => path).stdout
+  end
 end
 
 # Destroy the old Delivery Cluster
 #
-# We are using a temporal cache directory to save the state of our cluster.
-# HERE: we are moving the data back to the repository path before we trigger
-# the destroy task
+# The current clycle for this cookbook is to destroy the old cluster we
+# have running and then create a brand new one from scratch.
+# For now are using a temporal cache directory outside of the workspace
+# to save the state of our clusters and don't loose control, therefore
+# the first thing we do is move the data back to the repository path
+# before we trigger the destroy_all rake task.
 #
 # TODO: We need to figure a better way to do this
-execute "Destroy the old Delivery Cluster" do
-  cwd path
-  command <<-EOF
-    mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/clients clients
-    mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/nodes nodes
-    mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/trusted_certs .chef/.
-    mv /var/opt/delivery/workspace/delivery-cluster-aws-cache/delivery-cluster-data-* .chef/.
-    chef exec bundle exec chef-client -z -o delivery-cluster::destroy_all -E #{cluster_name} > #{cache}/delivery-cluster-destroy-all.log
-  EOF
-  environment ({
-    'AWS_CONFIG_FILE' => "#{cache}/.aws/config"
-  })
-  only_if do ::File.exists?('var/opt/delivery/workspace/delivery-cluster-aws-cache/nodes') end
+ruby_block 'Destroy old Delivery Cluster' do
+  block do
+    restore_cluster_data(path)
+    destroy_all = shell_out(
+                    "rake destroy:all",
+                    :cwd => path,
+                    :environment => {
+                      'CHEF_ENV' => cluster_name,
+                      'AWS_CONFIG_FILE' => "#{cache}/.aws/config"
+                    }
+                  )
+    puts destroy_all.stdout
+  end
 end
 
 # Create a new Delivery Cluster
 #
-# We are using a temporal cache directory to save the state of our cluster
-# HERE: we are copying the data after we create the Delivery Cluster
+# Once we have deleted our old cluster it is time to build a new one from
+# scratch. At the moment there are many problems in chef-provisioning that
+# causes delivery-cluster to fail randomly, therefor instead of failing
+# immediatelly we will try to run the automation multiple times (5) until
+# we succeed. Every time that the cluster setup fails we will display the
+# error to keep records and to be able to create the pertinent issues and
+# get them fixed.
+# In the future this loop should be deleted and delivery-cluster should
+# work without the need of re-run multiple times.
+#
+# After we completed or failed to setup the new cluster we must backup the
+# critical data directories to be able to manipulate the cluster on further
+# changes and pipelines.
 #
 # TODO: We need to figure a better way to do this
-#       Translate this into ruby code
-# WORKAROUND: There are many problems that we can fix in chef-provisioning
-#             so we will try to re-run the automation three times before fail
-execute "Create a new Delivery Cluster" do
-  cwd path
-  command <<-EOF
-    for i in 1 2 3; do
-      chef exec bundle exec chef-client -z -o delivery-cluster::setup -E #{cluster_name} -l info > #{cache}/delivery-cluster-setup.log
-      exitcode=$?
-      if [ ${exitcode} -eq 0 ]; then
-        break
-      else
-        echo "$i) chef-zero failed with exitcode: $exitcode" >> #{cache}/delivery-cluster-setup.err
-      fi
-    done
-    cp -r clients nodes .chef/delivery-cluster-data-* .chef/trusted_certs /var/opt/delivery/workspace/delivery-cluster-aws-cache/
-  EOF
-  environment ({
-    'AWS_CONFIG_FILE' => "#{cache}/.aws/config"
-  })
+ruby_block 'Create a new Delivery Cluster' do
+  block do
+    times = 0
+    setup_cluster = shell_out(
+                      "rake setup:cluster",
+                      :cwd => path,
+                      :environment => {
+                        'CHEF_ENV' => cluster_name,
+                        'AWS_CONFIG_FILE' => "#{cache}/.aws/config"
+                      }
+                    )
+    until 5 < times
+      # Printing the output
+      puts setup_cluster.stdout
+
+      # If we completed the cluster setup, break the loop
+      break if setup_cluster.exitstatus.eql?(0)
+
+      # Printing the error and exitcode
+      puts "Command exited with code: #{setup_cluster.exitstatus}"
+      puts "ERROR MESSAGE: #{setup_cluster.stderr}"
+
+      # Lets try it one more time
+      setup_cluster.run_command
+      times += 1
+    end
+
+    # Finally we backup the cluster data
+    backup_cluster_data(path)
+  end
 end
 
 # Print the Delivery Credentials
 ruby_block 'print-delivery-credentials' do
   block do
-    puts File.read(File.join(path, ".chef/delivery-cluster-data-#{cluster_name}/#{cluster_name}.creds"))
+    puts shell_out!("rake info:delivery_creds", :cwd => path).stdout
   end
 end
 
 ruby_block "Get Services" do
   block do
-    list_services = Mixlib::ShellOut.new("rake info:list_core_services",
-                                         :cwd => node['delivery']['workspace']['repo'])
+    list_services = shell_out("rake info:list_core_services", :cwd => path)
 
-    list_services.run_command
     # Print Services
     puts list_services.stdout
 
