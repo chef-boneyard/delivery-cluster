@@ -98,6 +98,7 @@ ruby_block 'Destroy old Delivery Cluster' do
     destroy_all = shell_out(
                     "rake destroy:all",
                     :cwd => path,
+                    :timeout => cluster_timeout,
                     :environment => {
                       'CHEF_ENV' => cluster_name,
                       'AWS_CONFIG_FILE' => "#{cache}/.aws/config"
@@ -130,6 +131,7 @@ ruby_block 'Create a new Delivery Cluster' do
     setup_cluster = shell_out(
                       "rake setup:cluster",
                       :cwd => path,
+                      :timeout => cluster_timeout,
                       :environment => {
                         'CHEF_ENV' => cluster_name,
                         'AWS_CONFIG_FILE' => "#{cache}/.aws/config"

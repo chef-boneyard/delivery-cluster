@@ -63,5 +63,13 @@ def critical_cluster_dirs
   ]
 end
 
+# Timeout for Delivery Cluster commands
+#
+# Some of the Delivery Cluster commands take more than an hour to run
+# We are setting the cluster timeout to 2 hours
+def cluster_timeout
+  7200
+end
+
 Chef::Recipe.send(:include, Chef::Mixin::ShellOut)
 Chef::Resource.send(:include, Chef::Mixin::ShellOut)
