@@ -34,7 +34,10 @@ def backup_cluster_data(path)
   critical_cluster_dirs.each do |dir|
     src = ::File.join(path, dir)
     dst = ::File.join(backup_dir, dir)
-    FileUtils.cp_r src, dst
+    if ::File.exists?(src)
+      FileUtils.mkdir_p dst
+      FileUtils.cp_r src, dst
+    end
   end
 end
 
@@ -58,7 +61,6 @@ def critical_cluster_dirs
   [
     'clients',
     'nodes',
-    '.chef/trusted_certs',
     '.chef/delivery-cluster-data-*'
   ]
 end

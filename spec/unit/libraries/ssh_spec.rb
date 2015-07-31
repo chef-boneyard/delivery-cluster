@@ -27,7 +27,7 @@ describe DeliveryCluster::Provisioning::Ssh do
   let(:ssh_object) { described_class.new(node) }
 
   before do
-    node.default['delivery-cluster'] = {}
+    node.default['delivery-cluster'] = cluster_data
     node.default['ipaddress'] = '33.33.33.10'
   end
 
@@ -82,6 +82,39 @@ describe DeliveryCluster::Provisioning::Ssh do
 
       it 'raise an error' do
         expect { ssh_object }.to raise_error(RuntimeError)
+      end
+    end
+
+    describe '#specific_machine_options' do
+      it 'returns the chef-server specific_machine_options' do
+        expect(ssh_object.specific_machine_options('chef-server')).to eq(
+          [{
+            transport_options: {
+              host: 'chef-server.chef.io'
+            }
+          }]
+        )
+      end
+
+      context 'with NO builders specs' do
+        it 'returns an empty array for the builder 1' do
+          expect(ssh_object.specific_machine_options('builders', 1)).to eq([])
+        end
+      end
+
+      context 'with builders specs' do
+        before do
+          node.default['delivery-cluster']['builders']['1'] = { 'ip' => '33.33.33.20' }
+        end
+        it 'returns the ipaddress of the builder 1' do
+          expect(ssh_object.specific_machine_options('builders', 1)).to eq(
+            [{
+              transport_options: {
+                ip_address: '33.33.33.20'
+              }
+            }]
+          )
+        end
       end
     end
   end
