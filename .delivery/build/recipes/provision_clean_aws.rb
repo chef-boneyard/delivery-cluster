@@ -78,7 +78,9 @@ end
 # chef-repo that has cookbooks/ environments/ nodes/ clients/ etc.
 ruby_block 'Setup Prerequisites' do
   block do
-    puts shell_out!("rake setup:prerequisites", :cwd => path).stdout
+    puts shell_out!("rake setup:prerequisites",
+                    :environment => {'CHEF_ENV' => cluster_name},
+                    :cwd => path).stdout
   end
 end
 
@@ -128,16 +130,16 @@ end
 ruby_block 'Create a new Delivery Cluster' do
   block do
     times = 0
-    setup_cluster = shell_out(
-                      "rake setup:cluster",
-                      :cwd => path,
-                      :timeout => cluster_timeout,
-                      :environment => {
-                        'CHEF_ENV' => cluster_name,
-                        'AWS_CONFIG_FILE' => "#{cache}/.aws/config"
-                      }
-                    )
     until 5 < times
+      setup_cluster = shell_out(
+                        "rake setup:cluster",
+                        :cwd => path,
+                        :timeout => cluster_timeout,
+                        :environment => {
+                          'CHEF_ENV' => cluster_name,
+                          'AWS_CONFIG_FILE' => "#{cache}/.aws/config"
+                        }
+                      )
       # Printing the output
       puts setup_cluster.stdout
 
@@ -149,8 +151,8 @@ ruby_block 'Create a new Delivery Cluster' do
       puts "ERROR MESSAGE: #{setup_cluster.stderr}"
 
       # Lets try it one more time
-      setup_cluster.run_command
       times += 1
+      puts "Re-running 'rake setup:cluster' (#{times}/5)"
     end
 
     # Finally we backup the cluster data
