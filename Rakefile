@@ -69,7 +69,8 @@ ENV['CHEF_ENV'] ||= 'test'
 ENV['CHEF_ENV_FILE'] = "environments/#{ENV['CHEF_ENV']}.json"
 
 def chef_zero(recipe)
-  system "bundle exec chef-client -z -o delivery-cluster::#{recipe} -E #{ENV['CHEF_ENV']}"
+  succeed = system "bundle exec chef-client -z -o delivery-cluster::#{recipe} -E #{ENV['CHEF_ENV']}"
+  fail 'Failed executing ChefZero run' unless succeed
 end
 
 def render_environment(environment, options)

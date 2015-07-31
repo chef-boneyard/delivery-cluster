@@ -32,11 +32,11 @@ end
 # the Brackup Directory
 def backup_cluster_data(path)
   critical_cluster_dirs.each do |dir|
-    src = ::File.join(path, dir)
-    dst = ::File.join(backup_dir, dir)
-    if ::File.exists?(src)
-      FileUtils.mkdir_p dst
-      FileUtils.cp_r src, dst
+    src = ::Dir.glob(::File.join(path, dir))
+    dst = ::File.dirname(::File.join(backup_dir, dir))
+    unless src.empty?
+      FileUtils.mkdir_p(dst)
+      FileUtils.cp_r(src, dst)
     end
   end
 end
@@ -47,9 +47,9 @@ end
 # the `running phase path`
 def restore_cluster_data(path)
   critical_cluster_dirs.each do |dir|
-    src = ::File.join(backup_dir, dir)
-    dst = ::File.join(path, dir)
-    FileUtils.mv src, dst if ::File.exists?(src)
+    src = ::Dir.glob(::File.join(backup_dir, dir))
+    dst = ::File.dirname(::File.join(path, dir))
+    FileUtils.mv(src, dst) unless src.empty?
   end
 end
 

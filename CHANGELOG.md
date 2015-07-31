@@ -1,3 +1,11 @@
+v0.3.8 (2015-07-31)
+-------------------
+- AWS Pipeline Stabilization (build-cookbook)
+
+v0.3.7 (2015-07-31)
+-------------------
+- [#150] Fix SSH Driver for builder components
+
 v0.3.6 (2015-07-23)
 -------------------
 - Fix the necessity of specifying builders spec

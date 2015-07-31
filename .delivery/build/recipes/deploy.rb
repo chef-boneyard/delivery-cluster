@@ -35,9 +35,9 @@ if node['delivery']['change']['pipeline'] == 'upgrade_aws' &&
 
   include_recipe "build::provision_clean_aws"
 
-  unwind "execute[Destroy the old Delivery Cluster]"
+  unwind "ruby_block[Destroy old Delivery Cluster]"
 
-  rewind "execute[Create a new Delivery Cluster]" do
+  rewind "ruby_block[Create a new Delivery Cluster]" do
     name "Upgrade Delivery Cluster"
   end
 end
