@@ -101,3 +101,10 @@ execute 'upload delivery cookbooks' do
     'KNIFE_HOME' => cluster_data_dir
   )
 end
+
+execute 'upload site cookbooks' do
+  command "knife cookbook upload --all --cookbook-path #{current_dir}/site-cookbooks --force"
+  environment(
+    'KNIFE_HOME' => cluster_data_dir
+  )
+end
