@@ -30,14 +30,12 @@ directory "/etc/opscode" do
   recursive true
 end
 
-chef_ingredient 'chef-server' do
-  notifies :reconfigure, 'chef_ingredient[chef-server]'
-end
+chef_ingredient 'chef-server'
 
 template "/etc/opscode/chef-server.rb" do
   owner "root"
   mode "0644"
-  notifies :run, "execute[reconfigure chef]", :immediately
+  notifies :reconfigure, "chef_ingredient[chef-server]", :immediately
 end
 
 execute "reconfigure chef" do

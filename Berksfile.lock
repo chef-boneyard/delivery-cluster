@@ -1,7 +1,7 @@
 DEPENDENCIES
   chef-ingredient
     git: https://github.com/chef-cookbooks/chef-ingredient.git
-    revision: 060e429fe92c312a6495e840ca6a7caee98d3085
+    revision: 215873838e420fb6760cd5a8055cedc90ed74e4e
     branch: master
   chef-server-12
     path: vendor/chef-server-12
@@ -21,7 +21,7 @@ GRAPH
   apt-chef (0.1.0)
     apt (>= 0.0.0)
   build-essential (2.2.3)
-  chef-ingredient (0.9.0)
+  chef-ingredient (0.9.1)
     apt-chef (>= 0.0.0)
     yum-chef (>= 0.0.0)
   chef-server-12 (0.1.7)
