@@ -60,6 +60,22 @@ module DeliveryCluster
         }
       end
 
+      # Generates the Supermarket Server Config
+      #
+      # @param node [Chef::Node] Chef Node object
+      # @return [Hash] Supermarket attributes for a machine resource
+      def supermarket_config(node)
+        return {} unless supermarket_enabled?(node)
+        {
+          'supermarket-config' => {
+            'chef_server_url' => "https://#{DeliveryCluster::Helpers::ChefServer.chef_server_fqdn(node)}",
+            'chef_oauth2_app_id' => get_supermarket_attribute(node, 'uid'),
+            'chef_oauth2_secret' => get_supermarket_attribute(node, 'secret'),
+            'chef_oauth2_verify_ssl' => false
+          }
+        }
+      end
+
       # Return an specific Supermarket Attribute
       # Parse the supermarket.json config file and retrieve an specific attribute
       #
@@ -119,9 +135,9 @@ module DeliveryCluster
       DeliveryCluster::Helpers::Supermarket.supermarket_server_attributes(node)
     end
 
-    # Return an specific Supermarket Attribute
-    def get_supermarket_attribute(attr)
-      DeliveryCluster::Helpers::Supermarket.get_supermarket_attribute(node, attr)
+    # Generates the Supermarket Server Config
+    def supermarket_config
+      DeliveryCluster::Helpers::Supermarket.supermarket_config(node)
     end
 
     # Activate the Supermarket Component

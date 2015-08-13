@@ -25,22 +25,11 @@ hostsfile_entry node['ipaddress'] do
   not_if "grep #{node.hostname} /etc/hosts"
 end
 
-directory '/etc/supermarket' do
-  owner 'root'
-  group 'root'
-  mode '0755'
-  action :create
-end
-
-file '/etc/supermarket/supermarket.json' do
-  action :create
-  owner 'root'
-  group 'root'
-  mode '0644'
-  content JSON.pretty_generate(node['delivery-cluster'])
-  notifies :reconfigure, 'chef_ingredient[supermarket]'
-end
-
 chef_ingredient 'supermarket' do
+  config JSON.pretty_generate(node['supermarket-config'])
+  action :install
+end
+
+ingredient_config 'supermarket' do
   notifies :reconfigure, 'chef_ingredient[supermarket]'
 end

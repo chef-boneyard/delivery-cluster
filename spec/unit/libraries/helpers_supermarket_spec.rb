@@ -52,15 +52,15 @@ describe DeliveryCluster::Helpers::Supermarket do
       .and_return(supermarket_node)
   end
 
-  it 'return the supermarket hostname for a machine resource' do
+  it 'returns the supermarket hostname for a machine resource' do
     expect(described_class.supermarket_server_hostname(node)).to eq 'supermarket-server-chefspec'
   end
 
-  it 'return the supermarket fqdn' do
+  it 'returns the supermarket fqdn' do
     expect(described_class.supermarket_server_fqdn(node)).to eq 'supermarket-server.chef.io'
   end
 
-  it 'return the PATH of the supermarket lock file' do
+  it 'returns the PATH of the supermarket lock file' do
     expect(described_class.supermarket_lock_file(node)).to eq File.join(Chef::Config.chef_repo_path, '.chef', 'delivery-cluster-data-chefspec', 'supermarket')
   end
 
@@ -72,7 +72,7 @@ describe DeliveryCluster::Helpers::Supermarket do
         expect(described_class.supermarket_enabled?(node)).to eq false
       end
 
-      it 'return NO attributes' do
+      it 'returns NO attributes' do
         expect(described_class.supermarket_server_attributes(node)).to eq({})
       end
     end
@@ -84,7 +84,7 @@ describe DeliveryCluster::Helpers::Supermarket do
         expect(described_class.supermarket_enabled?(node)).to eq true
       end
 
-      it 'return the supermarket attributes' do
+      it 'returns the supermarket attributes' do
         expect(described_class.supermarket_server_attributes(node)).to eq('chef-server-12' => mock_supermarket_server_attributes)
       end
     end
@@ -98,14 +98,28 @@ describe DeliveryCluster::Helpers::Supermarket do
     end
 
     context 'does exist' do
-      before { allow(File).to receive(:read).and_return(mock_supermarket_json) }
+      before do
+        allow(File).to receive(:read).and_return(mock_supermarket_json)
+        allow(File).to receive(:exist?).and_return(true)
+      end
 
-      it 'return value of the uid attribute' do
+      it 'returns the uid attribute' do
         expect(described_class.get_supermarket_attribute(node, 'uid')).to eq '768fd17555298930830180eedc8ff6ca45736a8c392bbcbe866c804efb25262d'
       end
 
-      it 'return value of the secret attribute' do
+      it 'returns the secret attribute' do
         expect(described_class.get_supermarket_attribute(node, 'secret')).to eq '154b8a364e60deb3d83771df9159639362cd59a60661a63f9b126e794bd95daa'
+      end
+
+      it 'returns the supermarket server configuration' do
+        expect(described_class.supermarket_config(node)).to eq(
+          'supermarket-config' => {
+            'chef_server_url' => 'https://chef-server.chef.io',
+            'chef_oauth2_app_id' => '768fd17555298930830180eedc8ff6ca45736a8c392bbcbe866c804efb25262d',
+            'chef_oauth2_secret' => '154b8a364e60deb3d83771df9159639362cd59a60661a63f9b126e794bd95daa',
+            'chef_oauth2_verify_ssl' => false
+          }
+        )
       end
     end
   end
