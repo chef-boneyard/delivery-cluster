@@ -30,7 +30,7 @@ describe DeliveryCluster::Helpers::ChefServer do
       'api_fqdn' => 'chef-server.chef.io',
       'store_keys_databag' => false,
       'plugin' => {
-        'opscode-reporting' => true
+        'reporting' => true
       }
     }
   end

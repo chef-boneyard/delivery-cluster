@@ -20,23 +20,15 @@
 # limitations under the License.
 #
 
-directory '/etc/opscode' do
-  recursive true
-end
-
-directory '/etc/opscode-analytics' do
-  recursive true
-end
-
-file '/etc/opscode-analytics/opscode-analytics.rb' do
-  content <<-EOF
+chef_ingredient 'analytics' do
+  config <<-EOF
 topology 'standalone'
 analytics_fqdn '#{node['delivery-cluster']['analytics']['fqdn']}'
 features['integration'] = #{node['delivery-cluster']['analytics']['features']}
-  EOF
-  notifies :reconfigure, 'chef_server_ingredient[opscode-analytics]'
+EOF
+  action :install
 end
 
-chef_server_ingredient 'opscode-analytics' do
-  notifies :reconfigure, 'chef_server_ingredient[opscode-analytics]'
+ingredient_config 'analytics' do
+  notifies :reconfigure, 'chef_ingredient[analytics]'
 end

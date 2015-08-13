@@ -1,6 +1,6 @@
 #
-# Cookbook Name:: chef-server-12
-# Libraries:: default
+# Cookbook Name:: delivery-cluster
+# Recipe:: supermarket
 #
 # Author:: Salim Afiune (<afiune@chef.io>)
 #
@@ -20,11 +20,16 @@
 # limitations under the License.
 #
 
-def install_plugin(plugin)
-  chef_ingredient plugin
+hostsfile_entry node['ipaddress'] do
+  hostname node.hostname
+  not_if "grep #{node.hostname} /etc/hosts"
+end
 
-  ingredient_config plugin do
-    notifies :reconfigure, "chef_ingredient[#{plugin}]", :immediately
-    notifies :reconfigure, "chef_ingredient[chef-server]", :immediately
-  end
+chef_ingredient 'supermarket' do
+  config JSON.pretty_generate(node['supermarket-config'])
+  action :install
+end
+
+ingredient_config 'supermarket' do
+  notifies :reconfigure, 'chef_ingredient[supermarket]'
 end

@@ -27,10 +27,10 @@ default['chef-server-12']['version']       = 'latest'
 # To Install plugins into the Chef-Server simply enable them setting the value `true`
 # If there is more plugins you just need to add them as follow:
 # => default['chef-server-12']['plugin']['PLUGIN_NAME'] = true
-default['chef-server-12']['plugin']['opscode-manage']            = true
-default['chef-server-12']['plugin']['opscode-reporting']         = true
-default['chef-server-12']['plugin']['opscode-push-jobs-server']  = true
-default['chef-server-12']['plugin']['chef-sync']                 = false
+default['chef-server-12']['plugin']['manage']       = true
+default['chef-server-12']['plugin']['reporting']    = true
+default['chef-server-12']['plugin']['push-server']  = true
+default['chef-server-12']['plugin']['chef-sync']    = false
 
 # Chef Server Parameters
 default['chef-server-12']['api_fqdn'] = node['ipaddress']
