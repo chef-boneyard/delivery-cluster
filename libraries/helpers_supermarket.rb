@@ -25,7 +25,7 @@ module DeliveryCluster
     #
     # Supermarket Module
     #
-    # This module provides helpers related to the Supermerket Component
+    # This module provides helpers related to the Supermarket Component
     module Supermarket
       module_function
 
@@ -68,6 +68,7 @@ module DeliveryCluster
         return {} unless supermarket_enabled?(node)
         {
           'supermarket-config' => {
+            'fqdn' => supermarket_server_fqdn(node),
             'chef_server_url' => "https://#{DeliveryCluster::Helpers::ChefServer.chef_server_fqdn(node)}",
             'chef_oauth2_app_id' => get_supermarket_attribute(node, 'uid'),
             'chef_oauth2_secret' => get_supermarket_attribute(node, 'secret'),
