@@ -25,7 +25,7 @@ module DeliveryCluster
     #
     # Supermarket Module
     #
-    # This module provides helpers related to the Supermerket Component
+    # This module provides helpers related to the Supermarket Component
     module Supermarket
       module_function
 
