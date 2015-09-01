@@ -285,9 +285,12 @@ namespace :setup do
   end
 
   desc 'Install all the prerequisites on you system'
-  task :prerequisites do
+  task :prerequisites, [:cache] do |_t, args|
+    opts = ''
+    # Assemble Gem dependencies on a `cache` directory if specified
+    opts = "--path #{args[:cache]}" if args[:cache]
     msg 'Install rubygem dependencies locally'
-    system 'bundle install'
+    system "bundle install #{opts}"
 
     msg 'Download and vendor the necessary cookbooks locally'
     system 'bundle exec berks vendor cookbooks'

@@ -76,9 +76,10 @@ end
 # Here we are assambling our gem and cookbook dependencies, when this
 # command runs, the delivery-cluster cookbook converts into a monolitic
 # chef-repo that has cookbooks/ environments/ nodes/ clients/ etc.
+# The gem deps will be installed on a `cache` directory
 ruby_block 'Setup Prerequisites' do
   block do
-    puts shell_out!("rake setup:prerequisites",
+    puts shell_out!("rake setup:prerequisites[#{cache}/.chefdk]",
                     :environment => {'CHEF_ENV' => cluster_name},
                     :cwd => path).stdout
   end
