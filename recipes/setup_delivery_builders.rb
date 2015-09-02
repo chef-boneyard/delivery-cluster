@@ -45,11 +45,9 @@ machine_batch "#{node['delivery-cluster']['builders']['count']}-build-nodes" do
       provisioning.specific_machine_options('builders', i).each do |option|
         add_machine_options option
       end
-
       Dir.glob("#{Chef::Config[:trusted_certs_dir]}/*.{crt,pem}").each do |cert_path|
         file ::File.join('/etc/chef/trusted_certs', ::File.basename(cert_path)), cert_path
       end
-      
       attributes lazy { builders_attributes }
       converge true
       action :converge
