@@ -45,10 +45,44 @@ module DeliveryCluster
       def builders_attributes(node)
         builders_attributes = {}
 
-        # Add cli attributes if they exists.
-        builders_attributes['delivery_build'] = { 'delivery-cli' => node['delivery-cluster']['builders']['delivery-cli'] } unless node['delivery-cluster']['builders']['delivery-cli'].empty?
+        # Add cli attributes if they exists
+        unless node['delivery-cluster']['builders']['delivery-cli'].empty?
+          builders_attributes = Chef::Mixin::DeepMerge.hash_only_merge(
+            builders_attributes,
+            'delivery_build' => { 'delivery-cli' => node['delivery-cluster']['builders']['delivery-cli'] }
+          )
+        end
+
+        # Add trusted_certs attributes if Supermarket is enabled
+        if DeliveryCluster::Helpers::Supermarket.supermarket_enabled?(node)
+          builders_attributes = Chef::Mixin::DeepMerge.hash_only_merge(
+            builders_attributes,
+            trusted_certs_attributes(node)
+          )
+        end
 
         builders_attributes
+      end
+
+      # Generate trusted_certs attributes to send to `delivery_build` cookbook
+      #
+      # As part of our cookbook workflow in Delivery, we need to have a
+      # Supermarket Server for cookbook resolution, this process is being
+      # done by `berkshelf` which needs to have the Supermarket cert in the
+      # `cacert.pem` within `chefdk`. Here we are passing that cert to the
+      # `delivery_build` cookbook so it can append the cert to every build node
+      #
+      # @param node [Chef::Node] Chef Node object
+      # @return [Hash] trusted_certs attributes
+      def trusted_certs_attributes(node)
+        supermarket_server_fqdn = DeliveryCluster::Helpers::Supermarket.supermarket_server_fqdn(node)
+        {
+          'delivery_build' => {
+            'trusted_certs' => {
+              'Supermarket Server' => "/etc/chef/trusted_certs/#{supermarket_server_fqdn}.crt"
+            }
+          }
+        }
       end
 
       # Retrieve the Builder Private Key

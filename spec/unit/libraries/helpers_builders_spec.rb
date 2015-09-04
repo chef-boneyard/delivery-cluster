@@ -33,7 +33,7 @@ describe DeliveryCluster::Helpers::Builders do
 
   context 'when the builder hostname' do
     context 'is NOT set' do
-      it 'return the builders hostname for a machine resource' do
+      it 'returns the builders hostname for a machine resource' do
         1.upto(cluster_data['builders']['count'].to_i) do |index|
           expect(described_class.delivery_builder_hostname(node, index)).to eq "build-node-chefspec-#{index}"
         end
@@ -46,7 +46,7 @@ describe DeliveryCluster::Helpers::Builders do
         node.default['delivery-cluster']['builders']['3']['hostname'] = 'my-great-build-node-3'
       end
 
-      it 'return the specific builders hostname for a machine resource' do
+      it 'returns the specific builders hostname for a machine resource' do
         expect(described_class.delivery_builder_hostname(node, '1')).to eq 'my-cool-build-node-1'
         expect(described_class.delivery_builder_hostname(node, '2')).to eq 'my-awesome-build-node-2'
         expect(described_class.delivery_builder_hostname(node, '3')).to eq 'my-great-build-node-3'
@@ -93,7 +93,7 @@ describe DeliveryCluster::Helpers::Builders do
     context 'does exist' do
       before { allow(File).to receive(:read).and_return(true) }
 
-      it 'return the key' do
+      it 'returns the key' do
         expect(described_class.builder_private_key(node)).to eq true
       end
     end
@@ -101,7 +101,7 @@ describe DeliveryCluster::Helpers::Builders do
 
   context 'when an additional_run_list' do
     context 'is NOT specified' do
-      it 'return the right run_list for the builders' do
+      it 'returns the right run_list for the builders' do
         expect(described_class.builder_run_list(node)).to eq %w( recipe[push-jobs] recipe[delivery_build] )
       end
     end
@@ -112,7 +112,7 @@ describe DeliveryCluster::Helpers::Builders do
         DeliveryCluster::Helpers::Builders.instance_variable_set :@builder_run_list, nil
       end
 
-      it 'return the right run_list for the builders plus the additional run_list' do
+      it 'returns the right run_list for the builders plus the additional run_list' do
         expect(described_class.builder_run_list(node)).to eq %w( recipe[push-jobs] recipe[delivery_build] recipe[awesome-cookbook] )
       end
     end
@@ -123,6 +123,59 @@ describe DeliveryCluster::Helpers::Builders do
 
     it 'raise an error' do
       expect { described_class.delivery_builder_hostname(node, '1') }.to raise_error(RuntimeError)
+    end
+  end
+
+  describe '#builders_attributes' do
+    it 'returns an empty hash if no attribute is needed' do
+      expect(described_class.builders_attributes(node)).to eq({})
+    end
+
+    context 'when Supermarket Server is enabled' do
+      before do
+        allow(DeliveryCluster::Helpers::Supermarket).to receive(:supermarket_enabled?)
+          .and_return(true)
+        allow_any_instance_of(Chef::REST).to receive(:get_rest)
+          .with('nodes/supermarket-server-chefspec')
+          .and_return(supermarket_node)
+      end
+
+      it 'returns the trusted_certs attributes' do
+        expect(described_class.builders_attributes(node)).to eq(
+          'delivery_build' => {
+            'trusted_certs' => {
+              'Supermarket Server' => '/etc/chef/trusted_certs/supermarket-server.chef.io.crt'
+            }
+          }
+        )
+      end
+
+      context 'and the delivery-cli is set as well' do
+        before { node.default['delivery-cluster']['builders']['delivery-cli'] = 'Awesome Artifact' }
+
+        it 'returns the both attributes deep merged' do
+          expect(described_class.builders_attributes(node)).to eq(
+            'delivery_build' => {
+              'delivery-cli' => 'Awesome Artifact',
+              'trusted_certs' => {
+                'Supermarket Server' => '/etc/chef/trusted_certs/supermarket-server.chef.io.crt'
+              }
+            }
+          )
+        end
+      end
+    end
+
+    context 'when delivery-cli attributes are set' do
+      before { node.default['delivery-cluster']['builders']['delivery-cli'] = 'Awesome Artifact' }
+
+      it 'returns the delivery-cli attributes' do
+        expect(described_class.builders_attributes(node)).to eq(
+          'delivery_build' => {
+            'delivery-cli' => 'Awesome Artifact'
+          }
+        )
+      end
     end
   end
 end
