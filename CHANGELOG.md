@@ -1,3 +1,11 @@
+v0.3.11 (2015-09-04)
+-------------------
+- Generate trusted_certs attributes to send to `delivery_build` cookbook
+- Add `oc_id['vip']` to chef-server config
+- [#155] Assemble Gem dependencies on a `cache` directory
+- Break `delivery-sugar-extras` into its own repo
+- Add FQDN option in the supermarket config
+
 v0.3.8 (2015-07-31)
 -------------------
 - AWS Pipeline Stabilization (build-cookbook)

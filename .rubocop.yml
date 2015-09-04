@@ -2,6 +2,8 @@ AllCops:
   Exclude:
     - 'Berksfile'
     - 'vendor/**/*'
+    - 'cookbooks/**/*'
+    - 'workspace/**/*'
 
 Metrics/MethodLength:
   CountComments: false  # count full line comments?
