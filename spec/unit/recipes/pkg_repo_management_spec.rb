@@ -75,20 +75,22 @@ describe 'delivery-cluster::pkg_repo_management' do
       runner.converge(described_recipe)
     end
 
-    # There is currently a bug https://github.com/opscode-cookbooks/omnibus/pull/114
-    # with omnibus cookbook that is making this tests to fail on windows
-    # commenting them for now
+    before do
+      # Mocking Windows Environment Variables that `omnibus` cookbook use
+      ENV['SYSTEMDRIVE'] = 'C:'
+      ENV['USERPROFILE'] = 'C:/Users'
+    end
 
-    # it 'NOT include yum cookbook' do
-    #   expect(chef_run).to_not include_recipe 'yum'
-    # end
+    it 'NOT include yum cookbook' do
+      expect(chef_run).to_not include_recipe 'yum'
+    end
 
-    # it 'NOT include apt cookbook' do
-    #   expect(chef_run).to_not include_recipe 'apt'
-    # end
+    it 'NOT include apt cookbook' do
+      expect(chef_run).to_not include_recipe 'apt'
+    end
 
-    # it 'write log' do
-    #   expect(chef_run).to write_log 'delivery-cluster-pkg-repo-update-not-handled'
-    # end
+    it 'write log' do
+      expect(chef_run).to write_log 'delivery-cluster-pkg-repo-update-not-handled'
+    end
   end
 end
