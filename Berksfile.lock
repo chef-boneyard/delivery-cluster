@@ -13,7 +13,8 @@ DEPENDENCIES
     metadata: true
   delivery_build
     git: https://github.com/chef-cookbooks/delivery_build.git
-    revision: 0d1d6f276dc6d5aacae0db5539e7399234120f72
+    revision: c50762735ed00c076f3a1fc97886b9d119b41c06
+    branch: afiune/add-push-jobs
   hostsfile
   packagecloud
     git: https://github.com/afiune/packagecloud-cookbook.git
@@ -47,12 +48,13 @@ GRAPH
     packagecloud (>= 0.0.0)
     push-jobs (>= 0.0.0)
     yum (>= 0.0.0)
-  delivery_build (0.2.16)
+  delivery_build (0.2.17)
     build-essential (>= 0.0.0)
     chef-sugar (>= 0.0.0)
     git (>= 0.0.0)
     omnibus (>= 0.0.0)
     packagecloud (>= 0.0.0)
+    push-jobs (>= 0.0.0)
   dmg (2.2.2)
   git (4.2.2)
     build-essential (>= 0.0.0)
