@@ -75,6 +75,12 @@ describe 'delivery-cluster::pkg_repo_management' do
       runner.converge(described_recipe)
     end
 
+    before do
+      # Mocking Windows Environment Variables that `omnibus` cookbook use
+      ENV['SYSTEMDRIVE'] = 'C:'
+      ENV['USERPROFILE'] = 'C:/Users'
+    end
+
     it 'NOT include yum cookbook' do
       expect(chef_run).to_not include_recipe 'yum'
     end

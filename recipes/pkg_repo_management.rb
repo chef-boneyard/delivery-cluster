@@ -39,7 +39,7 @@ else
   log 'delivery-cluster-pkg-repo-update-not-handled' do
     message <<-EOF
       delivery-cluster mediated package repository updating is not yet handled
-      for platform family #{node['platform_family']}. If this is in error, please
+      for platform family #{node['platform_family']}. If this is an error, please
       update the `delivery-cluster::pkg_repo_management` recipe as appropriate
     EOF
   end
