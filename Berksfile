@@ -17,5 +17,4 @@ cookbook 'chef-splunk',
   git: 'https://github.com/chef-cookbooks/chef-splunk.git'
 
 cookbook 'delivery_build',
-  git: 'https://github.com/chef-cookbooks/delivery_build.git',
-  branch: 'afiune/add-push-jobs'
+  git: 'https://github.com/chef-cookbooks/delivery_build.git'
