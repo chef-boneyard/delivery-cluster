@@ -73,7 +73,7 @@ To switch your environment run:
 Easy Setup
 ------------
 
-The easiest way to setup a Delivery Cluster is to follow these five steps:
+The easiest way to setup a Delivery Cluster is to follow these four steps:
 
 #### 1) Download your Delivery license key
 Delivery requires a valid license to activate successfully. **If you do
@@ -83,20 +83,7 @@ representative.**
 You will need to have the `delivery.license` file present on your provisioner
 node or local workstation and specify it on the next step.
 
-
-#### 2) Create an environment
-
-Use the `rake` task `generate_env` to generate an environment file.
-
-**Use the defaults by pressing <enter> on all of the questions with the exception of the delivery.license.**
-
-```
-$ rake setup:generate_env
-```
-
-Do not forget to `export` your new environment.
-
-#### 3) Install Bundler or use the ChefDK ruby environment as your system Ruby
+#### 2) Install Bundler or use the ChefDK ruby environment as your system Ruby
 
 If you are using ChefDK (recommended path), you can set your system Ruby temporarily using the following command
 
@@ -110,7 +97,19 @@ If you do not wish to use ChefDK, you must install Bundler into your system Ruby
 $ gem install bundler
 ```
 
-#### 3) Provision your Delivery Cluster
+#### 3) Create an environment
+
+Use the `rake` task `generate_env` to generate an environment file.
+
+**Use the defaults by pressing <enter> on all of the questions with the exception of the delivery.license.**
+
+```
+$ rake setup:generate_env
+```
+
+Do not forget to `export` your new environment.
+
+#### 4) Provision your Delivery Cluster
 
 ```
 $ rake setup:cluster
@@ -129,6 +128,14 @@ rake info:delivery_creds
 Additional features [OPTIONAL]
 ------------
 
+#### Provision a Supermarket Server
+
+If you have cookbook dependencies to resolve, try our Supermarket Server by running:
+
+```
+$ rake setup:supermarket
+```
+
 #### Provision an Analytics Server
 
 Once you have completed the `cluster` provisioning, you could setup an Analytics Server by running:
@@ -145,14 +152,6 @@ Would you like to try our Splunk Server Integration with Analytics? If yes, prov
 
 ```
 $ rake setup:splunk
-```
-
-#### Provision a Supermarket Server
-
-If you have cookbook dependencies to resolve, try our Supermarket Server by running:
-
-```
-$ rake setup:supermarket
 ```
 
 Available Provisioning Methods
@@ -396,6 +395,22 @@ This attribute would look like:
 default['delivery-cluster']['common_cluster_recipes'] = ['security_policies::lock_root_login']
 ```
 
+### trusted_certs
+
+Add the list of trusted certificates you depend on. These certificates will get added
+to the list of trusted_certs within `chefdk`.
+
+You would need to transfer the certificates inside the directory `.chef/trusted_certs`
+that lives within this repository and then, list them as the following example:
+
+```
+default['delivery-cluster']['trusted_certs'] = {
+  'Proxy Cert': 'my_proxy.cer',
+  'Corp Cert': 'corporate.crt',
+  'Open Cert': 'other_open.crt'
+}
+```
+
 Specific Attributes per Machine
 ------------
 
@@ -462,7 +477,7 @@ Supported Platforms
 
 Delivery Server packages are available for the following platforms:
 
-* EL (CentOS, RHEL) 6 64-bit
+* EL (CentOS, RHEL) 6, 7 64-bit
 * Ubuntu 12.04, 14.04 64-bit
 
 So please don't use another AMI type.
