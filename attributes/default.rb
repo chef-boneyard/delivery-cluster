@@ -89,7 +89,7 @@ default['delivery-cluster']['common_cluster_recipes'] = []
 # repository and then list them in the below attribute as the following example:
 # {
 #   'Proxy Cert': 'my_proxy.cer',
-#   'Corp Cert':'corporate.crt',
+#   'Corp Cert': 'corporate.crt',
 #   'Open Cert': 'other_open.crt'
 # }
 default['delivery-cluster']['trusted_certs'] = {}
@@ -216,4 +216,4 @@ default['delivery-cluster']['builders']['additional_run_list'] = []
 default['delivery-cluster']['builders']['delivery-cli']        = {}
 
 # Optional ChefDK version
-default['delivery-cluster']['builders']['chefdk_version']        = nil
+default['delivery-cluster']['builders']['chefdk_version']      = nil

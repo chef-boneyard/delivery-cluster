@@ -83,31 +83,22 @@ representative.**
 You will need to have the `delivery.license` file present on your provisioner
 node or local workstation and specify it on the next step.
 
-#### 2) Install Bundler or use the ChefDK ruby environment as your system Ruby
+#### 2) Install and Configure ChefDK
 
-If you are using ChefDK (recommended path), you can set your system Ruby temporarily using the following command
-
-```
-$ eval "$(chef shell-init SHELL_NAME)"
-```
-
-If you do not wish to use ChefDK, you must install Bundler into your system Ruby gems
-
-```
-$ gem install bundler
-```
+Follow the instructions at https://docs.chef.io/install_dk.html to install and configure chefdk as your default version of ruby.
 
 #### 3) Create an environment
 
-Use the `rake` task `generate_env` to generate an environment file.
-
-**Use the defaults by pressing <enter> on all of the questions with the exception of the delivery.license.**
+Generate an environment file using the following command
 
 ```
 $ rake setup:generate_env
 ```
 
-Do not forget to `export` your new environment.
+You can accept the default options by pressing `<enter>`. Note that you must customize the
+configuration for Delivery's license file.
+
+Remember to export your environment by running: `export CHEF_ENV=my_environment_name`
 
 #### 4) Provision your Delivery Cluster
 
@@ -125,16 +116,16 @@ Now it is time to get access. You can use the `admin` credentials shown by:
 rake info:delivery_creds
 ```
 
-Additional features [OPTIONAL]
-------------
-
 #### Provision a Supermarket Server
 
-If you have cookbook dependencies to resolve, try our Supermarket Server by running:
+A private Supermarket instance is required to resolve cookbook dependencies. Create one for your environment with the following command:
 
 ```
 $ rake setup:supermarket
 ```
+
+Additional features [OPTIONAL]
+------------
 
 #### Provision an Analytics Server
 
@@ -400,8 +391,7 @@ default['delivery-cluster']['common_cluster_recipes'] = ['security_policies::loc
 Add the list of trusted certificates you depend on. These certificates will get added
 to the list of trusted_certs within `chefdk`.
 
-You would need to transfer the certificates inside the directory `.chef/trusted_certs`
-that lives within this repository and then, list them as the following example:
+Copy your custom certificates to the `.chef/trusted_certs` directory and then list them as follows:
 
 ```
 default['delivery-cluster']['trusted_certs'] = {
