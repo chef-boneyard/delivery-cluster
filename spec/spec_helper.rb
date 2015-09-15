@@ -80,6 +80,7 @@ module SharedCommonData
   let(:cluster_data) do
     {
       'id' => 'chefspec',
+      'trusted_certs' => {},
       'chef-server' => {
         'organization' => 'chefspec',
         'fqdn' => 'chef-server.chef.io',

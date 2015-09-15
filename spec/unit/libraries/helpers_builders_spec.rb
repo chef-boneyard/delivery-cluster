@@ -24,6 +24,31 @@ require 'spec_helper'
 
 describe DeliveryCluster::Helpers::Builders do
   let(:node) { Chef::Node.new }
+  let(:chefdk_version) { '0.6.2-1.el6' }
+  let(:delivery_actifact) do
+    {
+      'version' => '0.3.0',
+      'artifact' => 'http://my.delivery-cli.pkg',
+      'checksum' => '123456789ABCDEF'
+    }
+  end
+  let(:mock_global_trusted_certs) do
+    {
+      'Proxy Cert' => 'my_proxy.cer',
+      'Corp Cert' => 'corporate.crt',
+      'Open Cert' => 'other_open.crt'
+    }
+  end
+  let(:result_internal_plus_global_certs) do
+    {
+      'Delivery Server Cert' => '/etc/chef/trusted_certs/delivery-server.chef.io.crt',
+      'Supermarket Server' => '/etc/chef/trusted_certs/supermarket-server.chef.io.crt',
+      'Proxy Cert' => '/etc/chef/trusted_certs/my_proxy.cer',
+      'Corp Cert' => '/etc/chef/trusted_certs/corporate.crt',
+      'Open Cert' => '/etc/chef/trusted_certs/other_open.crt'
+    }
+  end
+
   before do
     node.default['delivery-cluster'] = cluster_data
     allow(FileUtils).to receive(:touch).and_return(true)
@@ -126,9 +151,21 @@ describe DeliveryCluster::Helpers::Builders do
     end
   end
 
-  describe '#builders_attributes' do
-    it 'returns an empty hash if no attribute is needed' do
-      expect(described_class.builders_attributes(node)).to eq({})
+  describe '#trusted_certs_attributes' do
+    before do
+      allow_any_instance_of(Chef::REST).to receive(:get_rest)
+        .with('nodes/delivery-server-chefspec')
+        .and_return(delivery_node)
+    end
+
+    it 'always return the Delivery server cert' do
+      expect(described_class.builders_attributes(node)).to eq(
+        'delivery_build' => {
+          'trusted_certs' => {
+            'Delivery Server Cert' => '/etc/chef/trusted_certs/delivery-server.chef.io.crt'
+          }
+        }
+      )
     end
 
     context 'when Supermarket Server is enabled' do
@@ -140,41 +177,90 @@ describe DeliveryCluster::Helpers::Builders do
           .and_return(supermarket_node)
       end
 
-      it 'returns the trusted_certs attributes' do
+      it 'returns also the Supermarket server cert' do
         expect(described_class.builders_attributes(node)).to eq(
           'delivery_build' => {
             'trusted_certs' => {
+              'Delivery Server Cert' => '/etc/chef/trusted_certs/delivery-server.chef.io.crt',
               'Supermarket Server' => '/etc/chef/trusted_certs/supermarket-server.chef.io.crt'
             }
           }
         )
       end
 
-      context 'and the delivery-cli is set as well' do
-        before { node.default['delivery-cluster']['builders']['delivery-cli'] = 'Awesome Artifact' }
+      context 'and the user specify additional certificates' do
+        before do
+          node.default['delivery-cluster']['trusted_certs'] = mock_global_trusted_certs
+        end
 
-        it 'returns the both attributes deep merged' do
+        it 'returns all of the certificates' do
           expect(described_class.builders_attributes(node)).to eq(
             'delivery_build' => {
-              'delivery-cli' => 'Awesome Artifact',
-              'trusted_certs' => {
-                'Supermarket Server' => '/etc/chef/trusted_certs/supermarket-server.chef.io.crt'
-              }
+              'trusted_certs' => result_internal_plus_global_certs
             }
           )
         end
       end
     end
+  end
+
+  describe '#builders_attributes' do
+    before do
+      # Mocking this method since it is being tested already
+      allow(described_class).to receive(:trusted_certs_attributes)
+        .and_return({})
+    end
+
+    it 'returns an empty Hash if there are no attributes' do
+      expect(described_class.builders_attributes(node)).to eq({})
+    end
 
     context 'when delivery-cli attributes are set' do
-      before { node.default['delivery-cluster']['builders']['delivery-cli'] = 'Awesome Artifact' }
+      before do
+        node.default['delivery-cluster']['builders']['delivery-cli'] = delivery_actifact
+      end
 
       it 'returns the delivery-cli attributes' do
         expect(described_class.builders_attributes(node)).to eq(
           'delivery_build' => {
-            'delivery-cli' => 'Awesome Artifact'
+            'delivery-cli' => delivery_actifact
           }
         )
+      end
+
+      context 'and the chefdk_version is set as well' do
+        before do
+          node.default['delivery-cluster']['builders']['chefdk_version'] = chefdk_version
+        end
+
+        it 'returns both the chefdk_version and delivery-cli attributes' do
+          expect(described_class.builders_attributes(node)).to eq(
+            'delivery_build' => {
+              'delivery-cli' => delivery_actifact,
+              'chefdk_version' => chefdk_version
+            }
+          )
+        end
+
+        context 'plus a bunch of certificates' do
+          before do
+            allow(described_class).to receive(:trusted_certs_attributes)
+              .and_return(
+                'delivery_build' => {
+                  'trusted_certs' => result_internal_plus_global_certs
+                })
+          end
+
+          it 'returns lots of attributes deep merged' do
+            expect(described_class.builders_attributes(node)).to eq(
+              'delivery_build' => {
+                'delivery-cli' => delivery_actifact,
+                'chefdk_version' => chefdk_version,
+                'trusted_certs' => result_internal_plus_global_certs
+              }
+            )
+          end
+        end
       end
     end
   end
