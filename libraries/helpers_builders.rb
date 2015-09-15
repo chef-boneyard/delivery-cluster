@@ -49,17 +49,27 @@ module DeliveryCluster
         unless node['delivery-cluster']['builders']['delivery-cli'].empty?
           builders_attributes = Chef::Mixin::DeepMerge.hash_only_merge(
             builders_attributes,
-            'delivery_build' => { 'delivery-cli' => node['delivery-cluster']['builders']['delivery-cli'] }
+            'delivery_build' => {
+              'delivery-cli' => node['delivery-cluster']['builders']['delivery-cli']
+            }
           )
         end
 
-        # Add trusted_certs attributes if Supermarket is enabled
-        if DeliveryCluster::Helpers::Supermarket.supermarket_enabled?(node)
+        # Add chefdk_version attribute if it exist
+        if node['delivery-cluster']['builders']['chefdk_version']
           builders_attributes = Chef::Mixin::DeepMerge.hash_only_merge(
             builders_attributes,
-            trusted_certs_attributes(node)
+            'delivery_build' => {
+              'chefdk_version' => node['delivery-cluster']['builders']['chefdk_version']
+            }
           )
         end
+
+        # Add trusted_certs attributes
+        builders_attributes = Chef::Mixin::DeepMerge.hash_only_merge(
+          builders_attributes,
+          trusted_certs_attributes(node)
+        )
 
         builders_attributes
       end
@@ -69,20 +79,47 @@ module DeliveryCluster
       # As part of our cookbook workflow in Delivery, we need to have a
       # Supermarket Server for cookbook resolution, this process is being
       # done by `berkshelf` which needs to have the Supermarket cert in the
-      # `cacert.pem` within `chefdk`. Here we are passing that cert to the
-      # `delivery_build` cookbook so it can append the cert to every build node
+      # `cacert.pem` within `chefdk`.
+      #
+      # Besides the Supermarket Cert, we also need to have a method to add
+      # certificates for enterprises that need to sign every request that goes
+      # to the internet.
+      #
+      # Here we are passing those certs to the `delivery_build` cookbook so it
+      # can append the cert to every build node
       #
       # @param node [Chef::Node] Chef Node object
       # @return [Hash] trusted_certs attributes
       def trusted_certs_attributes(node)
-        supermarket_server_fqdn = DeliveryCluster::Helpers::Supermarket.supermarket_server_fqdn(node)
-        {
-          'delivery_build' => {
-            'trusted_certs' => {
-              'Supermarket Server' => "/etc/chef/trusted_certs/#{supermarket_server_fqdn}.crt"
-            }
-          }
-        }
+        trusted_certs_list = {}
+
+        # Adding any global certificate
+        unless node['delivery-cluster']['trusted_certs'].empty?
+          global_trusted_certs = {}
+
+          # Append the location where we will be uploading the certs
+          node['delivery-cluster']['trusted_certs'].each do |name, cert|
+            global_trusted_certs[name] = "/etc/chef/trusted_certs/#{cert}"
+          end
+
+          trusted_certs_list.merge!(global_trusted_certs)
+        end
+
+        # Adding the Delivery Cert
+        delivery_fqdn = DeliveryCluster::Helpers::Delivery.delivery_server_fqdn(node)
+        trusted_certs_list.merge!(
+          'Delivery Server Cert' => "/etc/chef/trusted_certs/#{delivery_fqdn}.crt"
+        )
+
+        # Adding the Supermarket Cert if it exists
+        if DeliveryCluster::Helpers::Supermarket.supermarket_enabled?(node)
+          supermarket_server_fqdn = DeliveryCluster::Helpers::Supermarket.supermarket_server_fqdn(node)
+          trusted_certs_list.merge!(
+            'Supermarket Server' => "/etc/chef/trusted_certs/#{supermarket_server_fqdn}.crt"
+          )
+        end
+
+        { 'delivery_build' => { 'trusted_certs' => trusted_certs_list } }
       end
 
       # Retrieve the Builder Private Key

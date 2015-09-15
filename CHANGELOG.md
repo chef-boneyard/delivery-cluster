@@ -1,3 +1,10 @@
+v0.3.14 (2015-09-14)
+-------------------
+- Expose trusted_certs to the end-user
+- Expose chefdk_version for build-nodes
+- Bump delivery_build to 0.2.22
+- Push-jobs fixed in delivery_build
+
 v0.3.11 (2015-09-04)
 -------------------
 - Generate trusted_certs attributes to send to `delivery_build` cookbook

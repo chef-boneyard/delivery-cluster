@@ -83,6 +83,17 @@ default['delivery-cluster']['id'] = nil
 # default['delivery-cluster']['common_cluster_recipes'] = ['security_policies::lock_root_login']
 default['delivery-cluster']['common_cluster_recipes'] = []
 
+# List of Trusted Certificates to add to chefdk
+#
+# You need to store the certificates inside `.chef/trusted_certs` within `delivery-cluster`
+# repository and then list them in the below attribute as the following example:
+# {
+#   'Proxy Cert': 'my_proxy.cer',
+#   'Corp Cert': 'corporate.crt',
+#   'Open Cert': 'other_open.crt'
+# }
+default['delivery-cluster']['trusted_certs'] = {}
+
 # Delivery License
 # => Delivery requires a license in able to install properly. This license needs to
 #    be put on the server prior to installation of Delivery otherwise
@@ -203,3 +214,6 @@ default['delivery-cluster']['builders']['additional_run_list'] = []
 #      "checksum": "123456789ABCDEF"
 #    }
 default['delivery-cluster']['builders']['delivery-cli']        = {}
+
+# Optional ChefDK version
+default['delivery-cluster']['builders']['chefdk_version']      = nil

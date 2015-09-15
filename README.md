@@ -73,7 +73,7 @@ To switch your environment run:
 Easy Setup
 ------------
 
-The easiest way to setup a Delivery Cluster is to follow these five steps:
+The easiest way to setup a Delivery Cluster is to follow these four steps:
 
 #### 1) Download your Delivery license key
 Delivery requires a valid license to activate successfully. **If you do
@@ -83,34 +83,24 @@ representative.**
 You will need to have the `delivery.license` file present on your provisioner
 node or local workstation and specify it on the next step.
 
+#### 2) Install and Configure ChefDK
 
-#### 2) Create an environment
+Follow the instructions at https://docs.chef.io/install_dk.html to install and configure chefdk as your default version of ruby.
 
-Use the `rake` task `generate_env` to generate an environment file.
+#### 3) Create an environment
 
-**Use the defaults by pressing <enter> on all of the questions with the exception of the delivery.license.**
+Generate an environment file using the following command
 
 ```
 $ rake setup:generate_env
 ```
 
-Do not forget to `export` your new environment.
+You can accept the default options by pressing `<enter>`. Note that you must customize the
+configuration for Delivery's license file.
 
-#### 3) Install Bundler or use the ChefDK ruby environment as your system Ruby
+Remember to export your environment by running: `export CHEF_ENV=my_environment_name`
 
-If you are using ChefDK (recommended path), you can set your system Ruby temporarily using the following command
-
-```
-$ eval "$(chef shell-init SHELL_NAME)"
-```
-
-If you do not wish to use ChefDK, you must install Bundler into your system Ruby gems
-
-```
-$ gem install bundler
-```
-
-#### 3) Provision your Delivery Cluster
+#### 4) Provision your Delivery Cluster
 
 ```
 $ rake setup:cluster
@@ -124,6 +114,14 @@ Now it is time to get access. You can use the `admin` credentials shown by:
 
 ```
 rake info:delivery_creds
+```
+
+#### Provision a Supermarket Server
+
+A private Supermarket instance is required to resolve cookbook dependencies. Create one for your environment with the following command:
+
+```
+$ rake setup:supermarket
 ```
 
 Additional features [OPTIONAL]
@@ -145,14 +143,6 @@ Would you like to try our Splunk Server Integration with Analytics? If yes, prov
 
 ```
 $ rake setup:splunk
-```
-
-#### Provision a Supermarket Server
-
-If you have cookbook dependencies to resolve, try our Supermarket Server by running:
-
-```
-$ rake setup:supermarket
 ```
 
 Available Provisioning Methods
@@ -396,6 +386,21 @@ This attribute would look like:
 default['delivery-cluster']['common_cluster_recipes'] = ['security_policies::lock_root_login']
 ```
 
+### trusted_certs
+
+Add the list of trusted certificates you depend on. These certificates will get added
+to the list of trusted_certs within `chefdk`.
+
+Copy your custom certificates to the `.chef/trusted_certs` directory and then list them as follows:
+
+```
+default['delivery-cluster']['trusted_certs'] = {
+  'Proxy Cert': 'my_proxy.cer',
+  'Corp Cert': 'corporate.crt',
+  'Open Cert': 'other_open.crt'
+}
+```
+
 Specific Attributes per Machine
 ------------
 
@@ -462,7 +467,7 @@ Supported Platforms
 
 Delivery Server packages are available for the following platforms:
 
-* EL (CentOS, RHEL) 6 64-bit
+* EL (CentOS, RHEL) 6, 7 64-bit
 * Ubuntu 12.04, 14.04 64-bit
 
 So please don't use another AMI type.

@@ -13,7 +13,7 @@ DEPENDENCIES
     metadata: true
   delivery_build
     git: https://github.com/chef-cookbooks/delivery_build.git
-    revision: 21d5bcd24a8c5f32f18da094bd6c8eb1c62190e6
+    revision: 9d54f02f0159f5e176947dc9f4d99f609d0220d1
   hostsfile
   packagecloud
     git: https://github.com/afiune/packagecloud-cookbook.git
@@ -37,7 +37,7 @@ GRAPH
   chef-sugar (3.1.1)
   chef-vault (1.3.0)
   chef_handler (1.1.6)
-  delivery-cluster (0.3.13)
+  delivery-cluster (0.3.14)
     apt (>= 0.0.0)
     chef-ingredient (>= 0.0.0)
     chef-server-12 (>= 0.0.0)
@@ -46,7 +46,7 @@ GRAPH
     git (>= 0.0.0)
     packagecloud (>= 0.0.0)
     yum (>= 0.0.0)
-  delivery_build (0.2.18)
+  delivery_build (0.2.22)
     build-essential (>= 0.0.0)
     chef-sugar (>= 0.0.0)
     git (>= 0.0.0)
@@ -71,7 +71,7 @@ GRAPH
     windows-sdk (~> 1.0)
     wix (~> 1.1)
   packagecloud (0.0.17)
-  push-jobs (2.4.1)
+  push-jobs (2.4.2)
     chef-ingredient (>= 0.0.0)
     runit (>= 0.0.0)
     windows (>= 0.0.0)
