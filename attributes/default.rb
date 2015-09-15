@@ -214,3 +214,6 @@ default['delivery-cluster']['builders']['additional_run_list'] = []
 #      "checksum": "123456789ABCDEF"
 #    }
 default['delivery-cluster']['builders']['delivery-cli']        = {}
+
+# Optional ChefDK version
+default['delivery-cluster']['builders']['chefdk_version']        = nil

@@ -55,6 +55,16 @@ module DeliveryCluster
           )
         end
 
+        # Add chefdk_version attribute if it exist
+        if node['delivery-cluster']['builders']['chefdk_version']
+          builders_attributes = Chef::Mixin::DeepMerge.hash_only_merge(
+            builders_attributes,
+            'delivery_build' => {
+              'chefdk_version' => node['delivery-cluster']['builders']['chefdk_version']
+            }
+          )
+        end
+
         # Add trusted_certs attributes
         builders_attributes = Chef::Mixin::DeepMerge.hash_only_merge(
           builders_attributes,
@@ -85,23 +95,28 @@ module DeliveryCluster
 
         # Adding any global certificate
         unless node['delivery-cluster']['trusted_certs'].empty?
-          # Search how to modify a JSON
-          global_trusted_certs = node['delivery-cluster']['trusted_certs'].map { |name, cert| {name =>"/some/path/#{cert}"} }
+          global_trusted_certs = {}
+
+          # Append the location where we will be uploading the certs
+          node['delivery-cluster']['trusted_certs'].each do |name, cert|
+            global_trusted_certs[name] = "/etc/chef/trusted_certs/#{cert}"
+          end
+
           trusted_certs_list.merge!(global_trusted_certs)
         end
 
         # Adding the Delivery Cert
-        delivary_fqdn = DeliveryCluster::Helpers::Delivery.delivery_server_fqdn(node)
-        trusted_certs_list.merge!({
-          'Server Cert' => "/etc/chef/trusted_certs/#{delivery_fqdn}.crt"
-        })
+        delivery_fqdn = DeliveryCluster::Helpers::Delivery.delivery_server_fqdn(node)
+        trusted_certs_list.merge!(
+          'Delivery Server Cert' => "/etc/chef/trusted_certs/#{delivery_fqdn}.crt"
+        )
 
         # Adding the Supermarket Cert if it exists
         if DeliveryCluster::Helpers::Supermarket.supermarket_enabled?(node)
           supermarket_server_fqdn = DeliveryCluster::Helpers::Supermarket.supermarket_server_fqdn(node)
-          trusted_certs_list.merge!({
+          trusted_certs_list.merge!(
             'Supermarket Server' => "/etc/chef/trusted_certs/#{supermarket_server_fqdn}.crt"
-          })
+          )
         end
 
         { 'delivery_build' => { 'trusted_certs' => trusted_certs_list } }
