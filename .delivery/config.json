@@ -6,7 +6,7 @@
   },
   "delivery-truck": {
     "publish": {
-      "github": "opscode-cookbooks/delivery-cluster"
+      "github": "chef-cookbooks/delivery-cluster"
     }
   },
   "skip_phases": [
