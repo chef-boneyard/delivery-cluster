@@ -83,10 +83,10 @@ def validate_environment
 
   begin
     JSON.parse(File.read(ENV['CHEF_ENV_FILE']))
-  rescue JSON::ParserError => e
+  rescue JSON::ParserError
     puts "You have syntax errors on the environment file '#{ENV['CHEF_ENV_FILE']}'".red
-    puts "Please fix the problems and re run the task."
-    fail
+    puts 'Please fix the problems and re run the task.'
+    raise
   end
 end
 
@@ -473,5 +473,5 @@ task :help do
   Rake.application.options.show_task_pattern = /info/
   Rake.application.display_tasks_and_comments
   puts "\nTo switch your environment run:"
-  puts "  # export CHEF_ENV=#{'my_new_environment'.yellow}\n"
+  puts "  # export CHEF_ENV=#{'my_environment_name'.yellow}\n"
 end

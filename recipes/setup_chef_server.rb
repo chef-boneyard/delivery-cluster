@@ -32,9 +32,9 @@ machine chef_server_hostname do
   provisioning.specific_machine_options('chef-server').each do |option|
     add_machine_options(option)
   end
-  # Transfer any trusted certs from the current CCR
-  Dir.glob("#{Chef::Config[:trusted_certs_dir]}/*.{crt,pem}").each do |cert_path|
-    file cert_path, cert_path
+  # Transfer any trusted certs
+  Dir.glob("#{Chef::Config[:trusted_certs_dir]}/*").each do |cert_path|
+    file ::File.join('/etc/chef/trusted_certs', ::File.basename(cert_path)), cert_path
   end
   action :converge
 end

@@ -1,3 +1,10 @@
+v0.3.15 (2015-09-21)
+-------------------
+- [#156] Fixed uploading certs process for Chef-Server
+- [#136] Fail fast if `environment` file is wrong
+- Enabled Proxy Settings on Rake::generate_env
+- Disabled Artifactory question on Rake:generate_env
+
 v0.3.14 (2015-09-14)
 -------------------
 - Expose trusted_certs to the end-user
