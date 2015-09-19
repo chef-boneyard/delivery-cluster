@@ -68,7 +68,30 @@ end
 ENV['CHEF_ENV'] ||= 'test'
 ENV['CHEF_ENV_FILE'] = "environments/#{ENV['CHEF_ENV']}.json"
 
+# Validate the environment file
+#
+# If the environment file does not exist or it has syntax errors fail fast
+def validate_environment
+  unless File.exist?(ENV['CHEF_ENV_FILE'])
+    puts 'You need to configure an Environment under \'environments/\'. Check the README.md'.red
+    puts 'You can use the \'generate_env\' task to auto-generate one:'
+    puts '  # rake setup:generate_env'
+    puts "\nOr if you just have a different chef environment name run:"
+    puts "  # export CHEF_ENV=#{'my_new_environment'.yellow}"
+    fail
+  end
+
+  begin
+    JSON.parse(File.read(ENV['CHEF_ENV_FILE']))
+  rescue JSON::ParserError => e
+    puts "You have syntax errors on the environment file '#{ENV['CHEF_ENV_FILE']}'".red
+    puts "Please fix the problems and re run the task."
+    fail
+  end
+end
+
 def chef_zero(recipe)
+  validate_environment
   succeed = system "bundle exec chef-client -z -o delivery-cluster::#{recipe} -E #{ENV['CHEF_ENV']}"
   fail 'Failed executing ChefZero run' unless succeed
 end
@@ -296,13 +319,7 @@ namespace :setup do
     system 'bundle exec berks vendor cookbooks'
 
     msg "Current chef environment => #{ENV['CHEF_ENV_FILE']}"
-    unless File.exist?(ENV['CHEF_ENV_FILE'])
-      puts 'You need to configure an Environment under \'environments/\'. Check the README.md'.red
-      puts 'You can use the \'generate_env\' task to auto-generate one:'
-      puts '  # rake setup:generate_env'
-      puts '\nOr if you just have a different chef environment name run:'
-      puts "  # export CHEF_ENV=#{'my_new_environment'.yellow}"
-    end
+    validate_environment
   end
 
   desc 'Setup the Chef Delivery Cluster that includes: [ Chef Server | Delivery Server | Build Nodes ]'
