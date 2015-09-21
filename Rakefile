@@ -223,7 +223,7 @@ namespace :setup do
         options['chef_server']['vm_hostname'] = 'chef.example.com'
         options['chef_server']['network'] = ask_for('Network Config', ":private_network, {:ip => '33.33.33.10'}")
         options['chef_server']['vm_memory'] = ask_for('Memory allocation', '2048')
-        options['chef_server']['vm_cpus'] = ask_for('Cpus alotted', '2')
+        options['chef_server']['vm_cpus'] = ask_for('Cpus allocation', '2')
        end
     end
 
@@ -248,7 +248,7 @@ namespace :setup do
       options['delivery']['vm_hostname'] = 'delivery.example.com'
       options['delivery']['network'] = ask_for('Network Config', ":private_network, {:ip => '33.33.33.11'}")
       options['delivery']['vm_memory'] = ask_for('Memory allocation', '2048')
-      options['delivery']['vm_cpus'] = ask_for('Cpus alotted', '2')
+      options['delivery']['vm_cpus'] = ask_for('Cpus allocation', '2')
     end
 
     puts "\nAnalytics Server".pink
@@ -263,7 +263,7 @@ namespace :setup do
         options['analytics']['vm_hostname'] = 'analytics.example.com'
         options['analytics']['network'] = ask_for('Network Config', ":private_network, {:ip => '33.33.33.12'}")
         options['analytics']['vm_memory'] = ask_for('Memory allocation', '2048')
-        options['analytics']['vm_cpus'] = ask_for('Cpus alotted', '2')
+        options['analytics']['vm_cpus'] = ask_for('Cpus allocation', '2')
       end
     end
 
@@ -279,7 +279,7 @@ namespace :setup do
         options['supermarket']['vm_hostname'] = 'analytics.example.com'
         options['supermarket']['network'] = ask_for('Network Config', ":private_network, {:ip => '33.33.33.12'}")
         options['supermarket']['vm_memory'] = ask_for('Memory allocation', '2048')
-        options['supermarket']['vm_cpus'] = ask_for('Cpus alotted', '2')
+        options['supermarket']['vm_cpus'] = ask_for('Cpus allocation', '2')
       end
     end
 
@@ -298,7 +298,7 @@ namespace :setup do
       1.upto(options['builders']['count'].to_i) do |i|
         net = ask_for("Network for Build Node #{i}", ":private_network, {:ip => '33.33.33.1#{i + 3}'}")
         mem = ask_for("Memory allocation for Build Node #{i}", '2048')
-        cpu = ask_for("Cpus alotted for Build Node #{i}", '2')
+        cpu = ask_for("Cpus allocation for Build Node #{i}", '2')
         options['builders'][i] = { 'network' => net, 'vm_memory' => mem, 'vm_cpus' => cpu }
       end
     end
