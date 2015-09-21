@@ -231,7 +231,6 @@ namespace :setup do
     options['delivery'] = {}
     options['delivery']['version']      = ask_for('Package Version', 'latest')
     options['delivery']['enterprise']   = ask_for('Enterprise Name', environment)
-    options['delivery']['artifactory']  = ask_for('Use chef artifactory?', 'no')
     options['delivery']['license_file'] = ask_for('License File',
                                                   File.expand_path('~/delivery.license'))
     unless File.exist?(options['delivery']['license_file'])
