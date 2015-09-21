@@ -198,6 +198,16 @@ namespace :setup do
       puts 'Available Drivers are [ vagrant | aws | ssh ]'.yellow
       exit 1
     end
+    # Proxy Settings
+    if ask_for('Would you like to configure Proxy Settings?', 'no')
+      http_proxy  = ask_for('http_proxy: ')
+      https_proxy = ask_for('https_proxy: ')
+      no_proxy    = ask_for('no_proxy: ')
+      options['driver']['bootstrap_proxy'] = https_proxy || http_proxy || nil
+      options['driver']['chef_config']     = "http_proxy '#{http_proxy}'\n" \
+                                             "https_proxy '#{https_proxy}'\n" \
+                                             "no_proxy '#{no_proxy}'"
+    end
 
     puts "\nChef Server".pink
     options['chef_server'] = {}
