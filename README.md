@@ -13,10 +13,10 @@ This cookbook will setup a full delivery cluster which includes:
 
 *  1 -  Chef Server 12
 *  1 -  Delivery Server
-*  N -  Build Nodes
+*  N -  Build Nodes (Recommend at least 3)
+*  1 -  Supermarket Server (Required for cookbook workflow)
 
 Additionally it enables extra optional infrastructure:
-*  1 -  Supermarket Server (Not Required)
 *  1 -  Analytics Server (Not Required)
 *  1 -  Splunk Server (Not Required)
 
@@ -41,7 +41,7 @@ rake setup:delivery              # Create a Delivery Server & Build Nodes
 rake setup:delivery_build_nodes  # Create Delivery Build Nodes
 rake setup:delivery_server       # Create a Delivery Server only
 rake setup:generate_env          # Generate an Environment
-rake setup:prerequisites         # Install all the prerequisites on you system
+rake setup:prerequisites[cache]  # Install all the prerequisites on you system
 rake setup:splunk                # Create a Splunk Server with Analytics Integration
 rake setup:supermarket           # Create a Supermarket Server
 
@@ -52,7 +52,7 @@ rake maintenance:update       # Update gem & cookbook dependencies
 rake maintenance:upgrade      # Upgrade Delivery
 
 Destroy Tasks
-The following tasks should be used to destroy you cluster
+The following tasks should be used to destroy your cluster
 rake destroy:all          # Destroy Everything
 rake destroy:analytics    # Destroy Analytics Server
 rake destroy:builders     # Destroy Build Nodes
@@ -67,7 +67,7 @@ rake info:delivery_creds      # Show Delivery admin credentials
 rake info:list_core_services  # List all your core services
 
 To switch your environment run:
-  # export CHEF_ENV=my_new_environment
+  # export CHEF_ENV=my_environment_name
 ```
 
 Easy Setup
