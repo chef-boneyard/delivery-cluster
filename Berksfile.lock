@@ -17,7 +17,7 @@ DEPENDENCIES
   hostsfile
   packagecloud
     git: https://github.com/afiune/packagecloud-cookbook.git
-    revision: 5988de62407d66dc654e5273db31bbae8029173f
+    revision: 67bf110bb28cf030ce5867f581135e2c012a81ff
 
 GRAPH
   7-zip (1.0.2)
@@ -70,7 +70,7 @@ GRAPH
     windows (~> 1.30)
     windows-sdk (~> 1.0)
     wix (~> 1.1)
-  packagecloud (0.0.17)
+  packagecloud (0.1.0)
   push-jobs (2.4.2)
     chef-ingredient (>= 0.0.0)
     runit (>= 0.0.0)
