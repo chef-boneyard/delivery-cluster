@@ -127,6 +127,9 @@ end
 # Installing splunk
 machine splunk_server_hostname do
   chef_server lazy { chef_server_config }
+  provisioning.specific_machine_options('splunk').each do |option|
+    add_machine_options option
+  end
   chef_environment 'delivered'
   common_cluster_recipes.each { |r| recipe r }
   recipe 'chef-splunk::server'
