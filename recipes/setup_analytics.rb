@@ -69,6 +69,9 @@ end
 # Installing Analytics
 machine analytics_server_hostname do
   chef_server lazy { chef_server_config }
+  provisioning.specific_machine_options('analytics').each do |option|
+    add_machine_options option
+  end
   recipe 'delivery-cluster::analytics'
   files(
     '/etc/opscode-analytics/actions-source.json' => "#{cluster_data_dir}/actions-source.json",

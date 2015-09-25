@@ -12,3 +12,4 @@ nodes*
 .chef/delivery-cluster*
 .chef/keys
 .chef/provisioning/
+.delivery/cli.toml

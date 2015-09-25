@@ -66,6 +66,9 @@ end
 # Installing Supermarket
 machine supermarket_server_hostname do
   chef_server lazy { chef_server_config }
+  provisioning.specific_machine_options('supermarket').each do |option|
+    add_machine_options option
+  end
   common_cluster_recipes.each { |r| recipe r }
   recipe 'delivery-cluster::supermarket'
   attributes lazy { supermarket_config }
