@@ -22,7 +22,7 @@
 
 include_recipe 'delivery-cluster::_settings'
 
-# It's ugly but this must happen in the compile phase so we can switch out
+# This must happen in the compile phase so we can switch out
 # the Chef Server we are talking to for the remainder of the CCR.
 
 # Provision the Chef Server with an empty runlist so we can extract
@@ -98,9 +98,16 @@ template File.join(cluster_data_dir, 'knife.rb') do
   variables lazy { knife_variables }
 end
 
-execute 'upload delivery cookbooks' do
-  command "knife cookbook upload --all --cookbook-path #{Chef::Config[:cookbook_path]} --force"
-  environment(
-    'KNIFE_HOME' => cluster_data_dir
-  )
+# Upload all the cookbook dependencies we need for Delivery
+ruby_block 'upload delivery cookbooks' do
+  block do
+    require 'chef/knife/cookbook_upload'
+    Chef::Knife::CookbookUpload.load_deps
+    knife = Chef::Knife::CookbookUpload.new
+    ENV['KNIFE_HOME']             = cluster_data_dir
+    knife.config[:all]            = true
+    knife.config[:cookbook_path]  = Chef::Config[:cookbook_path]
+    knife.config[:force]          = true
+    knife.run
+  end
 end
