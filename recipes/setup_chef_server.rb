@@ -102,11 +102,11 @@ end
 ruby_block 'upload delivery cookbooks' do
   block do
     require 'chef/knife/cookbook_upload'
+    Chef::Config.from_file(File.join(cluster_data_dir, 'knife.rb'))
     Chef::Knife::CookbookUpload.load_deps
     knife = Chef::Knife::CookbookUpload.new
-    ENV['KNIFE_HOME']             = cluster_data_dir
-    knife.config[:all]            = true
     knife.config[:cookbook_path]  = Chef::Config[:cookbook_path]
+    knife.config[:all]            = true
     knife.config[:force]          = true
     knife.run
   end
