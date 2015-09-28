@@ -11,6 +11,8 @@ DEPENDENCIES
   delivery-cluster
     path: .
     metadata: true
+  delivery-infra-node
+    path: vendor/delivery-infra-node
   delivery_build
     git: https://github.com/chef-cookbooks/delivery_build.git
     revision: 9d54f02f0159f5e176947dc9f4d99f609d0220d1
@@ -42,10 +44,13 @@ GRAPH
     chef-ingredient (>= 0.0.0)
     chef-server-12 (>= 0.0.0)
     chef-splunk (>= 0.0.0)
+    delivery-infra-node (>= 0.0.0)
     delivery_build (>= 0.0.0)
     git (>= 0.0.0)
     packagecloud (>= 0.0.0)
     yum (>= 0.0.0)
+  delivery-infra-node (0.1.0)
+    push-jobs (>= 0.0.0)
   delivery_build (0.2.22)
     build-essential (>= 0.0.0)
     chef-sugar (>= 0.0.0)
