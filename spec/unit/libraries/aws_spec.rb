@@ -83,5 +83,23 @@ describe DeliveryCluster::Provisioning::Aws do
         expect(aws_object.ipaddress(node)).to eq '192.168.1.2'
       end
     end
+
+    context 'and components has specific attributes' do
+      before do
+        node.default['delivery-cluster'] = cluster_data
+        node.default['delivery-cluster']['aws'] = aws_data
+      end
+
+      it 'returns the right specific_machine_options for chef_server' do
+        expect(aws_object.specific_machine_options('chef-server')).to eq [
+          {
+            aws_tags: {
+              'cool_tag' => 'awesomeness',
+              'important' => 'thing'
+            }
+          }
+        ]
+      end
+    end
   end
 end
