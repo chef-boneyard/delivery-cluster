@@ -18,7 +18,8 @@
       "chef-server": {
         "organization": "<%= @cluster_name %>",
         "existing": false,
-        "flavor": "c3.xlarge"
+        "flavor": "c3.xlarge",
+        "aws_tags": { "cool_tag": "awesomeness" }
       },
       "delivery": {
         "version": "<%= @delivery_version %>",
