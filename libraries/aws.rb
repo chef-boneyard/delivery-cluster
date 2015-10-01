@@ -50,17 +50,16 @@ module DeliveryCluster
 
         DeliveryCluster::Helpers.check_attribute?(node['delivery-cluster'][driver], "node['delivery-cluster']['#{driver}']")
         @node                   = node
-        @flavor                 = @node['delivery-cluster'][driver]['flavor'] if @node['delivery-cluster'][driver]['flavor']
-        @key_name               = @node['delivery-cluster'][driver]['key_name'] if @node['delivery-cluster'][driver]['key_name']
-        @image_id               = @node['delivery-cluster'][driver]['image_id'] if @node['delivery-cluster'][driver]['image_id']
-        @subnet_id              = @node['delivery-cluster'][driver]['subnet_id'] if @node['delivery-cluster'][driver]['subnet_id']
-        @bootstrap_proxy        = @node['delivery-cluster'][driver]['bootstrap_proxy'] if @node['delivery-cluster'][driver]['bootstrap_proxy']
-        @chef_config            = @node['delivery-cluster'][driver]['chef_config'] if @node['delivery-cluster'][driver]['chef_config']
-        @chef_version           = @node['delivery-cluster'][driver]['chef_version'] if @node['delivery-cluster'][driver]['chef_version']
-        @ssh_username           = @node['delivery-cluster'][driver]['ssh_username'] if @node['delivery-cluster'][driver]['ssh_username']
-        @security_group_ids     = @node['delivery-cluster'][driver]['security_group_ids'] if @node['delivery-cluster'][driver]['security_group_ids']
-        @use_private_ip_for_ssh = false
-        @use_private_ip_for_ssh = @node['delivery-cluster'][driver]['use_private_ip_for_ssh'] if @node['delivery-cluster'][driver]['use_private_ip_for_ssh']
+        @flavor                 = @node['delivery-cluster'][driver]['flavor'] || nil
+        @key_name               = @node['delivery-cluster'][driver]['key_name'] || nil
+        @image_id               = @node['delivery-cluster'][driver]['image_id'] || nil
+        @subnet_id              = @node['delivery-cluster'][driver]['subnet_id'] || nil
+        @bootstrap_proxy        = @node['delivery-cluster'][driver]['bootstrap_proxy'] || nil
+        @chef_config            = @node['delivery-cluster'][driver]['chef_config'] || nil
+        @chef_version           = @node['delivery-cluster'][driver]['chef_version'] || nil
+        @ssh_username           = @node['delivery-cluster'][driver]['ssh_username'] || nil
+        @security_group_ids     = @node['delivery-cluster'][driver]['security_group_ids'] || nil
+        @use_private_ip_for_ssh = @node['delivery-cluster'][driver]['use_private_ip_for_ssh'] || false
       end
 
       # Return the machine options to use.
@@ -101,6 +100,7 @@ module DeliveryCluster
         options << { bootstrap_options: { instance_type: @node['delivery-cluster'][component]['flavor'] } } if @node['delivery-cluster'][component]['flavor']
         options << { bootstrap_options: { security_group_ids: @node['delivery-cluster'][component]['security_group_ids'] } } if @node['delivery-cluster'][component]['security_group_ids']
         options << { image_id: @node['delivery-cluster'][component]['image_id'] } if @node['delivery-cluster'][component]['image_id']
+        options << { aws_tags: @node['delivery-cluster'][component]['aws_tags'] } if @node['delivery-cluster'][component]['aws_tags']
         # Specify more specific machine_options to add
         options
       end

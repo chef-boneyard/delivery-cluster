@@ -85,7 +85,11 @@ module SharedCommonData
         'organization' => 'chefspec',
         'fqdn' => 'chef-server.chef.io',
         'host' => 'chef-server.chef.io',
-        'existing' => false
+        'existing' => false,
+        'aws_tags' => {
+          'cool_tag' => 'awesomeness',
+          'important' => 'thing'
+        }
       },
       'delivery' => {
         'version' => 'latest',

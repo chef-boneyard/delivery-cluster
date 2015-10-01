@@ -1,3 +1,14 @@
+v0.3.20 (2015-09-30)
+-------------------
+- Enabled `aws_tags` for AWS Driver
+- Fixed conflict using `bundler` inside `chefdk`
+- Update gem dependencies
+  - chef (12.4.3)
+  - chef-provisioning (~> 1.4)
+  - chef-provisioning-aws (1.4.1)
+  - chef-provisioning-ssh (0.0.9)
+  - chef-provisioning-vagrant (0.10.0)
+
 v0.3.15 (2015-09-21)
 -------------------
 - [#156] Fixed uploading certs process for Chef-Server

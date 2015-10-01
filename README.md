@@ -255,6 +255,7 @@ The list of attributes that you need to specify are:
 | `chef_config`            | Anything you want dumped in `/etc/chef/client.rb` |
 | `image_id`               | AWS AMI.                                    |
 | `flavor`                 | Size/flavor of your machine.                |
+| `aws_tags`               | Hash of aws tags to add to an specific component. |
 | `security_group_ids`     | Security Group on AWS.                      |
 | `bootstrap_proxy`        | Automatically configure HTTPS proxy. |
 | `use_private_ip_for_ssh` | Set to `true` if you want to use the private  ipaddress. |
@@ -288,6 +289,7 @@ Here is an example of how you specify them
       "chef-server": {
         "flavor": "c3.xlarge",
         "organization": "aws-example"
+        "aws_tags": { "cool_tag": "awesomeness" }
       },
       "analytics": {
         "flavor": "c3.xlarge"
