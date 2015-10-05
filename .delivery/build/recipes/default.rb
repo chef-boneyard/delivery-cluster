@@ -20,10 +20,11 @@
 
 # Gems for our tests
 %w{watir-webdriver phantomjs}.each do |g|
-  chef_gem g do
-    compile_time true
-  end
+  chef_gem g
 end
+
+# Package dependency in phantomjs for Linux systems
+package 'libfontconfig1' unless platform_family?('windows')
 
 include_recipe 'delivery-sugar-extras::default'
 include_recipe 'delivery-red-pill::default'
