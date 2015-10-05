@@ -23,7 +23,7 @@
   chef_gem g
 end
 
-# Package dependency in phantomjs for Ubuntu systems
+# Package dependency in phantomjs for Linux systems
 package 'libfontconfig1' unless platform_family?('windows')
 
 include_recipe 'delivery-sugar-extras::default'
