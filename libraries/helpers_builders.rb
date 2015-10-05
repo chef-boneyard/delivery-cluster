@@ -38,6 +38,24 @@ module DeliveryCluster
         DeliveryCluster::Helpers::Component.component_hostname(node, 'builders', index.to_s)
       end
 
+      # Returns Builders files to upload
+      #
+      # @param node [Chef::Node] Chef Node object
+      # @return [Hash] Builders files to upload through a machine resource
+      def builders_files(node)
+        builders_files = {
+          '/etc/chef/encrypted_data_bag_secret' => "#{DeliveryCluster::Helpers.cluster_data_dir(node)}/encrypted_data_bag_secret"
+        }
+
+        Dir.glob("#{Chef::Config[:trusted_certs_dir]}/*").each do |cert_path|
+          builders_files.merge!(
+            ::File.join('/etc/chef/trusted_certs', ::File.basename(cert_path)) => cert_path
+          )
+        end
+
+        builders_files
+      end
+
       # Generates the Builders Attributes
       #
       # @param node [Chef::Node] Chef Node object
@@ -154,6 +172,11 @@ module DeliveryCluster
     # Generates the Builders Attributes
     def builders_attributes
       DeliveryCluster::Helpers::Builders.builders_attributes(node)
+    end
+
+    # Returns Builders files to upload
+    def builders_files
+      DeliveryCluster::Helpers::Builders.builders_files(node)
     end
 
     # Retrieve the Builder Private Key

@@ -204,6 +204,39 @@ describe DeliveryCluster::Helpers::Builders do
     end
   end
 
+  describe '#builders_files' do
+    before do
+      allow(DeliveryCluster::Helpers).to receive(:cluster_data_dir).and_return('/chefspec')
+      allow(Dir).to receive(:glob).and_return([])
+    end
+
+    it 'returns at least the encrypted_data_bag_secret file' do
+      expect(described_class.builders_files(node)).to eq(
+        '/etc/chef/encrypted_data_bag_secret' => '/chefspec/encrypted_data_bag_secret'
+      )
+    end
+
+    context 'when there are some certificates to upload' do
+      let(:mock_cert_file) do
+        [
+          '/chefspec/trusted_certs/cool.crt',
+          '/chefspec/trusted_certs/super.crt',
+          '/chefspec/trusted_certs/cocina.crt'
+        ]
+      end
+      before { allow(Dir).to receive(:glob).and_return(mock_cert_file) }
+
+      it 'returns encrypted_data_bag_secret plus certificate files' do
+        expect(described_class.builders_files(node)).to eq(
+          '/etc/chef/encrypted_data_bag_secret' => '/chefspec/encrypted_data_bag_secret',
+          '/etc/chef/trusted_certs/cool.crt' => '/chefspec/trusted_certs/cool.crt',
+          '/etc/chef/trusted_certs/super.crt' => '/chefspec/trusted_certs/super.crt',
+          '/etc/chef/trusted_certs/cocina.crt' => '/chefspec/trusted_certs/cocina.crt'
+        )
+      end
+    end
+  end
+
   describe '#builders_attributes' do
     before do
       # Mocking this method since it is being tested already
