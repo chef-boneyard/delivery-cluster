@@ -24,7 +24,7 @@
 end
 
 # Package dependency in phantomjs for Ubuntu systems
-package 'libfontconfig1' if platform_family?('debian')
+package 'libfontconfig1' unless platform_family?('windows')
 
 include_recipe 'delivery-sugar-extras::default'
 include_recipe 'delivery-red-pill::default'
