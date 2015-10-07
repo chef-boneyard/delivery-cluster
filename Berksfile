@@ -18,3 +18,6 @@ cookbook 'chef-splunk',
 
 cookbook 'delivery_build',
   git: 'https://github.com/chef-cookbooks/delivery_build.git'
+
+cookbook 'delivery-base',
+  git: 'https://github.com/chef-cookbooks/delivery-base.git'
