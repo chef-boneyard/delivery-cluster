@@ -21,10 +21,8 @@
 #
 
 def install_plugin(plugin)
-  chef_ingredient plugin
-
-  ingredient_config plugin do
-    notifies :reconfigure, "chef_ingredient[#{plugin}]", :immediately
+  chef_ingredient plugin do
+    action [:install, :reconfigure]
     notifies :reconfigure, "chef_ingredient[chef-server]", :immediately
   end
 end
