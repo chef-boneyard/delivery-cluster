@@ -25,11 +25,11 @@ hostsfile_entry node['ipaddress'] do
   not_if "grep #{node.hostname} /etc/hosts"
 end
 
-chef_ingredient 'supermarket' do
+ingredient_config 'supermarket' do
   config JSON.pretty_generate(node['supermarket-config'])
-  action :install
+  action :add
 end
 
-ingredient_config 'supermarket' do
-  notifies :reconfigure, 'chef_ingredient[supermarket]'
+chef_ingredient 'supermarket' do
+  action [:install, :reconfigure]
 end

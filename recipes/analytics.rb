@@ -20,15 +20,15 @@
 # limitations under the License.
 #
 
-chef_ingredient 'analytics' do
+ingredient_config 'analytics' do
   config <<-EOF
 topology 'standalone'
 analytics_fqdn '#{node['delivery-cluster']['analytics']['fqdn']}'
 features['integration'] = #{node['delivery-cluster']['analytics']['features']}
 EOF
-  action :install
+  action :add
 end
 
-ingredient_config 'analytics' do
-  notifies :reconfigure, 'chef_ingredient[analytics]'
+chef_ingredient 'analytics' do
+  action [:install, :reconfigure]
 end
