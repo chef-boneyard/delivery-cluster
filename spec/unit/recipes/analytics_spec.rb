@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: delivery-cluster
-# Recipe:: supermarket
+# Spec:: analytics_spec
 #
 # Author:: Salim Afiune (<afiune@chef.io>)
 #
@@ -20,16 +20,21 @@
 # limitations under the License.
 #
 
-hostsfile_entry node['ipaddress'] do
-  hostname node.hostname
-  not_if "grep #{node.hostname} /etc/hosts"
-end
+require 'spec_helper'
 
-ingredient_config 'supermarket' do
-  config JSON.pretty_generate(node['supermarket-config'])
-  action :add
-end
+describe 'delivery-cluster::analytics' do
+  let(:chef_run) do
+    ChefSpec::SoloRunner.new do |node|
+      node.set['delivery-cluster'] = cluster_data
+    end.converge(described_recipe)
+  end
 
-chef_ingredient 'supermarket' do
-  action [:install, :reconfigure]
+  it 'adds analytics ingredient config' do
+    expect(chef_run).to add_ingredient_config('analytics')
+  end
+
+  it 'installs and reconfigures analytics ingredient' do
+    expect(chef_run).to install_chef_ingredient('analytics')
+    expect(chef_run).to reconfigure_chef_ingredient('analytics')
+  end
 end
