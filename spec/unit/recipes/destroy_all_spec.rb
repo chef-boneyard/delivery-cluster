@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: delivery-cluster
-# Spec:: setup_spec
+# Spec:: destroy_all_spec
 #
 # Author:: Salim Afiune (<afiune@chef.io>)
 #

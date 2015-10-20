@@ -29,11 +29,11 @@ describe 'delivery-cluster::analytics' do
     end.converge(described_recipe)
   end
 
-  it "adds analytics ingredient config" do
+  it 'adds analytics ingredient config' do
     expect(chef_run).to add_ingredient_config('analytics')
   end
 
-  it "installs and reconfigures analytics ingredient" do
+  it 'installs and reconfigures analytics ingredient' do
     expect(chef_run).to install_chef_ingredient('analytics')
     expect(chef_run).to reconfigure_chef_ingredient('analytics')
   end
