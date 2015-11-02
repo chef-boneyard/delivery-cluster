@@ -94,6 +94,7 @@ if node['delivery-cluster']['delivery']['version'] == 'latest' ||
     machine delivery_server_hostname
     local_path node['delivery-cluster']['delivery']['license_file']
     action :upload
+    mode '0644'
   end
 end
 
