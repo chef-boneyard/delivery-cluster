@@ -49,6 +49,7 @@ if node['delivery']['change']['pipeline'] != 'master' &&
 
       delivery_details = ::Chef.node.run_state['delivery']['stage']['data']['cluster_details']['delivery']
       chef_details = ::Chef.node.run_state['delivery']['stage']['data']['cluster_details']['chef_server']
+      supermarket_details = ::Chef.node.run_state['delivery']['stage']['data']['cluster_details']['supermarket_server']
       #build_node_details = ::Chef.node.run_state['delivery']['stage']['data']['cluster_details']['build_nodes']
 
       describe 'Chef Server' do
@@ -68,6 +69,18 @@ if node['delivery']['change']['pipeline'] != 'master' &&
         it "login page is available" do
           @browser.goto delivery_details['url']
           expect(@browser.url).not_to eql("about:blank")
+        end
+      end
+
+      describe 'Supermarket Server' do
+        it "login page is available" do
+          @browser.goto supermarket_details['url']
+          expect(@browser.url).not_to eql("about:blank")
+        end
+
+        it "can access cookbooks-directory" do
+          @browser.goto "#{supermarket_details['url']}/cookbooks-directory"
+          expect(@browser.text).to include("Cookbooks Directory - Chef Supermarket")
         end
       end
     end
