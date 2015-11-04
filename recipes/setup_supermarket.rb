@@ -44,7 +44,9 @@ machine supermarket_server_hostname do
 end
 
 # Activate Supermarket
-activate_supermarket
+ruby_block 'Activate Supermarket' do
+  block { activate_supermarket }
+end
 
 # Configuring Supermarket on the Chef Server
 machine chef_server_hostname do
