@@ -302,11 +302,6 @@ namespace :setup do
         options['builders'][i] = { 'network' => net, 'vm_memory' => mem, 'vm_cpus' => cpu }
       end
     end
-    if ask_for('Specify a delivery-cli artifact?', 'no')
-      options['builders']['delivery-cli'] = {}
-      options['builders']['delivery-cli']['artifact'] = ask_for('Delivery-cli Artifact: ')
-      options['builders']['delivery-cli']['checksum'] = ask_for('Delivery-cli Checksum: ')
-    end
 
     msg "Rendering Environment => environments/#{environment}.json"
 
