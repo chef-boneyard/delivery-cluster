@@ -42,6 +42,10 @@ describe 'delivery-cluster::setup_supermarket' do
     expect(chef_run).to converge_machine('supermarket-server-chefspec')
   end
 
+  it 'activates supermarket through a ruby_block resource' do
+    expect(chef_run).to run_ruby_block('Activate Supermarket')
+  end
+
   it 'converge chef-server machine' do
     expect(chef_run).to converge_machine('chef-server-chefspec')
   end
