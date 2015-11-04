@@ -29,5 +29,10 @@ include_recipe 'delivery-cluster::_settings'
 # Phase 1: Bootstrap a Chef Server instance with Chef-Zero
 include_recipe 'delivery-cluster::setup_chef_server'
 
-# Phase 2: Create all the Delivery specific prerequisites
+# Phase 2: Create a Supermarket Server if enabled (Cookbook Workflow)
+unless node['delivery-cluster']['supermarket'].nil?
+  include_recipe 'delivery-cluster::setup_supermarket'
+end
+
+# Phase 3: Create all the Delivery specific prerequisites
 include_recipe 'delivery-cluster::setup_delivery'

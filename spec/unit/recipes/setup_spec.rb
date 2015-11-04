@@ -23,6 +23,10 @@
 require 'spec_helper'
 
 describe 'delivery-cluster::setup' do
+  before do
+    allow_any_instance_of(Chef::Recipe).to receive(:activate_supermarket).and_return(true)
+  end
+
   describe '#vagrant driver' do
     let(:chef_run) do
       ChefSpec::SoloRunner.new do |node|
@@ -32,14 +36,13 @@ describe 'delivery-cluster::setup' do
       end
     end
 
+    before do
+      DeliveryCluster::Helpers.instance_variable_set :@provisioning, nil
+      chef_run.converge(described_recipe)
+    end
+
     context 'always' do
-      before do
-        DeliveryCluster::Helpers.instance_variable_set :@provisioning, nil
-        chef_run.converge(described_recipe)
-      end
-
       includes = %w( _settings setup_chef_server setup_delivery)
-
       includes.each do |recipename|
         it "includes #{recipename} recipe" do
           expect(chef_run).to include_recipe("delivery-cluster::#{recipename}")
@@ -50,10 +53,30 @@ describe 'delivery-cluster::setup' do
     context 'build-nodes without specs' do
       before do
         chef_run.node.set['delivery-cluster']['builders']['count'] = '99'
+        chef_run.converge(described_recipe)
       end
 
-      it 'raise error' do
-        expect { chef_run.converge(described_recipe) }.to raise_error(RuntimeError)
+      it 'converges successfully by rendering the attributes' do
+        expect { chef_run }.to_not raise_error(RuntimeError)
+        expect(chef_run.node['delivery-cluster']['builders']['99']).to eq(
+          'hostname' => 'build-node-chefspec-99'
+        )
+      end
+    end
+
+    context 'when supermarket is enabled' do
+      it 'includes supermarket recipe' do
+        expect(chef_run).to include_recipe('delivery-cluster::setup_supermarket')
+      end
+    end
+
+    context 'when supermarket is disabled' do
+      before do
+        chef_run.node.set['delivery-cluster']['supermarket'] = nil
+        chef_run.converge(described_recipe)
+      end
+      it 'does not includes supermarket recipe' do
+        expect(chef_run).to_not include_recipe('delivery-cluster::setup_supermarket')
       end
     end
   end

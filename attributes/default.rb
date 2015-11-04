@@ -195,9 +195,7 @@ default['delivery-cluster']['splunk']['password']        = nil
 default['delivery-cluster']['splunk']['flavor']          = 'c3.large'
 
 # Supermarket Server
-default['delivery-cluster']['supermarket']['hostname'] = nil
-default['delivery-cluster']['supermarket']['fqdn']     = nil
-default['delivery-cluster']['supermarket']['flavor']   = 'c3.large'
+default['delivery-cluster']['supermarket'] = nil
 
 # => Build Nodes
 default['delivery-cluster']['builders']['hostname_prefix']     = nil
