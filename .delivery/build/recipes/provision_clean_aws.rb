@@ -193,7 +193,7 @@ ruby_block "Get Services" do
           node.run_state['delivery']['stage']['data']['cluster_details']['build_nodes'] << ipaddress
         elsif previous_line =~ /^supermarket-server\S+:/
           ipaddress = line.match(/^  ipaddress: (\S+)$/)[1]
-          node.run_state['delivery']['stage']['data']['cluster_details']['supermarket_server'] ||= []
+          node.run_state['delivery']['stage']['data']['cluster_details']['supermarket_server'] ||= {}
           node.run_state['delivery']['stage']['data']['cluster_details']['supermarket_server']['url'] = ipaddress
         elsif line =~ /^chef_server_url.*$/
           ipaddress = URI(line.match(/^chef_server_url\s+'(\S+)'$/)[1]).host
