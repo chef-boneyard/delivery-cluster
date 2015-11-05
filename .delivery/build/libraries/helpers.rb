@@ -59,9 +59,10 @@ end
 # to be able to manipulate old Delivery Clusters
 def critical_cluster_dirs
   [
-    'clients',
-    'nodes',
-    '.chef/delivery-cluster-data-*'
+    'repo/clients',
+    'repo/nodes',
+    'repo/.chef/delivery-cluster-data-*',
+    'cache/.chef/trusted_certs'
   ]
 end
 

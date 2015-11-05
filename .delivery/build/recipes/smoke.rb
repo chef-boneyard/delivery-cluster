@@ -24,7 +24,7 @@ if node['delivery']['change']['pipeline'] != 'master' &&
     action :download
   end
 
-  delivery_rspec_block "Smoke Test Delivery Cluster" do
+  delivery_rspec_block 'Smoke Test Delivery Cluster' do
     block do
       require 'watir-webdriver'
       require 'phantomjs'
@@ -55,8 +55,8 @@ if node['delivery']['change']['pipeline'] != 'master' &&
       describe 'Chef Server' do
         before { @browser.goto chef_details['url'] }
 
-        it "login page is available" do
-          expect(@browser.url).not_to eql("about:blank")
+        it 'login page is available' do
+          expect(@browser.url).not_to eql('about:blank')
         end
       end
 
@@ -66,21 +66,21 @@ if node['delivery']['change']['pipeline'] != 'master' &&
           expect(@browser.text).to include("delivery #{delivery_details['version']}")
         end
 
-        it "login page is available" do
+        it 'login page is available' do
           @browser.goto delivery_details['url']
-          expect(@browser.url).not_to eql("about:blank")
+          expect(@browser.url).not_to eql('about:blank')
         end
       end
 
       describe 'Supermarket Server' do
-        it "login page is available" do
+        it 'login page is available' do
           @browser.goto supermarket_details['url']
-          expect(@browser.url).not_to eql("about:blank")
+          expect(@browser.url).not_to eql('about:blank')
         end
 
-        it "can access cookbooks-directory" do
+        it 'can access cookbooks-directory' do
           @browser.goto "#{supermarket_details['url']}/cookbooks-directory"
-          expect(@browser.text).to include("Cookbooks")
+          expect(@browser.text).to include('Cookbooks')
         end
       end
     end

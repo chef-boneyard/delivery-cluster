@@ -18,17 +18,16 @@
 # limitations under the License.
 #
 
-chef_gem "chef-rewind"
+chef_gem 'chef-rewind'
 require 'chef/rewind'
 
 cluster_name     = "#{node['delivery']['change']['stage']}_#{node['delivery']['change']['pipeline']}"
-path             = node['delivery']['workspace']['repo']
 cache            = node['delivery']['workspace']['cache']
 delivery_version = get_delivery_versions[1]
 
-include_recipe "build::provision_clean_aws"
+include_recipe 'build::provision_clean_aws'
 
-rewind "template[Create Environment Template]" do
+rewind 'template[Create Environment Template]' do
   variables(
     :delivery_license => "#{cache}/delivery.license",
     :delivery_version => delivery_version,

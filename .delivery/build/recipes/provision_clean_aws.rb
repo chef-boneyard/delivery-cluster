@@ -20,11 +20,12 @@
 
 delivery_secrets = get_project_secrets
 cluster_name     = "#{node['delivery']['change']['stage']}_#{node['delivery']['change']['pipeline']}"
+root             = node['delivery']['workspace']['root']
 path             = node['delivery']['workspace']['repo']
 cache            = node['delivery']['workspace']['cache']
 
-ssh_private_key_path =  File.join(cache, '.ssh', "chef-delivery-cluster")
-ssh_public_key_path  =  File.join(cache, '.ssh', "chef-delivery-cluster.pub")
+ssh_private_key_path =  File.join(cache, '.ssh', 'chef-delivery-cluster')
+ssh_public_key_path  =  File.join(cache, '.ssh', 'chef-delivery-cluster.pub')
 
 directory File.join(cache, '.ssh')
 directory File.join(cache, '.aws')
@@ -44,12 +45,12 @@ file ssh_public_key_path do
   mode '0644'
 end
 
-template "Create Environment Template" do
+template 'Create Environment Template' do
   path File.join(path, "environments/#{cluster_name}.json")
   source 'environment.json.erb'
   variables(
     :delivery_license => "#{cache}/delivery.license",
-    :delivery_version => "latest",
+    :delivery_version => 'latest',
     :cluster_name => cluster_name
   )
 end
@@ -64,8 +65,8 @@ template File.join(cache, '.aws/config') do
 end
 
 s3_file File.join(cache, 'delivery.license') do
-  remote_path "licenses/delivery-internal.license"
-  bucket "delivery-packages"
+  remote_path 'licenses/delivery-internal.license'
+  bucket 'delivery-packages'
   aws_access_key_id delivery_secrets['access_key_id']
   aws_secret_access_key delivery_secrets['secret_access_key']
   action :create
@@ -79,9 +80,12 @@ end
 # The gem deps will be installed on a `cache` directory
 ruby_block 'Setup Prerequisites' do
   block do
-    puts shell_out!("rake setup:prerequisites[#{cache}/.chefdk]",
-                    :environment => {'CHEF_ENV' => cluster_name},
-                    :cwd => path).stdout
+    shell_out!(
+      "rake setup:prerequisites[#{cache}/.chefdk]",
+      :environment => { 'CHEF_ENV' => cluster_name },
+      :live_stream => STDOUT,
+      :cwd => path
+    )
   end
 end
 
@@ -97,17 +101,17 @@ end
 # TODO: We need to figure a better way to do this
 ruby_block 'Destroy old Delivery Cluster' do
   block do
-    restore_cluster_data(path)
-    destroy_all = shell_out(
-                    "rake destroy:all",
-                    :cwd => path,
-                    :timeout => cluster_timeout,
-                    :environment => {
-                      'CHEF_ENV' => cluster_name,
-                      'AWS_CONFIG_FILE' => "#{cache}/.aws/config"
-                    }
-                  )
-    puts destroy_all.stdout
+    restore_cluster_data(root)
+    shell_out(
+      'rake destroy:all',
+      :cwd => path,
+      :timeout => cluster_timeout,
+      :live_stream => STDOUT,
+      :environment => {
+        'CHEF_ENV' => cluster_name,
+        'AWS_CONFIG_FILE' => "#{cache}/.aws/config"
+      }
+    )
   end
 end
 
@@ -133,16 +137,15 @@ ruby_block 'Create a new Delivery Cluster' do
     times = 0
     until 5 < times
       setup_cluster = shell_out(
-                        "rake setup:cluster",
+                        'rake setup:cluster',
                         :cwd => path,
                         :timeout => cluster_timeout,
+                        :live_stream => STDOUT,
                         :environment => {
                           'CHEF_ENV' => cluster_name,
                           'AWS_CONFIG_FILE' => "#{cache}/.aws/config"
                         }
                       )
-      # Printing the output
-      puts setup_cluster.stdout
 
       # If we completed the cluster setup, break the loop
       break if setup_cluster.exitstatus.eql?(0)
@@ -157,20 +160,28 @@ ruby_block 'Create a new Delivery Cluster' do
     end
 
     # Finally we backup the cluster data
-    backup_cluster_data(path)
+    backup_cluster_data(root)
   end
 end
 
 # Print the Delivery Credentials
 ruby_block 'print-delivery-credentials' do
   block do
-    puts shell_out!("rake info:delivery_creds", :cwd => path).stdout
+    shell_out!(
+      'rake info:delivery_creds',
+      :cwd => path,
+      :live_stream => STDOUT
+    )
   end
 end
 
-ruby_block "Get Services" do
+ruby_block 'Get Services' do
   block do
-    list_services = shell_out("rake info:list_core_services", :cwd => path)
+    list_services = shell_out(
+                      'rake info:list_core_services',
+                      :cwd => path,
+                      :live_stream => STDOUT
+                    )
 
     # Print Services
     puts list_services.stdout
