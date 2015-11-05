@@ -80,7 +80,7 @@ if node['delivery']['change']['pipeline'] != 'master' &&
 
         it "can access cookbooks-directory" do
           @browser.goto "#{supermarket_details['url']}/cookbooks-directory"
-          expect(@browser.text).to include("Cookbooks Directory - Chef Supermarket")
+          expect(@browser.text).to include("Cookbooks")
         end
       end
     end
