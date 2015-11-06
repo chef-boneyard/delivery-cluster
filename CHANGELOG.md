@@ -1,3 +1,16 @@
+v0.3.29 (2015-11-06)
+-------------------
+- Enable Supermarket in the Pipeline
+- Wrap activate_supermarket in a ruby_block
+- Include Supermarket in setup cluster
+- Remove delivery-cli artifact question in Rake
+- Set mode to 0644 on delivery.license
+- Bundle update chef-provisioning-aws to 1.6.0
+- Fixing the pipeline with chef-ingredient 0.12.0
+- Adopt delivery-base and update dependencies
+- Ensure all files get uploaded to the build-nodes
+- Pipeline improvements
+
 v0.3.20 (2015-09-30)
 -------------------
 - Enabled `aws_tags` for AWS Driver
