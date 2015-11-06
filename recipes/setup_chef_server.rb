@@ -82,7 +82,7 @@ end
 
 machine_file '/tmp/delivery.pem' do
   machine chef_server_hostname
-  mode '0644'                                     # This is not working.
+  mode '0644' # This is not working.
   local_path "#{cluster_data_dir}/delivery.pem"
   action :download
 end

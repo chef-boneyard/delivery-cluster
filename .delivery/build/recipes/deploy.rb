@@ -23,21 +23,19 @@ require 'chef/rewind'
 
 if node['delivery']['change']['pipeline'] == 'upgrade_aws' &&
   node['delivery']['change']['stage'] == 'acceptance'
-  cluster_name     = "#{node['delivery']['change']['stage']}_#{node['delivery']['change']['pipeline']}"
-  path             = node['delivery']['workspace']['repo']
-  cache            = node['delivery']['workspace']['cache']
+  root = node['delivery']['workspace']['root']
 
   ruby_block 'Restore Provisioning Bits' do
     block do
-      restore_cluster_data(path)
+      restore_cluster_data(root)
     end
   end
 
-  include_recipe "build::provision_clean_aws"
+  include_recipe 'build::provision_clean_aws'
 
-  unwind "ruby_block[Destroy old Delivery Cluster]"
+  unwind 'ruby_block[Destroy old Delivery Cluster]'
 
-  rewind "ruby_block[Create a new Delivery Cluster]" do
-    name "Upgrade Delivery Cluster"
+  rewind 'ruby_block[Create a new Delivery Cluster]' do
+    name 'Upgrade Delivery Cluster'
   end
 end

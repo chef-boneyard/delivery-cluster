@@ -27,7 +27,7 @@ describe DeliveryCluster::Provisioning::Vagrant do
   let(:vagrant_object) { described_class.new(node) }
 
   before do
-    node.default['delivery-cluster']   = {}
+    node.default['delivery-cluster'] = {}
     node.default['ipaddress'] = '10.1.1.2'
   end
 

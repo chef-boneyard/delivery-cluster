@@ -99,7 +99,7 @@ default['delivery-cluster']['trusted_certs'] = {}
 #    be put on the server prior to installation of Delivery otherwise
 #    `delivery-ctl reconfigure` will fail. Specify the path to a local copy of the
 #    delivery.license file to have it synced to your Delivery Server.
-default['delivery-cluster']['delivery']['license_file'] = nil   # delivery.license
+default['delivery-cluster']['delivery']['license_file'] = nil
 
 # Specific attributes
 # => Delivery Server
@@ -131,13 +131,13 @@ default['delivery-cluster']['delivery']['pass-through'] = true
 #   => ldap_attr_login
 #   => ldap_attr_mail
 #   => ldap_attr_full_name
-default['delivery-cluster']['delivery']['ldap']        = {}
+default['delivery-cluster']['delivery']['ldap'] = {}
 
 # => Custom config
 #
 # Specify custom configuration for the `delivery.rb` like:
 # => default['delivery-cluster']['delivery']['config'] = "nginx['enable_non_ssl'] = true"
-default['delivery-cluster']['delivery']['config']      =  nil
+default['delivery-cluster']['delivery']['config'] = nil
 
 # Delivery Artifacts
 #
