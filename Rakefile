@@ -159,9 +159,9 @@ namespace :setup do
       exit 1
     end
 
-    options['cluster_id']   = ask_for('Cluster ID', environment)
+    options['cluster_id'] = ask_for('Cluster ID', environment)
     puts "\nAvailable Drivers: [ aws | ssh | vagrant ]"
-    options['driver_name']  = ask_for('Driver Name', 'vagrant')
+    options['driver_name'] = ask_for('Driver Name', 'vagrant')
 
     puts "\nDriver Information [#{options['driver_name']}]".pink
     options['driver'] = {}
@@ -171,8 +171,8 @@ namespace :setup do
       # TODO: Ask for 'password' when we are ready to encrypt it
       loop do
         puts 'Key File Not Found'.red if options['driver']['key_file']
-        options['driver']['key_file']   = ask_for('Key File',
-                                                  File.expand_path('~/.vagrant.d/insecure_private_key'))
+        options['driver']['key_file'] = ask_for('Key File',
+                                                File.expand_path('~/.vagrant.d/insecure_private_key'))
         break if File.exist?(options['driver']['key_file'])
       end
     when 'aws'
@@ -189,8 +189,8 @@ namespace :setup do
       options['driver']['use_private_ip_for_ssh'] = ask_for('Use private ip for ssh?', 'yes')
       loop do
         puts 'Key File Not Found'.red if options['driver']['key_file']
-        options['driver']['key_file']   = ask_for('Key File',
-                                                  File.expand_path('~/.vagrant.d/insecure_private_key'))
+        options['driver']['key_file'] = ask_for('Key File',
+                                                File.expand_path('~/.vagrant.d/insecure_private_key'))
         break if File.exist?(options['driver']['key_file'])
       end
     else
@@ -224,7 +224,7 @@ namespace :setup do
         options['chef_server']['network'] = ask_for('Network Config', ":private_network, {:ip => '33.33.33.10'}")
         options['chef_server']['vm_memory'] = ask_for('Memory allocation', '2048')
         options['chef_server']['vm_cpus'] = ask_for('Cpus allocation', '2')
-       end
+      end
     end
 
     puts "\nDelivery Server".pink
@@ -452,7 +452,7 @@ task :help do
   puts "\nDelivery Cluster Helper".green
   puts "\nSetup Tasks".pink
   puts 'The following tasks should be used to set up your cluster'.yellow
-  Rake.application.options.show_tasks = :tasks  # this solves sidewaysmilk problem
+  Rake.application.options.show_tasks = :tasks # this solves sidewaysmilk problem
   Rake.application.options.show_task_pattern = /setup/
   Rake.application.display_tasks_and_comments
   puts "\nMaintenance Tasks".pink
