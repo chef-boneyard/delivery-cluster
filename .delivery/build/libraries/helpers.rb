@@ -49,7 +49,10 @@ def restore_cluster_data(path)
   critical_cluster_dirs.each do |dir|
     src = ::Dir.glob(::File.join(backup_dir, dir))
     dst = ::File.dirname(::File.join(path, dir))
-    FileUtils.mv(src, dst) unless src.empty?
+    unless src.empty?
+      FileUtils.mkdir_p(dst)
+      FileUtils.mv(src, dst)
+    end
   end
 end
 
@@ -62,7 +65,7 @@ def critical_cluster_dirs
     'repo/clients',
     'repo/nodes',
     'repo/.chef/delivery-cluster-data-*',
-    'cache/.chef/trusted_certs'
+    'cache/.chef/trusted_certs/*'
   ]
 end
 
