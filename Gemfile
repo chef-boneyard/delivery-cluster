@@ -13,3 +13,7 @@ gem 'chef-provisioning-ssh',     git: 'https://github.com/chef/chef-provisioning
                                  ref: 'master'
 gem 'chef-provisioning-vagrant', git: 'https://github.com/chef/chef-provisioning-vagrant.git',
                                  ref: 'master'
+group :development do
+  gem 'pry-byebug'
+  gem 'pry-stack_explorer'
+end

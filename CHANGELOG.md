@@ -1,4 +1,4 @@
-v0.3.29 (2015-11-06)
+v0.3.30 (2015-11-06)
 -------------------
 - Enable Supermarket in the Pipeline
 - Wrap activate_supermarket in a ruby_block
