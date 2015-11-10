@@ -436,8 +436,12 @@ end
 namespace :info do
   desc 'Show Delivery admin credentials'
   task :delivery_creds do
-    # TODO: Use Ruby to read these files so its cross-platform
-    system 'cat .chef/delivery-cluster-data/*.creds'
+    puts 'Delivery Server'.yellow
+    puts File.read(Dir['.chef/delivery-cluster-data/*.creds'].first)
+    puts "\nChef Server".yellow
+    puts 'Username: delivery'
+    puts 'Password: delivery'
+    system 'grep chef_server_url .chef/delivery-cluster-data/knife.rb'
   end
 
   desc 'List all your core services'
