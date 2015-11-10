@@ -276,8 +276,8 @@ namespace :setup do
       when 'ssh'
         options['supermarket']['host'] = ask_for('Host', '33.33.33.13')
       when 'vagrant'
-        options['supermarket']['vm_hostname'] = 'analytics.example.com'
-        options['supermarket']['network'] = ask_for('Network Config', ":private_network, {:ip => '33.33.33.12'}")
+        options['supermarket']['vm_hostname'] = 'supermarket.example.com'
+        options['supermarket']['network'] = ask_for('Network Config', ":private_network, {:ip => '33.33.33.13'}")
         options['supermarket']['vm_memory'] = ask_for('Memory allocation', '2048')
         options['supermarket']['vm_cpus'] = ask_for('Cpus allocation', '2')
       end
