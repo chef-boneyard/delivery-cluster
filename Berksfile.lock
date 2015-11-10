@@ -1,12 +1,12 @@
 DEPENDENCIES
   chef-ingredient
     git: https://github.com/chef-cookbooks/chef-ingredient.git
-    revision: 3e3bf96eedae6d23316355bcd00f813a21d8f9ce
+    revision: fea4071c5376a9269424d754d4585826e0b3b110
   chef-server-12
     path: vendor/chef-server-12
   chef-splunk
     git: https://github.com/chef-cookbooks/chef-splunk.git
-    revision: 26c19ae1c82e79f66b6b25f62c27fd10b60daf03
+    revision: 97dddd18fb90aae82b2649d8df8c8f47b0eb828c
   delivery-base
     git: https://github.com/chef-cookbooks/delivery-base.git
     revision: 5f17ebe8fd2be9f345bbfb125084122fe81d4468
@@ -15,29 +15,27 @@ DEPENDENCIES
     metadata: true
   delivery_build
     git: https://github.com/chef-cookbooks/delivery_build.git
-    revision: 2b7a7fa6d8160d17a5d7cc0e8151f985452e5133
+    revision: 44548aa88a00c24cf88d91b53c8488b8bef082e6
   hostsfile
   packagecloud
     git: https://github.com/afiune/packagecloud-cookbook.git
     revision: 67bf110bb28cf030ce5867f581135e2c012a81ff
 
 GRAPH
-  7-zip (1.0.2)
-    windows (>= 1.2.2)
-  apt (2.8.2)
+  apt (2.9.2)
   apt-chef (0.2.0)
     apt (>= 0.0.0)
   build-essential (2.2.4)
-  chef-ingredient (0.12.0)
-    apt-chef (~> 0.2.0)
-    yum-chef (~> 0.2.0)
+  chef-ingredient (0.13.1)
+    apt-chef (>= 0.2.0)
+    yum-chef (>= 0.2.0)
   chef-server-12 (0.1.8)
     chef-ingredient (>= 0.0.0)
     hostsfile (>= 0.0.0)
   chef-splunk (1.4.0)
     chef-vault (>= 1.0.4)
   chef-sugar (3.1.1)
-  chef-vault (1.3.1)
+  chef-vault (1.3.2)
   chef_handler (1.2.0)
   delivery-base (0.1.0)
     push-jobs (>= 0.0.0)
@@ -50,44 +48,30 @@ GRAPH
     git (>= 0.0.0)
     packagecloud (>= 0.0.0)
     yum (>= 0.0.0)
-  delivery_build (0.3.2)
+  delivery_build (0.4.7)
     build-essential (>= 0.0.0)
+    chef-ingredient (>= 0.0.0)
     chef-sugar (>= 0.0.0)
     delivery-base (>= 0.0.0)
     git (>= 0.0.0)
-    omnibus (>= 0.0.0)
-    packagecloud (>= 0.0.0)
-  dmg (2.2.2)
+  dmg (2.3.0)
   git (4.3.4)
     build-essential (>= 0.0.0)
     dmg (>= 0.0.0)
     windows (>= 0.0.0)
     yum-epel (>= 0.0.0)
-  homebrew (1.13.0)
-    build-essential (>= 2.1.2)
   hostsfile (2.4.5)
-  omnibus (2.7.2)
-    7-zip (~> 1.0)
-    build-essential (~> 2.0)
-    chef-sugar (~> 3.0)
-    homebrew (~> 1.9)
-    windows (~> 1.30)
-    windows-sdk (~> 1.0)
-    wix (~> 1.1)
   packagecloud (0.1.0)
-  push-jobs (2.4.2)
+  push-jobs (2.6.2)
     chef-ingredient (>= 0.0.0)
     runit (>= 0.0.0)
     windows (>= 0.0.0)
-  runit (1.7.2)
+  runit (1.7.4)
     packagecloud (>= 0.0.0)
-  windows (1.38.2)
+  windows (1.38.3)
     chef_handler (>= 0.0.0)
-  windows-sdk (1.0.2)
-  wix (1.1.0)
-    windows (>= 1.2.2)
-  yum (3.7.1)
-  yum-chef (0.2.0)
-    yum (~> 3.2)
-  yum-epel (0.6.3)
+  yum (3.8.2)
+  yum-chef (0.2.1)
+    yum (>= 3.2)
+  yum-epel (0.6.4)
     yum (~> 3.2)
