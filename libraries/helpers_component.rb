@@ -49,10 +49,10 @@ module DeliveryCluster
       # @param component [String] The name of the component
       # @param component_node [Chef::Node] The Chef Node object of the component
       # @return [String]
-      def component_fqdn(node, component, component_node = component_node(node, component))
+      def component_fqdn(node, component, c_node = component_node(node, component))
         node['delivery-cluster'][component]['fqdn'] ||
           node['delivery-cluster'][component]['host'] ||
-          DeliveryCluster::Helpers.get_ip(node, component_node)
+          DeliveryCluster::Helpers.get_ip(node, c_node)
       end
 
       # Returns the Hostname of the component
