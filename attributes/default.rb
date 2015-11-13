@@ -147,7 +147,7 @@ default['delivery-cluster']['delivery']['config'] = nil
 # => default['delivery-cluster']['delivery']['version'] = 'latest'
 #    Note that will pull from stable packages; if you want to pull from
 #    bleeding edge, untested packages (not recommended!), please use
-# => default['delivery-cluster']['delivery']['packagecloud-channel'] = 'current'
+# => default['delivery-cluster']['delivery']['release-channel'] = 'current'
 #
 # 2) If you want to deploy a specific version you can also specify it
 #    To see the available versions go to:
@@ -161,7 +161,7 @@ default['delivery-cluster']['delivery']['config'] = nil
 # => default['delivery-cluster']['delivery']['checksum']  = '123456789ABCDEF'
 #
 default['delivery-cluster']['delivery']['version'] = 'latest'
-default['delivery-cluster']['delivery']['packagecloud-channel'] = 'stable'
+default['delivery-cluster']['delivery']['release-channel'] = 'stable'
 
 # Use Chef Artifactory (Requires Chef VPN)
 default['delivery-cluster']['delivery']['artifactory'] = false

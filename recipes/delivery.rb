@@ -53,7 +53,7 @@ if node['delivery-cluster']['delivery']['artifact']
 else
   chef_ingredient 'delivery' do
     version node['delivery-cluster']['delivery']['version']
-    channel node['delivery-cluster']['delivery']['packagecloud-channel'].to_sym
+    channel node['delivery-cluster']['delivery']['release-channel'].to_sym
     notifies :run, 'execute[reconfigure delivery]'
     action :upgrade
   end
