@@ -20,43 +20,11 @@
 # limitations under the License.
 #
 
-# Specific Artifact to Install
-if node['delivery-cluster']['delivery']['artifact']
-
-  # Temporal pkg file
-  case node['platform_family']
-  when 'rhel'
-    pkg = "#{Chef::Config[:file_cache_path]}/delivery.rpm"
-  when 'debian'
-    pkg = "#{Chef::Config[:file_cache_path]}/delivery.deb"
-  end
-
-  # Install a local/remote artifact
-  if node['delivery-cluster']['delivery']['artifact'] =~ %r{^\/}
-    pkg = node['delivery-cluster']['delivery']['artifact']
-  else
-    remote_file pkg do
-      checksum node['delivery-cluster']['delivery']['checksum'] if node['delivery-cluster']['delivery']['checksum']
-      source node['delivery-cluster']['delivery']['artifact']
-      owner 'root'
-      group 'root'
-      mode '0644'
-    end
-  end
-
-  package 'delivery' do
-    source pkg
-    version node['delivery-cluster']['delivery']['version']
-    provider Chef::Provider::Package::Dpkg if node['platform_family'].eql?('debian')
-    notifies :run, 'execute[reconfigure delivery]'
-  end
-else
-  chef_ingredient 'delivery' do
-    version node['delivery-cluster']['delivery']['version']
-    channel node['delivery-cluster']['delivery']['release-channel'].to_sym
-    notifies :run, 'execute[reconfigure delivery]'
-    action :upgrade
-  end
+chef_ingredient 'delivery' do
+  version node['delivery-cluster']['delivery']['version']
+  channel node['delivery-cluster']['delivery']['release-channel'].to_sym
+  notifies :run, 'execute[reconfigure delivery]'
+  action :upgrade
 end
 
 directory '/etc/delivery' do
@@ -89,8 +57,3 @@ execute 'reconfigure delivery' do
   command '/opt/delivery/bin/delivery-ctl reconfigure'
   action :nothing
 end
-
-# other cookbooks/recipes might want to know whether
-# delivery got upgraded
-# TODO: How do we know "package" upgrade was executed
-# node.run_state['delivery_upgraded'] = upgrade
