@@ -1,7 +1,7 @@
 DEPENDENCIES
   chef-ingredient
     git: https://github.com/chef-cookbooks/chef-ingredient.git
-    revision: fea4071c5376a9269424d754d4585826e0b3b110
+    revision: d8639254ce1bb99992c447fd2d56f52d04e4da2e
   chef-server-12
     path: vendor/chef-server-12
   chef-splunk
@@ -17,16 +17,13 @@ DEPENDENCIES
     git: https://github.com/chef-cookbooks/delivery_build.git
     revision: 44548aa88a00c24cf88d91b53c8488b8bef082e6
   hostsfile
-  packagecloud
-    git: https://github.com/afiune/packagecloud-cookbook.git
-    revision: 67bf110bb28cf030ce5867f581135e2c012a81ff
 
 GRAPH
   apt (2.9.2)
   apt-chef (0.2.0)
     apt (>= 0.0.0)
   build-essential (2.2.4)
-  chef-ingredient (0.13.1)
+  chef-ingredient (0.14.0)
     apt-chef (>= 0.2.0)
     yum-chef (>= 0.2.0)
   chef-server-12 (0.1.8)
@@ -39,14 +36,13 @@ GRAPH
   chef_handler (1.2.0)
   delivery-base (0.1.0)
     push-jobs (>= 0.0.0)
-  delivery-cluster (0.3.31)
+  delivery-cluster (0.4.0)
     apt (>= 0.0.0)
     chef-ingredient (>= 0.0.0)
     chef-server-12 (>= 0.0.0)
     chef-splunk (>= 0.0.0)
     delivery_build (>= 0.0.0)
     git (>= 0.0.0)
-    packagecloud (>= 0.0.0)
     yum (>= 0.0.0)
   delivery_build (0.4.7)
     build-essential (>= 0.0.0)
@@ -62,7 +58,7 @@ GRAPH
     yum-epel (>= 0.0.0)
   hostsfile (2.4.5)
   packagecloud (0.1.0)
-  push-jobs (2.6.2)
+  push-jobs (2.6.3)
     chef-ingredient (>= 0.0.0)
     runit (>= 0.0.0)
     windows (>= 0.0.0)

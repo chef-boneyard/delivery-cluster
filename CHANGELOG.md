@@ -1,3 +1,7 @@
+v0.4.0 (2015-11-13)
+-------------------
+- Remove packagecloud dependency in favor of chef-ingredient
+
 v0.3.30 (2015-11-06)
 -------------------
 - Enable Supermarket in the Pipeline

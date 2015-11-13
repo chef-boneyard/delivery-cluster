@@ -10,9 +10,6 @@ cookbook 'hostsfile'
 cookbook 'chef-ingredient',
   git: 'https://github.com/chef-cookbooks/chef-ingredient.git'
 
-cookbook 'packagecloud',
-  git: 'https://github.com/afiune/packagecloud-cookbook.git'
-
 cookbook 'chef-splunk',
   git: 'https://github.com/chef-cookbooks/chef-splunk.git'
 
