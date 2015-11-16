@@ -26,6 +26,10 @@ end
 # Package dependency in phantomjs for Linux systems
 package 'libfontconfig1' unless platform_family?('windows')
 
+# Make sure we can compile gems with make
+include_recipe 'build-essential::default'
+package 'libxml2-dev' unless platform_family?('windows')
+
 include_recipe 'delivery-sugar-extras::default'
 include_recipe 'delivery-red-pill::default'
 include_recipe 'delivery-truck::default'
