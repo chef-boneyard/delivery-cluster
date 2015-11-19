@@ -19,21 +19,33 @@
         "organization": "<%= @cluster_name %>",
         "existing": false,
         "flavor": "c3.xlarge",
-        "aws_tags": { "cool_tag": "awesomeness" }
+        "aws_tags": {
+          "cool_tag": "awesomeness",
+          "X-Project": "delivery"
+        }
       },
       "delivery": {
         "version": "<%= @delivery_version %>",
         "enterprise": "<%= @cluster_name %>",
         "artifactory": false,
         "license_file": "<%= @delivery_license %>",
-        "flavor": "c3.xlarge"
+        "flavor": "c3.xlarge",
+        "aws_tags": {
+          "X-Project": "delivery"
+        }
       },
       "supermarket": {
-        "flavor": "c3.large"
+        "flavor": "c3.large",
+        "aws_tags": {
+          "X-Project": "delivery"
+        }
       },
       "builders": {
         "count": "1",
-        "flavor": "c3.large"
+        "flavor": "c3.large",
+        "aws_tags": {
+          "X-Project": "delivery"
+        }
       }
     }
   }
