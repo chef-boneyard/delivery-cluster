@@ -114,7 +114,8 @@ module SharedCommonData
       },
       'builders' => {
         'count' => '3',
-        'delivery-cli' => {}
+        'delivery-cli' => {},
+        'push-client' => { 'version' => nil }
       }
     }
   end

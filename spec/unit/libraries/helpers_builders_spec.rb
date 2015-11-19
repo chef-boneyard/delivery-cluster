@@ -127,7 +127,7 @@ describe DeliveryCluster::Helpers::Builders do
   context 'when an additional_run_list' do
     context 'is NOT specified' do
       it 'returns the right run_list for the builders' do
-        expect(described_class.builder_run_list(node)).to eq %w( recipe[push-jobs] recipe[delivery_build] )
+        expect(described_class.builder_run_list(node)).to eq %w( recipe[delivery-base] recipe[delivery_build] )
       end
     end
 
@@ -138,7 +138,7 @@ describe DeliveryCluster::Helpers::Builders do
       end
 
       it 'returns the right run_list for the builders plus the additional run_list' do
-        expect(described_class.builder_run_list(node)).to eq %w( recipe[push-jobs] recipe[delivery_build] recipe[awesome-cookbook] )
+        expect(described_class.builder_run_list(node)).to eq %w( recipe[delivery-base] recipe[delivery_build] recipe[awesome-cookbook] )
       end
     end
   end
@@ -282,6 +282,7 @@ describe DeliveryCluster::Helpers::Builders do
                 'delivery_build' => {
                   'trusted_certs' => result_internal_plus_global_certs
                 })
+            node.default['delivery-cluster']['builders']['push-client']['version'] = '9.9.9'
           end
 
           it 'returns lots of attributes deep merged' do
@@ -290,6 +291,11 @@ describe DeliveryCluster::Helpers::Builders do
                 'delivery-cli' => delivery_actifact,
                 'chefdk_version' => chefdk_version,
                 'trusted_certs' => result_internal_plus_global_certs
+              },
+              'delivery-base' => {
+                'push-client' => {
+                  'version' => '9.9.9'
+                }
               }
             )
           end

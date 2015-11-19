@@ -67,9 +67,7 @@ module DeliveryCluster
         unless node['delivery-cluster']['builders']['delivery-cli'].empty?
           builders_attributes = Chef::Mixin::DeepMerge.hash_only_merge(
             builders_attributes,
-            'delivery_build' => {
-              'delivery-cli' => node['delivery-cluster']['builders']['delivery-cli']
-            }
+            delivery_build_attr(node, 'delivery-cli')
           )
         end
 
@@ -77,8 +75,16 @@ module DeliveryCluster
         if node['delivery-cluster']['builders']['chefdk_version']
           builders_attributes = Chef::Mixin::DeepMerge.hash_only_merge(
             builders_attributes,
-            'delivery_build' => {
-              'chefdk_version' => node['delivery-cluster']['builders']['chefdk_version']
+            delivery_build_attr(node, 'chefdk_version')
+          )
+        end
+
+        # Add push-client version if it exist
+        if node['delivery-cluster']['builders']['push-client']['version']
+          builders_attributes = Chef::Mixin::DeepMerge.hash_only_merge(
+            builders_attributes,
+            'delivery-base' => {
+              'push-client' => node['delivery-cluster']['builders']['push-client']
             }
           )
         end
@@ -90,6 +96,11 @@ module DeliveryCluster
         )
 
         builders_attributes
+      end
+
+      # Quick delivery_build attribute generator
+      def delivery_build_attr(node, id)
+        { 'delivery_build' => { id => node['delivery-cluster']['builders'][id] } }
       end
 
       # Generate trusted_certs attributes to send to `delivery_build` cookbook
@@ -154,7 +165,7 @@ module DeliveryCluster
       # @return [Array] builders run_list
       def builder_run_list(node)
         @builder_run_list ||= begin
-          base_builder_run_list = %w( recipe[push-jobs] recipe[delivery_build] )
+          base_builder_run_list = %w( recipe[delivery-base] recipe[delivery_build] )
           base_builder_run_list += node['delivery-cluster']['builders']['additional_run_list'] if node['delivery-cluster']['builders']['additional_run_list']
           base_builder_run_list
         end

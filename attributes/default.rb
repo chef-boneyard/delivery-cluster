@@ -209,3 +209,6 @@ default['delivery-cluster']['builders']['delivery-cli']        = {}
 
 # Optional ChefDK version
 default['delivery-cluster']['builders']['chefdk_version']      = nil
+
+# Optional push-client version
+default['delivery-cluster']['builders']['push-client']['version'] = nil
