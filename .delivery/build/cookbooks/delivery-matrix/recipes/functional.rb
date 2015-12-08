@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: delivery-red-pill
+# Cookbook Name:: delivery-matrix
 # Recipe:: functional
 #
 # Copyright:: Copyright (c) 2015 Chef Software, Inc.
@@ -27,7 +27,7 @@ if node['delivery']['change']['pipeline'] == 'master' && node['delivery']['chang
 
   ## Monitor pipeline acceptance stages for completion.
   delivery_in_parallel do
-    matrix = node['delivery-red-pill']['acceptance']['matrix']
+    matrix = node['delivery-matrix']['acceptance']['matrix']
     ## If you do not use .ech here the lazy evals get all messed up and evaluate
     ## each iteration as if it was the last.
     matrix.each do |vector|
@@ -38,5 +38,5 @@ if node['delivery']['change']['pipeline'] == 'master' && node['delivery']['chang
     end
   end
 elsif node['delivery']['change']['pipeline'] != 'master'
-  include_recipe "delivery-red-pill::_include_build_cb_recipe"
+  include_recipe "delivery-matrix::_include_build_cb_recipe"
 end

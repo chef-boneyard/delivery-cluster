@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'delivery-red-pill::default' do
+describe 'delivery-matrix::default' do
 
   # Serverspec examples can be found at
   # http://serverspec.org/resource_types.html

@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: delivery-red-pill
+# Cookbook Name:: delivery-matrix
 # Recipe:: _include_build_cb_recipe
 #
 # Copyright:: Copyright (c) 2015 Chef Software, Inc.

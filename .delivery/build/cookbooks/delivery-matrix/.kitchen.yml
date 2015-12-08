@@ -12,5 +12,5 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[delivery-red-pill::default]
+      - recipe[delivery-matrix::default]
     attributes:
