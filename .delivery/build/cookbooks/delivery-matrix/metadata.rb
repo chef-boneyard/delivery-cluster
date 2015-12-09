@@ -1,0 +1,10 @@
+name             'delivery-matrix'
+maintainer       'The Authors'
+maintainer_email 'you@example.com'
+license          'all_rights'
+description      'Installs/Configures delivery-matrix'
+long_description 'Installs/Configures delivery-matrix'
+version          '1.0.0'
+
+depends 'delivery-truck'
+depends 'delivery-sugar'

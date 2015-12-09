@@ -1,6 +1,6 @@
 #
-# Cookbook Name:: delivery-red-pill
-# Recipe:: deploy
+# Cookbook Name:: delivery-matrix
+# Recipe:: default
 #
 # Copyright:: Copyright (c) 2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
@@ -17,9 +17,3 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-include_recipe 'delivery-truck::deploy'
-
-if node['delivery']['change']['pipeline'] != 'master'
-  include_recipe "delivery-red-pill::_include_build_cb_recipe"
-end

@@ -1,12 +1,12 @@
 #
-# Cookbook Name:: delivery-red-pill
+# Cookbook Name:: delivery-matrix
 # Spec:: default
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
 require 'spec_helper'
 
-describe 'delivery-red-pill::default' do
+describe 'delivery-matrix::deploy' do
 
   context 'When all attributes are default, on an unspecified platform' do
 

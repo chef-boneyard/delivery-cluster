@@ -1,6 +1,5 @@
 .kitchen/
 clients*
-cookbooks/
 data_bags/
 environments*
 workspace*
