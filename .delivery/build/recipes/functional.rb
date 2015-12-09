@@ -19,11 +19,11 @@
 #
 
 # ## By including this recipe we trigger a matrix of acceptance envs specified
-# ## in the node attribute node['delivery-red-pill']['acceptance']['matrix']
+# ## in the node attribute node['delivery-matrix']['acceptance']['matrix']
 
 if node['delivery']['change']['pipeline'] == 'master'
   if node['delivery']['change']['stage'] == 'acceptance'
-    include_recipe "delivery-red-pill::functional"
+    include_recipe "delivery-matrix::functional"
   elsif node['delivery']['change']['stage'] == 'delivered'
     # This was lifted from delivery-truck publish
     secrets = get_project_secrets
