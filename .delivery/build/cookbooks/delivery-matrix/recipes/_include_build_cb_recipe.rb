@@ -1,6 +1,6 @@
 #
-# Cookbook Name:: build
-# Recipe:: provision
+# Cookbook Name:: delivery-matrix
+# Recipe:: _include_build_cb_recipe
 #
 # Copyright:: Copyright (c) 2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
@@ -18,8 +18,7 @@
 # limitations under the License.
 #
 
-# By including this recipe we trigger a matrix of acceptance envs specified
-# in the node attribute node['delivery-matrix']['acceptance']['matrix']
-if node['delivery']['change']['stage'] == 'acceptance'
-  include_recipe 'delivery-matrix::provision'
-end
+build_cb_name = node['delivery']['config']['build_cookbook']['name'] || node['delivery']['config']['build_cookbook']
+phase = node['delivery']['change']['phase']
+pipeline = node['delivery']['change']['pipeline']
+include_recipe "#{build_cb_name}::#{phase}_#{pipeline}"

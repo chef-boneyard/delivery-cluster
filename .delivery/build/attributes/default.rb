@@ -1,3 +1,3 @@
-include_attribute 'delivery-red-pill'
+include_attribute 'delivery-matrix'
 
-default['delivery-red-pill']['acceptance']['matrix'] = ["clean_aws", "upgrade_aws"]
+default['delivery-matrix']['acceptance']['matrix'] = ["clean_aws", "upgrade_aws"]
