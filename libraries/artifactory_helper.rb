@@ -21,6 +21,7 @@
 #
 
 require 'net/http'
+require 'chef/application'
 
 # Artifact Helper
 #
