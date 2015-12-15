@@ -36,7 +36,7 @@ GRAPH
   chef_handler (1.2.0)
   delivery-base (0.1.0)
     push-jobs (>= 0.0.0)
-  delivery-cluster (0.4.0)
+  delivery-cluster (0.5.0)
     apt (>= 0.0.0)
     chef-ingredient (>= 0.0.0)
     chef-server-12 (>= 0.0.0)

@@ -81,7 +81,7 @@ end
 ruby_block 'Setup Prerequisites' do
   block do
     shell_out!(
-      "rake setup:prerequisites[#{cache}/.chefdk]",
+      "rake setup:prerequisites",
       :environment => { 'CHEF_ENV' => cluster_name },
       :live_stream => STDOUT,
       :cwd => path

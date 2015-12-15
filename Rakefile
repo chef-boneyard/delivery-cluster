@@ -92,7 +92,7 @@ end
 
 def chef_zero(recipe)
   validate_environment
-  succeed = system "bundle exec chef-client -z -o delivery-cluster::#{recipe} -E #{ENV['CHEF_ENV']}"
+  succeed = system "chef exec chef-client -z -o delivery-cluster::#{recipe} -E #{ENV['CHEF_ENV']}"
   fail 'Failed executing ChefZero run' unless succeed
 end
 
@@ -312,15 +312,9 @@ namespace :setup do
   end
 
   desc 'Install all the prerequisites on you system'
-  task :prerequisites, [:cache] do |_t, args|
-    opts = ''
-    # Assemble Gem dependencies on a `cache` directory if specified
-    opts = "--path #{args[:cache]}" if args[:cache]
-    msg 'Install rubygem dependencies locally'
-    system "bundle install #{opts}"
-
+  task :prerequisites do
     msg 'Download and vendor the necessary cookbooks locally'
-    system 'bundle exec berks vendor cookbooks'
+    system 'chef exec berks vendor cookbooks'
 
     msg "Current chef environment => #{ENV['CHEF_ENV_FILE']}"
     validate_environment
@@ -381,12 +375,10 @@ namespace :maintenance do
     Rake::Task['setup:cluster'].invoke
   end
 
-  desc 'Update gem & cookbook dependencies'
+  desc 'Update cookbook dependencies'
   task :update do
-    msg 'Updating gems locally'
-    system 'bundle update'
     msg 'Updating cookbooks locally'
-    system 'bundle exec berks update'
+    system 'chef exec berks update'
   end
 
   desc 'Clean the cache'

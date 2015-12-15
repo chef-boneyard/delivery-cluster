@@ -15,7 +15,6 @@
     "publish"
   ],
   "build_nodes": {
-    "lint": ["name:builder-*-1.delivery.chef.co"],
     "provision": ["name:builder-*-2.delivery.chef.co AND platform_version:14.04"],
     "deploy": ["name:builder-*-2.delivery.chef.co AND platform_version:14.04"],
     "functional": ["name:builder* AND platform_version:14.04 NOT name:builder-*-2.delivery.chef.co"]
