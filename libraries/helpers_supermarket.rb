@@ -54,11 +54,9 @@ module DeliveryCluster
 
         Chef::Mixin::DeepMerge.hash_only_merge(
           DeliveryCluster::Helpers::Component.component_attributes(node, 'supermarket'),
-          {
-            'chef-server-12' => {
-              'supermarket' => {
-                'fqdn' => supermarket_server_fqdn(node)
-              }
+          'chef-server-12' => {
+            'supermarket' => {
+              'fqdn' => supermarket_server_fqdn(node)
             }
           }
         )

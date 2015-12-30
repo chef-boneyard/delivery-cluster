@@ -26,7 +26,7 @@ describe DeliveryCluster::Helpers::ChefServer do
   let(:node) { Chef::Node.new }
   let(:extra_chef_server_attributes) do
     {
-      'passed-something' => ['super', 'cool'],
+      'passed-something' => %w(super cool),
       'a-custom-attribute' => 'carambola',
       'port-for-something' => 1234
     }

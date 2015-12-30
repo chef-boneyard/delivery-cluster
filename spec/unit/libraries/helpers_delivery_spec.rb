@@ -37,7 +37,7 @@ describe DeliveryCluster::Helpers::Delivery do
   end
   let(:extra_delivery_attributes) do
     {
-      'passed-something' => ['super', 'cool'],
+      'passed-something' => %w(super cool),
       'a-custom-attribute' => 'carambola',
       'port-for-something' => 1234
     }
@@ -154,7 +154,10 @@ describe DeliveryCluster::Helpers::Delivery do
     before { node.default['delivery-cluster']['delivery']['attributes'] = extra_delivery_attributes }
 
     it 'returns extra delivery attributes deep merged' do
-      expect(described_class.delivery_server_attributes(node)).to eq()
+      attr_rendered = described_class.delivery_server_attributes(node)
+      expect(attr_rendered.key(%w(super cool))).to eq('passed-something')
+      expect(attr_rendered.key('carambola')).to eq('a-custom-attribute')
+      expect(attr_rendered.key(1234)).to eq('port-for-something')
     end
   end
 end
