@@ -51,13 +51,17 @@ module DeliveryCluster
       # @return [Hash] Analytics attributes for a machine resource
       def analytics_server_attributes(node)
         return {} unless analytics_enabled?(node)
-        {
-          'chef-server-12' => {
-            'analytics' => {
-              'fqdn' => analytics_server_fqdn(node)
+
+        Chef::Mixin::DeepMerge.hash_only_merge(
+          DeliveryCluster::Helpers::Component.component_attributes(node, 'analytics'),
+          {
+            'chef-server-12' => {
+              'analytics' => {
+                'fqdn' => analytics_server_fqdn(node)
+              }
             }
           }
-        }
+        )
       end
 
       # Activate the Analytics Component

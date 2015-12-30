@@ -61,7 +61,7 @@ module DeliveryCluster
       # @param node [Chef::Node] Chef Node object
       # @return [Hash] Builders attributes for a machine resource
       def builders_attributes(node)
-        builders_attributes = {}
+        builders_attributes = DeliveryCluster::Helpers::Component.component_attributes(node, 'builders')
 
         # Add cli attributes if they exists
         unless node['delivery-cluster']['builders']['delivery-cli'].empty?
