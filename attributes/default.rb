@@ -109,6 +109,7 @@ default['delivery-cluster']['delivery']['chef_server']     = nil
 default['delivery-cluster']['delivery']['flavor']          = 't2.medium'
 default['delivery-cluster']['delivery']['enterprise']      = 'my_enterprise'
 default['delivery-cluster']['delivery']['recipes']         = []
+default['delivery-cluster']['delivery']['attributes']      = {}
 
 # => pass-through
 # This attribute will allow the Artifact pass-through the delivery server.
@@ -154,7 +155,7 @@ default['delivery-cluster']['delivery']['config'] = nil
 #      * https://packagecloud.io/chef/current
 # => default['delivery-cluster']['delivery']['version']   = '0.3.9'
 #
-default['delivery-cluster']['delivery']['version'] = 'latest'
+default['delivery-cluster']['delivery']['version']         = 'latest'
 default['delivery-cluster']['delivery']['release-channel'] = 'stable'
 
 # Use Chef Artifactory (Requires Chef VPN)
@@ -167,6 +168,7 @@ default['delivery-cluster']['chef-server']['organization'] = 'my_enterprise'
 default['delivery-cluster']['chef-server']['flavor']       = 't2.medium'
 default['delivery-cluster']['chef-server']['existing']     = false
 default['delivery-cluster']['chef-server']['recipes']      = []
+default['delivery-cluster']['chef-server']['attributes']   = {}
 
 # By changing the chef-zero run port we can now enable opscode-reporting
 # See .chef/knife.rb
@@ -177,10 +179,11 @@ default['delivery-cluster']['chef-server']['enable-reporting'] = true
 # In order to provision an Analytics Server you have to first provision the entire
 # `delivery-cluster::setup` after that, you are ready to run `delivery-cluster::setup_analytics`
 # that will activate analytics.
-default['delivery-cluster']['analytics']['hostname']  = nil
-default['delivery-cluster']['analytics']['fqdn']      = nil
-default['delivery-cluster']['analytics']['features']  = 'false'
-default['delivery-cluster']['analytics']['flavor']    = 't2.medium'
+default['delivery-cluster']['analytics']['hostname']   = nil
+default['delivery-cluster']['analytics']['fqdn']       = nil
+default['delivery-cluster']['analytics']['features']   = 'false'
+default['delivery-cluster']['analytics']['flavor']     = 't2.medium'
+default['delivery-cluster']['analytics']['attributes'] = {}
 
 # Splunk Server
 default['delivery-cluster']['splunk']['hostname_prefix'] = nil
@@ -196,6 +199,7 @@ default['delivery-cluster']['builders']['hostname_prefix']     = nil
 default['delivery-cluster']['builders']['count']               = 3
 default['delivery-cluster']['builders']['flavor']              = 't2.small'
 default['delivery-cluster']['builders']['additional_run_list'] = []
+default['delivery-cluster']['builders']['attributes']          = {}
 
 # Optional Hash of delivery-cli
 #
