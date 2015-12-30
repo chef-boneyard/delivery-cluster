@@ -24,6 +24,13 @@ require 'spec_helper'
 
 describe DeliveryCluster::Helpers::ChefServer do
   let(:node) { Chef::Node.new }
+  let(:extra_chef_server_attributes) do
+    {
+      'passed-something' => ['super', 'cool'],
+      'a-custom-attribute' => 'carambola',
+      'port-for-something' => 1234
+    }
+  end
   let(:mock_chef_server_attributes) do
     {
       'delivery' => { 'organization' => 'chefspec' },
@@ -118,12 +125,28 @@ describe DeliveryCluster::Helpers::ChefServer do
         allow(DeliveryCluster::Helpers::Supermarket).to receive(:supermarket_enabled?).and_return(true)
       end
 
-      it 'return the chef-server attributes plus supermarket attributes plust analytics attributes' do
+      it 'return the chef-server attributes plus supermarket attributes plus analytics attributes' do
         expect(described_class.chef_server_attributes(node)).to eq(
           'chef-server-12' => mock_chef_server_attributes
             .merge(mock_supermarket_server_attributes)
             .merge(mock_analytics_server_attributes)
         )
+      end
+
+      context 'plus extra attributes that the user specified' do
+        before do
+          node.default['delivery-cluster']['chef-server']['attributes'] = extra_chef_server_attributes
+        end
+
+        it 'returns all of them plus the extra attributes' do
+          expect(described_class.chef_server_attributes(node)).to eq(
+            extra_chef_server_attributes.merge(
+              'chef-server-12' => mock_chef_server_attributes
+                .merge(mock_supermarket_server_attributes)
+                .merge(mock_analytics_server_attributes)
+            )
+          )
+        end
       end
     end
   end
