@@ -131,6 +131,15 @@ def bool(string)
   end
 end
 
+def validate_input(regex, error_message)
+  input = yield
+  until regex.match input do
+    puts error_message
+    input = yield
+  end
+  input
+end
+
 def ask_for(thing, default = nil)
   thing = "#{thing} [#{default.yellow}]: " if default
   stdin = nil
@@ -224,7 +233,7 @@ namespace :setup do
 
     puts "\nChef Server".pink
     options['chef_server'] = {}
-    options['chef_server']['organization'] = ask_for('Organization Name', environment)
+    options['chef_server']['organization'] = validate_input(/^[a-z0-9][a-z0-9_-]{0,254}$/, 'ERROR: Organization name must be less than 255 characters, contain only a-z, 0-9, _, or -, and not begin with _ or -.'.red) {ask_for('Organization Name', environment)}
     options['chef_server']['existing']     = ask_for('Use existing chef-server?', 'no')
     unless options['chef_server']['existing']
       case options['driver_name']
