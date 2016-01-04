@@ -403,8 +403,42 @@ default['delivery-cluster']['trusted_certs'] = {
 }
 ```
 
-Specific Attributes per Machine
+Passing raw attributes to Components
 ------------
+Every single component in the cluster has the ability to pass raw attributes, this is very
+useful for example to manipulate the behavior of the cookbooks that the mechines will have in
+their run_list. Having said that, you will have available a special attribute per component
+`node['delivery-cluster'][COMPONENT_NAME]['attributes']` that you can inject any raw attribute
+that will be transfer directly to the machine.
+
+Some examples;
+
+* If we have to deny `runit` cookbook to configure a package cloud repo on the build-nodes
+we have to pass the following attribute:
+
+  ```ruby
+  node['delivery-cluster']['builders']['attributes'] = { 'runit' => { 'prefer_local_yum' => true } }
+  ```
+
+* To change the password of the `delivery` user that is created in the chef-server automatically, you
+could do it passing this attribute:
+
+  ```ruby
+  node['delivery-cluster']['delivery']['attributes'] = { 'chef-server-12' => { 'delivery' => { 'password' => 'MY_NEW_PASSWORD' } } }
+  ```
+* Finally, lets imagine you added a special cookbook called `corp-iptables` to create/configure iptables rules
+inside the chef-server, then you want to manipulate it to add some extra rules from this cookbook, then you will
+pass the attributes like this:
+
+  ```ruby
+  node['delivery-cluster']['chef-server']['attributes'] = { 'corp-iptables' => { 'rules' => 'LIST_OF_RULES' } }
+ ```
+
+Specific Attributes per Component
+------------
+
+There are aditional specific attributes per component that you can use to configure your cluster
+in different ways.
 
 ### Chef Server Settings
 
