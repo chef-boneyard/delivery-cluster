@@ -174,18 +174,18 @@ namespace :setup do
 
     options['cluster_id'] = ask_for('Cluster ID', environment)
     puts "\nAvailable Drivers: [ aws | ssh | vagrant ]"
-    options['driver_name'] = ask_for('Driver Name', 'vagrant')
+    options['driver_name'] = ask_for('Driver Name', 'aws')
 
     puts "\nDriver Information [#{options['driver_name']}]".pink
     options['driver'] = {}
     case options['driver_name']
     when 'ssh'
-      options['driver']['ssh_username'] = ask_for('SSH Username', 'vagrant')
+      options['driver']['ssh_username'] = ask_for('SSH Username: ')
       # TODO: Ask for 'password' when we are ready to encrypt it
       loop do
         puts 'Key File Not Found'.red if options['driver']['key_file']
         options['driver']['key_file'] = ask_for('Key File',
-                                                File.expand_path('~/.vagrant.d/insecure_private_key'))
+                                                File.expand_path('~/.ssh/id_rsa.pub'))
         break if File.exist?(options['driver']['key_file'])
       end
     when 'aws'
@@ -199,7 +199,6 @@ namespace :setup do
       options['driver']['ssh_username']           = ask_for('SSH Username', 'vagrant')
       options['driver']['vm_box']                 = ask_for('Box Type: ', 'opscode-centos-6.6')
       options['driver']['image_url']              = ask_for('Box URL: ', 'https://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.6_chef-provisionerless.box')
-      options['driver']['use_private_ip_for_ssh'] = ask_for('Use private ip for ssh?', 'yes')
       loop do
         puts 'Key File Not Found'.red if options['driver']['key_file']
         options['driver']['key_file'] = ask_for('Key File',
@@ -208,7 +207,7 @@ namespace :setup do
       end
     else
       puts 'ERROR: Unsupported Driver.'.red
-      puts 'Available Drivers are [ vagrant | aws | ssh ]'.yellow
+      puts 'Available Drivers are [ aws | ssh | vagrant ]'.yellow
       exit 1
     end
     # Proxy Settings
@@ -225,19 +224,18 @@ namespace :setup do
     puts "\nChef Server".pink
     options['chef_server'] = {}
     options['chef_server']['organization'] = ask_for('Organization Name', environment)
-    options['chef_server']['existing']     = ask_for('Use existing chef-server?', 'no')
-    unless options['chef_server']['existing']
-      case options['driver_name']
-      when 'aws'
-        options['chef_server']['flavor'] = ask_for('Flavor', 'c3.xlarge')
-      when 'ssh'
-        options['chef_server']['host'] = ask_for('Host', '33.33.33.10')
-      when 'vagrant'
-        options['chef_server']['vm_hostname'] = 'chef.example.com'
-        options['chef_server']['network'] = ask_for('Network Config', ":private_network, {:ip => '33.33.33.10'}")
-        options['chef_server']['vm_memory'] = ask_for('Memory allocation', '2048')
-        options['chef_server']['vm_cpus'] = ask_for('Cpus allocation', '2')
-      end
+    case options['driver_name']
+    when 'aws'
+      options['chef_server']['flavor'] = ask_for('Flavor', 'c3.xlarge')
+    when 'ssh'
+      options['chef_server']['existing'] = ask_for('Use existing chef-server?', 'no')
+      options['chef_server']['host'] = ask_for('Host', '33.33.33.10')
+    when 'vagrant'
+      options['chef_server']['existing'] = ask_for('Use existing chef-server?', 'no')
+      options['chef_server']['vm_hostname'] = 'chef.example.com'
+      options['chef_server']['network'] = ask_for('Network Config', ":private_network, {:ip => '33.33.33.10'}")
+      options['chef_server']['vm_memory'] = ask_for('Memory allocation', '2048')
+      options['chef_server']['vm_cpus'] = ask_for('Cpus allocation', '2')
     end
 
     puts "\nDelivery Server".pink
