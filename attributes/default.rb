@@ -142,7 +142,7 @@ default['delivery-cluster']['delivery']['config'] = nil
 
 # Delivery Artifacts
 #
-# There are two ways you can specify the Delivery Artifact
+# There are three ways you can specify the Delivery Artifact
 # 1) If you want to deploy the latest Delivery Build set the version to
 #    'latest' and we will pull it down from `packagecloud`
 # => default['delivery-cluster']['delivery']['version'] = 'latest'
@@ -150,13 +150,19 @@ default['delivery-cluster']['delivery']['config'] = nil
 #    bleeding edge, untested packages (not recommended!), please use
 # => default['delivery-cluster']['delivery']['release-channel'] = 'current'
 #
-# 2) If you want to deploy a specific version you can specify it
+# 2) If you want to deploy a specific version you can also specify it
 #    To see the available versions go to:
 #      * https://packagecloud.io/chef/current
 # => default['delivery-cluster']['delivery']['version']   = '0.3.9'
 #
-default['delivery-cluster']['delivery']['version']         = 'latest'
-default['delivery-cluster']['delivery']['release-channel'] = 'stable'
+# 3) You can also specify the artifact
+#
+# => default['delivery-cluster']['delivery']['version']   = '0.3.7'
+# => default['delivery-cluster']['delivery']['artifact']  = 'http://my.delivery.pkg'
+# => default['delivery-cluster']['delivery']['checksum']  = '123456789ABCDEF'
+#
+default['delivery-cluster']['delivery']['version']          = 'latest'
+default['delivery-cluster']['delivery']['release-channel']  = 'stable'
 
 # Use Chef Artifactory (Requires Chef VPN)
 default['delivery-cluster']['delivery']['artifactory'] = false
