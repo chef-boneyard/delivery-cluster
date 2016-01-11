@@ -130,11 +130,30 @@ module DeliveryCluster
           node['delivery-cluster'][name]
         end
       end
+
+      # Returns the component attributes
+      # In the case of additional attributes specified, if there aren't
+      # we will return an empty Hash
+      #
+      # @param node [Chef::Node] Chef Node object
+      # @param name [String] The name of a component
+      # @return [Hash] of attributes from a component
+      #
+      def component_attributes(node, name)
+        node['delivery-cluster'][name]['attributes']
+      rescue
+        {}
+      end
     end
   end
 
   # Module that exposes multiple helpers
   module DSL
+    # Extra component attributes
+    def component_attributes(component)
+      DeliveryCluster::Helpers::Component.component_attributes(node, component)
+    end
+
     # The component node object
     def component_node(component)
       DeliveryCluster::Helpers::Component.component_node(node, component)

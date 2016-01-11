@@ -51,13 +51,15 @@ module DeliveryCluster
       # @return [Hash] Supermarket attributes for a machine resource
       def supermarket_server_attributes(node)
         return {} unless supermarket_enabled?(node)
-        {
+
+        Chef::Mixin::DeepMerge.hash_only_merge(
+          DeliveryCluster::Helpers::Component.component_attributes(node, 'supermarket'),
           'chef-server-12' => {
             'supermarket' => {
               'fqdn' => supermarket_server_fqdn(node)
             }
           }
-        }
+        )
       end
 
       # Generates the Supermarket Server Config

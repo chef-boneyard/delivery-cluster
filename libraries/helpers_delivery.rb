@@ -61,10 +61,13 @@ module DeliveryCluster
         # Configuring the chef-server url for delivery
         node.set['delivery-cluster']['delivery']['chef_server'] = DeliveryCluster::Helpers::ChefServer.chef_server_url(node) unless node['delivery-cluster']['delivery']['chef_server']
 
-        # Ensure we havea Delivery FQDN
+        # Ensure we have a Delivery FQDN
         node.set['delivery-cluster']['delivery']['fqdn'] = delivery_server_fqdn(node) unless node['delivery-cluster']['delivery']['fqdn']
 
-        { 'delivery-cluster' => node['delivery-cluster'] }
+        Chef::Mixin::DeepMerge.hash_only_merge(
+          { 'delivery-cluster' => node['delivery-cluster'] },
+          DeliveryCluster::Helpers::Component.component_attributes(node, 'delivery')
+        )
       end
 
       # Delivery Artifact

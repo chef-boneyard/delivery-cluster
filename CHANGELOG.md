@@ -1,3 +1,13 @@
+v0.5.2 (2015-12-30)
+-------------------
+- [#175] Allow passing extra attributes to components
+- [#183] Vefiry ChefDK version and Install Prerequisites
+- Get rid of `bundle` in favor of ChefDK
+- Rename delivery-red-pill cookbook to delivery-matrix (build-cookbook)
+- Updated chef-provisioning-aws to 1.7.0
+- Updated delivery_build to 0.4.9
+- Add dependency to build-essentials (build-cookbook)
+
 v0.4.0 (2015-11-13)
 -------------------
 - Remove packagecloud dependency in favor of chef-ingredient

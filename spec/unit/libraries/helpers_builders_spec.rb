@@ -25,6 +25,13 @@ require 'spec_helper'
 describe DeliveryCluster::Helpers::Builders do
   let(:node) { Chef::Node.new }
   let(:chefdk_version) { '0.6.2-1.el6' }
+  let(:extra_builders_attributes) do
+    {
+      'runit' => { 'prefer_local_yum' => true },
+      'custom_behavior' => 'super-cool',
+      'chef_ingredient' => 'custom-custom-custom'
+    }
+  end
   let(:delivery_actifact) do
     {
       'version' => '0.3.0',
@@ -292,6 +299,24 @@ describe DeliveryCluster::Helpers::Builders do
                 'trusted_certs' => result_internal_plus_global_certs
               }
             )
+          end
+
+          context 'plus extra attributes that the user specified' do
+            before do
+              node.default['delivery-cluster']['builders']['attributes'] = extra_builders_attributes
+            end
+
+            it 'returns lots of attributes deep merged plus the extra attributes' do
+              expect(described_class.builders_attributes(node)).to eq(
+                extra_builders_attributes.merge(
+                  'delivery_build' => {
+                    'delivery-cli' => delivery_actifact,
+                    'chefdk_version' => chefdk_version,
+                    'trusted_certs' => result_internal_plus_global_certs
+                  }
+                )
+              )
+            end
           end
         end
       end

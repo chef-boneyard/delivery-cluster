@@ -35,6 +35,13 @@ describe DeliveryCluster::Helpers::Delivery do
       'checksum' => 'checksumchecksumchecksumchecksumchecksumchecksum'
     }
   end
+  let(:extra_delivery_attributes) do
+    {
+      'passed-something' => %w(super cool),
+      'a-custom-attribute' => 'carambola',
+      'port-for-something' => 1234
+    }
+  end
   before do
     node.default['delivery-cluster'] = cluster_data
     allow(FileUtils).to receive(:touch).and_return(true)
@@ -140,6 +147,17 @@ describe DeliveryCluster::Helpers::Delivery do
 
     it 'raise an error' do
       expect { described_class.delivery_server_hostname(node) }.to raise_error(RuntimeError)
+    end
+  end
+
+  context 'when extra delivery attributes are specified' do
+    before { node.default['delivery-cluster']['delivery']['attributes'] = extra_delivery_attributes }
+
+    it 'returns extra delivery attributes deep merged' do
+      attr_rendered = described_class.delivery_server_attributes(node)
+      expect(attr_rendered.key(%w(super cool))).to eq('passed-something')
+      expect(attr_rendered.key('carambola')).to eq('a-custom-attribute')
+      expect(attr_rendered.key(1234)).to eq('port-for-something')
     end
   end
 end
