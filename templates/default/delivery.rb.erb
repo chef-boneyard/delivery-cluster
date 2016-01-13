@@ -6,6 +6,8 @@ delivery['chef_server']      = "<%= node['delivery-cluster']['delivery']['chef_s
 
 delivery['default_search']   = "<%= @default_search %>"
 
+insights['enable'] = <%= node['delivery-cluster']['delivery']['insights']['enable'] %>
+
 <% node['delivery-cluster']['delivery']['ldap'].each do |attr, value| -%>
 delivery['<%= attr %>'] = <%= value.pretty_inspect -%>
 <% end -%>
