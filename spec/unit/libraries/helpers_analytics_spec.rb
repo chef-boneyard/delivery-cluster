@@ -36,8 +36,8 @@ describe DeliveryCluster::Helpers::Analytics do
     node.default['delivery-cluster'] = cluster_data
     allow(FileUtils).to receive(:touch).and_return(true)
     allow(Chef::Node).to receive(:load).and_return(Chef::Node.new)
-    allow(Chef::REST).to receive(:new).and_return(rest)
-    allow_any_instance_of(Chef::REST).to receive(:get_rest)
+    allow(Chef::ServerAPI).to receive(:new).and_return(rest)
+    allow_any_instance_of(Chef::ServerAPI).to receive(:get)
       .with('nodes/analytics-server-chefspec')
       .and_return(analytics_node)
   end
