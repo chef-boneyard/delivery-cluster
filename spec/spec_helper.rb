@@ -22,6 +22,8 @@
 
 require 'chefspec'
 require 'chefspec/berkshelf'
+require 'chef/node'
+require 'chef/server_api'
 
 TOPDIR = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 $LOAD_PATH << File.expand_path(File.dirname(__FILE__))
