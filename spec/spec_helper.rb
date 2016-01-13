@@ -119,10 +119,10 @@ module SharedCommonData
     }
   end
   let(:rest) do
-    Chef::REST.new(
+    Chef::ServerAPI.new(
       'https://chef-server.chef.io/organizations/chefspec',
-      'delivery',
-      File.expand_path('spec/unit/mock/delivery.pem')
+      client_name: 'delivery',
+      signing_key_filename: File.expand_path('spec/unit/mock/delivery.pem')
     )
   end
   let(:chef_node) do

@@ -60,7 +60,7 @@ describe DeliveryCluster::Helpers::Builders do
     node.default['delivery-cluster'] = cluster_data
     allow(FileUtils).to receive(:touch).and_return(true)
     allow(Chef::Node).to receive(:load).and_return(Chef::Node.new)
-    allow(Chef::REST).to receive(:new).and_return(rest)
+    allow(Chef::ServerAPI).to receive(:new).and_return(rest)
   end
 
   context 'when the builder hostname' do
@@ -160,7 +160,7 @@ describe DeliveryCluster::Helpers::Builders do
 
   describe '#trusted_certs_attributes' do
     before do
-      allow_any_instance_of(Chef::REST).to receive(:get_rest)
+      allow_any_instance_of(Chef::ServerAPI).to receive(:get)
         .with('nodes/delivery-server-chefspec')
         .and_return(delivery_node)
     end
@@ -179,7 +179,7 @@ describe DeliveryCluster::Helpers::Builders do
       before do
         allow(DeliveryCluster::Helpers::Supermarket).to receive(:supermarket_enabled?)
           .and_return(true)
-        allow_any_instance_of(Chef::REST).to receive(:get_rest)
+        allow_any_instance_of(Chef::ServerAPI).to receive(:get)
           .with('nodes/supermarket-server-chefspec')
           .and_return(supermarket_node)
       end
