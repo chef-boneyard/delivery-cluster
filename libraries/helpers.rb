@@ -95,9 +95,13 @@ module DeliveryCluster
     # Get the IP address from the Provisioning Abstraction
     #
     # @param node [Chef::Node] Chef Node object
-    # @param machine_node [Chef::Node] Chef Node object of the machine we would like to get the ip
+    # @param machine_node [Chef::Node][Hash] Chef Node or Hash object of the machine we would like
+    #                                        to get the ipaddress from
     # @return [String] ip address
     def get_ip(node, machine_node)
+      # Inflate the `machine_node` is it is a Hash Object
+      # In the future we might need to substitute this for `Chef::Node.from_hash`
+      machine_node = Chef::Node.json_create(machine_node) if machine_node.class.eql?(Hash)
       provisioning(node).ipaddress(machine_node)
     end
 
