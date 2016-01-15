@@ -20,10 +20,10 @@
 # limitations under the License.
 #
 
+require 'spec_helper'
 require 'chef/node'
 require 'chef/run_context'
 require 'chef/event_dispatch/dispatcher'
-require 'spec_helper'
 
 # Storing the state of the Chef VPN
 vpn_state = validate_vpn
