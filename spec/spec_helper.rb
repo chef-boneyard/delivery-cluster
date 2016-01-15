@@ -129,50 +129,65 @@ module SharedCommonData
   end
   let(:chef_node) do
     {
-      'delivery-cluster' => {
-        'driver' => 'ssh',
-        'ssh' => {}
+      'normal' => {
+        'delivery-cluster' => {
+          'driver' => 'ssh',
+          'ssh' => {}
+        },
+        'ipaddress' => '10.1.1.1'
       },
-      'ipaddress' => '10.1.1.1'
+      'recipes' => []
     }
   end
   let(:delivery_node) do
     {
-      'delivery-cluster' => {
-        'driver' => 'vagrant',
-        'vagrant' => {}
+      'normal' => {
+        'delivery-cluster' => {
+          'driver' => 'vagrant',
+          'vagrant' => {}
+        },
+        'ipaddress' => '10.1.1.2'
       },
-      'ipaddress' => '10.1.1.2'
+      'recipes' => []
     }
   end
   let(:supermarket_node) do
     {
-      'delivery-cluster' => {
-        'driver' => 'aws',
-        'aws' => {}
+      'normal' => {
+        'delivery-cluster' => {
+          'driver' => 'aws',
+          'aws' => {}
+        },
+        'ec2' => {
+          'local_ipv4' => '10.1.1.3'
+        },
+        'ipaddress' => '10.1.1.3'
       },
-      'ec2' => {
-        'local_ipv4' => '10.1.1.3'
-      },
-      'ipaddress' => '10.1.1.3'
+      'recipes' => []
     }
   end
   let(:analytics_node) do
     {
-      'delivery-cluster' => {
-        'driver' => 'ssh',
-        'ssh' => {}
+      'normal' => {
+        'delivery-cluster' => {
+          'driver' => 'ssh',
+          'ssh' => {}
+        },
+        'ipaddress' => '10.1.1.4'
       },
-      'ipaddress' => '10.1.1.4'
+      'recipes' => []
     }
   end
   let(:splunk_node) do
     {
-      'delivery-cluster' => {
-        'driver' => 'vagrant',
-        'vagrant' => {}
+      'normal' => {
+        'delivery-cluster' => {
+          'driver' => 'vagrant',
+          'vagrant' => {}
+        },
+        'ipaddress' => '10.1.1.5'
       },
-      'ipaddress' => '10.1.1.5'
+      'recipes' => []
     }
   end
 end
