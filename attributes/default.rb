@@ -176,6 +176,13 @@ default['delivery-cluster']['chef-server']['existing']     = false
 default['delivery-cluster']['chef-server']['recipes']      = []
 default['delivery-cluster']['chef-server']['attributes']   = {}
 
+# Password of the Delivery User in the Chef Server
+#
+# Change this attribute to customize the password of the delivery user
+# inside the chef-server. If nil, `delivery-cluster` will automatically
+# generate a random password.
+default['delivery-cluster']['chef-server']['delivery_password'] = nil
+
 # By changing the chef-zero run port we can now enable opscode-reporting
 # See .chef/knife.rb
 default['delivery-cluster']['chef-server']['enable-reporting'] = true
