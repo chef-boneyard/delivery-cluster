@@ -128,40 +128,52 @@ module SharedCommonData
     )
   end
   let(:chef_node) do
-    n = Chef::Node.new
-    n.default['delivery-cluster']['driver'] = 'ssh'
-    n.default['delivery-cluster']['ssh'] = {}
-    n.default['ipaddress'] = '10.1.1.1'
-    n
+    {
+      'delivery-cluster' => {
+        'driver' => 'ssh',
+        'ssh' => {}
+      },
+      'ipaddress' => '10.1.1.1'
+    }
   end
   let(:delivery_node) do
-    n = Chef::Node.new
-    n.default['delivery-cluster']['driver'] = 'vagrant'
-    n.default['delivery-cluster']['vagrant'] = {}
-    n.default['ipaddress'] = '10.1.1.2'
-    n
+    {
+      'delivery-cluster' => {
+        'driver' => 'vagrant',
+        'vagrant' => {}
+      },
+      'ipaddress' => '10.1.1.2'
+    }
   end
   let(:supermarket_node) do
-    n = Chef::Node.new
-    n.default['delivery-cluster']['driver'] = 'aws'
-    n.default['delivery-cluster']['aws'] = {}
-    n.default['ec2']['local_ipv4'] = '10.1.1.3'
-    n.default['ipaddress'] = '10.1.1.3'
-    n
+    {
+      'delivery-cluster' => {
+        'driver' => 'aws',
+        'aws' => {}
+      },
+      'ec2' => {
+        'local_ipv4' => '10.1.1.3'
+      },
+      'ipaddress' => '10.1.1.3'
+    }
   end
   let(:analytics_node) do
-    n = Chef::Node.new
-    n.default['delivery-cluster']['driver'] = 'ssh'
-    n.default['delivery-cluster']['ssh'] = {}
-    n.default['ipaddress'] = '10.1.1.4'
-    n
+    {
+      'delivery-cluster' => {
+        'driver' => 'ssh',
+        'ssh' => {}
+      },
+      'ipaddress' => '10.1.1.4'
+    }
   end
   let(:splunk_node) do
-    n = Chef::Node.new
-    n.default['delivery-cluster']['driver'] = 'vagrant'
-    n.default['delivery-cluster']['vagrant'] = {}
-    n.default['ipaddress'] = '10.1.1.5'
-    n
+    {
+      'delivery-cluster' => {
+        'driver' => 'vagrant',
+        'vagrant' => {}
+      },
+      'ipaddress' => '10.1.1.5'
+    }
   end
 end
 
