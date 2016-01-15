@@ -20,6 +20,7 @@
 # limitations under the License.
 #
 require 'chef/server_api'
+require 'chef/node'
 
 module DeliveryCluster
   module Helpers
@@ -36,11 +37,15 @@ module DeliveryCluster
       # @param component [String] The name of the component
       # @return node [Chef::Node] Chef Node object
       def component_node(node, component)
-        Chef::ServerAPI.new(
-          DeliveryCluster::Helpers::ChefServer.chef_server_config(node)[:chef_server_url],
-          client_name: DeliveryCluster::Helpers::ChefServer.chef_server_config(node)[:options][:client_name],
-          signing_key_filename: DeliveryCluster::Helpers::ChefServer.chef_server_config(node)[:options][:signing_key_filename]
-        ).get("nodes/#{component_hostname(node, component)}")
+        # Inflate the Hash returned from Chef::ServerAPI
+        # In the future we might need to substitute this for `Chef::Node.from_hash`
+        Chef::Node.json_create(
+          Chef::ServerAPI.new(
+            DeliveryCluster::Helpers::ChefServer.chef_server_config(node)[:chef_server_url],
+            client_name: DeliveryCluster::Helpers::ChefServer.chef_server_config(node)[:options][:client_name],
+            signing_key_filename: DeliveryCluster::Helpers::ChefServer.chef_server_config(node)[:options][:signing_key_filename]
+          ).get("nodes/#{component_hostname(node, component)}")
+        )
       end
 
       # Returns the FQDN of the component

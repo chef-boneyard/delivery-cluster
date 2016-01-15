@@ -29,6 +29,14 @@ describe DeliveryCluster::Helpers do
     node.default['delivery-cluster'] = cluster_data
     allow_any_instance_of(Chef::Node).to receive(:save).and_return(true)
     allow(DeliveryCluster::Helpers).to receive(:node).and_return(node)
+    allow(Chef::Node).to receive(:load).and_return(Chef::Node.new)
+    allow(Chef::ServerAPI).to receive(:new).and_return(rest)
+    allow_any_instance_of(Chef::ServerAPI).to receive(:get)
+      .with('nodes/supermarket-server-chefspec')
+      .and_return(supermarket_node)
+    allow_any_instance_of(Chef::ServerAPI).to receive(:get)
+      .with('nodes/analytics-server-chefspec')
+      .and_return(analytics_node)
   end
 
   it 'return the cluster_id' do
