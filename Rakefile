@@ -200,7 +200,7 @@ namespace :setup do
       loop do
         puts 'Key File Not Found'.red if options['driver']['key_file']
         options['driver']['key_file'] = ask_for('Key File',
-                                                File.expand_path('~/.ssh/id_rsa.pub'))
+                                                File.expand_path('~/.ssh/id_rsa'))
         break if File.exist?(options['driver']['key_file'])
       end
     when 'aws'
