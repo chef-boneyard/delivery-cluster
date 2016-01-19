@@ -288,7 +288,7 @@ Here is an example of how you specify them
       },
       "chef-server": {
         "flavor": "c3.xlarge",
-        "organization": "aws-example"
+        "organization": "aws-example",
         "aws_tags": { "cool_tag": "awesomeness" }
       },
       "analytics": {
@@ -339,7 +339,8 @@ This is an example of how to specify this information
       },
       "chef-server": {
         "ip": "33.33.33.10",
-        "organization": "ssh-example"
+        "organization": "ssh-example",
+        "delivery_password": "SuperSecurePassword"
       },
       "delivery": {
         "ip": "33.33.33.11",
@@ -449,6 +450,7 @@ in different ways.
 | `fqdn`          | The Chef Server FQDN to substitute the IP Address. |
 | `existing`      | Set this to `true` if you want to use an existing chef-server. |
 | `recipes`       | Additional recipes to run on your Chef Server. |
+| `delivery_password` | Password of the Delivery User in the Chef Server. |
 
 ### Delivery Server Settings
 

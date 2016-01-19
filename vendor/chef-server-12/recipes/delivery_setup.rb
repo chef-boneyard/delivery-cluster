@@ -27,6 +27,7 @@ execute "Create #{node['chef-server-12']['delivery']['user']} User" do
             #{node['chef-server-12']['delivery']['email']} \
             #{node['chef-server-12']['delivery']['password']} \
             > #{node['chef-server-12']['delivery']['delivery_pem']}"
+  sensitive true
   not_if "chef-server-ctl user-list | grep -w #{node['chef-server-12']['delivery']['user']}"
   not_if { ::File.exist?(node['chef-server-12']['delivery']['delivery_pem']) }
   notifies :run, "ruby_block[upload delivery key]" if node['chef-server-12']['store_keys_databag']

@@ -24,6 +24,7 @@ require 'spec_helper'
 
 describe DeliveryCluster::Helpers::ChefServer do
   let(:node) { Chef::Node.new }
+  let(:chef_server_delivery_password) { 'SuperSecurePassword' }
   let(:extra_chef_server_attributes) do
     {
       'passed-something' => %w(super cool),
@@ -33,7 +34,10 @@ describe DeliveryCluster::Helpers::ChefServer do
   end
   let(:mock_chef_server_attributes) do
     {
-      'delivery' => { 'organization' => 'chefspec' },
+      'delivery' => {
+        'organization' => 'chefspec',
+        'password' => chef_server_delivery_password
+      },
       'api_fqdn' => 'chef-server.chef.io',
       'store_keys_databag' => false,
       'plugin' => {
@@ -69,16 +73,22 @@ describe DeliveryCluster::Helpers::ChefServer do
       .and_return(analytics_node)
   end
 
-  it 'return chef-server hostname for a machine resource' do
+  it 'returns chef-server hostname for a machine resource' do
     expect(described_class.chef_server_hostname(node)).to eq 'chef-server-chefspec'
   end
 
-  it 'return chef-server fqdn' do
+  it 'returns chef-server fqdn' do
     expect(described_class.chef_server_fqdn(node)).to eq 'chef-server.chef.io'
   end
 
-  it 'return chef-server url' do
-    expect(described_class.chef_server_url(node)).to eq 'https://chef-server.chef.io/organizations/chefspec'
+  it 'returns chef-server fqdn' do
+    expect(described_class.chef_server_fqdn(node)).to eq 'chef-server.chef.io'
+  end
+
+  it 'returns a random delivery password' do
+    random_password = described_class.chef_server_delivery_password(node)
+    expect(described_class.chef_server_delivery_password(node)).to_not eq chef_server_delivery_password
+    expect(described_class.chef_server_delivery_password(node)).to eq random_password
   end
 
   it 'return the chef-server configuration for a machine resource' do
@@ -91,61 +101,69 @@ describe DeliveryCluster::Helpers::ChefServer do
     )
   end
 
-  context 'when there is neither supermarket server nor analytics server' do
-    it 'return just the chef-server attributes' do
-      expect(described_class.chef_server_attributes(node)).to eq('chef-server-12' => mock_chef_server_attributes)
-    end
-  end
-
-  context 'when there is a supermarket server' do
+  context 'with same delivery password' do
+    # Mock the delivery passsword to test other attributes
     before do
-      allow(DeliveryCluster::Helpers::Supermarket).to receive(:supermarket_enabled?).and_return(true)
+      allow(DeliveryCluster::Helpers::ChefServer).to receive(:chef_server_delivery_password)
+        .and_return(chef_server_delivery_password)
     end
 
-    it 'return the chef-server attributes plus supermarket attributes' do
-      expect(described_class.chef_server_attributes(node)).to eq(
-        'chef-server-12' => mock_chef_server_attributes.merge(mock_supermarket_server_attributes)
-      )
-    end
-  end
-
-  context 'when there is a analytics server' do
-    before do
-      allow(DeliveryCluster::Helpers::Analytics).to receive(:analytics_enabled?).and_return(true)
+    context 'when there is neither supermarket server nor analytics server' do
+      it 'return just the chef-server attributes' do
+        expect(described_class.chef_server_attributes(node)).to eq('chef-server-12' => mock_chef_server_attributes)
+      end
     end
 
-    it 'return the chef-server attributes plus analytics attributes' do
-      expect(described_class.chef_server_attributes(node)).to eq(
-        'chef-server-12' => mock_chef_server_attributes.merge(mock_analytics_server_attributes)
-      )
-    end
-
-    context 'AND a supermarket server (both)' do
+    context 'when there is a supermarket server' do
       before do
         allow(DeliveryCluster::Helpers::Supermarket).to receive(:supermarket_enabled?).and_return(true)
       end
 
-      it 'return the chef-server attributes plus supermarket attributes plus analytics attributes' do
+      it 'return the chef-server attributes plus supermarket attributes' do
         expect(described_class.chef_server_attributes(node)).to eq(
-          'chef-server-12' => mock_chef_server_attributes
-            .merge(mock_supermarket_server_attributes)
-            .merge(mock_analytics_server_attributes)
+          'chef-server-12' => mock_chef_server_attributes.merge(mock_supermarket_server_attributes)
+        )
+      end
+    end
+
+    context 'when there is a analytics server' do
+      before do
+        allow(DeliveryCluster::Helpers::Analytics).to receive(:analytics_enabled?).and_return(true)
+      end
+
+      it 'return the chef-server attributes plus analytics attributes' do
+        expect(described_class.chef_server_attributes(node)).to eq(
+          'chef-server-12' => mock_chef_server_attributes.merge(mock_analytics_server_attributes)
         )
       end
 
-      context 'plus extra attributes that the user specified' do
+      context 'AND a supermarket server (both)' do
         before do
-          node.default['delivery-cluster']['chef-server']['attributes'] = extra_chef_server_attributes
+          allow(DeliveryCluster::Helpers::Supermarket).to receive(:supermarket_enabled?).and_return(true)
         end
 
-        it 'returns all of them plus the extra attributes' do
+        it 'return the chef-server attributes plus supermarket attributes plus analytics attributes' do
           expect(described_class.chef_server_attributes(node)).to eq(
-            extra_chef_server_attributes.merge(
-              'chef-server-12' => mock_chef_server_attributes
-                .merge(mock_supermarket_server_attributes)
-                .merge(mock_analytics_server_attributes)
-            )
+            'chef-server-12' => mock_chef_server_attributes
+              .merge(mock_supermarket_server_attributes)
+              .merge(mock_analytics_server_attributes)
           )
+        end
+
+        context 'plus extra attributes that the user specified' do
+          before do
+            node.default['delivery-cluster']['chef-server']['attributes'] = extra_chef_server_attributes
+          end
+
+          it 'returns all of them plus the extra attributes' do
+            expect(described_class.chef_server_attributes(node)).to eq(
+              extra_chef_server_attributes.merge(
+                'chef-server-12' => mock_chef_server_attributes
+                  .merge(mock_supermarket_server_attributes)
+                  .merge(mock_analytics_server_attributes)
+              )
+            )
+          end
         end
       end
     end

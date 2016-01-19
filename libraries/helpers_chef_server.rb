@@ -142,7 +142,7 @@ module DeliveryCluster
 
   # Module that exposes multiple helpers
   module DSL
-    # Encrypted Data Bag Secret
+    # Password of the Delivery User
     def chef_server_delivery_password
       DeliveryCluster::Helpers::ChefServer.chef_server_delivery_password(node)
     end

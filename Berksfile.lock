@@ -26,7 +26,7 @@ GRAPH
   chef-ingredient (0.15.0)
     apt-chef (>= 0.2.0)
     yum-chef (>= 0.2.0)
-  chef-server-12 (0.1.8)
+  chef-server-12 (0.1.9)
     chef-ingredient (>= 0.0.0)
     hostsfile (>= 0.0.0)
   chef-splunk (1.4.0)
