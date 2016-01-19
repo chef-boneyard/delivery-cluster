@@ -1,7 +1,7 @@
 DEPENDENCIES
   chef-ingredient
     git: https://github.com/chef-cookbooks/chef-ingredient.git
-    revision: d8639254ce1bb99992c447fd2d56f52d04e4da2e
+    revision: 245944aea3c6870aed60e97f7b5d94ff035640d8
   chef-server-12
     path: vendor/chef-server-12
   chef-splunk
@@ -23,7 +23,7 @@ GRAPH
   apt-chef (0.2.0)
     apt (>= 0.0.0)
   build-essential (2.2.4)
-  chef-ingredient (0.14.0)
+  chef-ingredient (0.15.0)
     apt-chef (>= 0.2.0)
     yum-chef (>= 0.2.0)
   chef-server-12 (0.1.8)
@@ -36,7 +36,7 @@ GRAPH
   chef_handler (1.2.0)
   delivery-base (0.1.0)
     push-jobs (>= 0.0.0)
-  delivery-cluster (0.5.7)
+  delivery-cluster (0.5.8)
     apt (>= 0.0.0)
     chef-ingredient (>= 0.0.0)
     chef-server-12 (>= 0.0.0)
