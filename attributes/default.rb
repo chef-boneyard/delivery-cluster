@@ -111,9 +111,6 @@ default['delivery-cluster']['delivery']['enterprise']      = 'my_enterprise'
 default['delivery-cluster']['delivery']['recipes']         = []
 default['delivery-cluster']['delivery']['attributes']      = {}
 
-# => Insights
-default['delivery-cluster']['delivery']['insights']['enable'] = false
-
 # => pass-through
 # This attribute will allow the Artifact pass-through the delivery server.
 # This feature requires that the delivery server has VPN Access.

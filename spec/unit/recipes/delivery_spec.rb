@@ -43,9 +43,6 @@ describe 'delivery-cluster::delivery' do
 
   it 'creates /etc/delivery/delivery.rb configuration file' do
     expect(chef_run).to render_file('/etc/delivery/delivery.rb')
-      .with_content { |content|
-        expect(content).to include('delivery_fqdn')
-        expect(content).to include("insights['enable'] = false")
-      }
+      .with_content('delivery_fqdn')
   end
 end
