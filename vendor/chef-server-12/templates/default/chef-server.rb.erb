@@ -1,6 +1,7 @@
 topology '<%= node['chef-server-12']['topology'] %>'
 api_fqdn '<%= node['chef-server-12']['api_fqdn'] %>'
 nginx['server_name'] = '<%= node['chef-server-12']['api_fqdn'] %>'
+<%= node['chef-server-12']['extra_config'] %>
 
 <%
 if node['chef-server-12']['analytics'] || node['chef-server-12']['supermarket']

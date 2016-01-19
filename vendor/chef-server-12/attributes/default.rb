@@ -33,8 +33,9 @@ default['chef-server-12']['plugin']['push-server']  = true
 default['chef-server-12']['plugin']['chef-sync']    = false
 
 # Chef Server Parameters
-default['chef-server-12']['api_fqdn'] = node['ipaddress']
-default['chef-server-12']['topology'] = "standalone"
+default['chef-server-12']['api_fqdn']     = node['ipaddress']
+default['chef-server-12']['topology']     = 'standalone'
+default['chef-server-12']['extra_config'] = nil
 
 # Analytics Server Parameters
 default['chef-server-12']['analytics'] = nil

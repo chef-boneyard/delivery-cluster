@@ -420,11 +420,10 @@ we have to pass the following attribute:
   node['delivery-cluster']['builders']['attributes'] = { 'runit' => { 'prefer_local_yum' => true } }
   ```
 
-* To change the password of the `delivery` user that is created in the chef-server automatically, you
-could do it passing this attribute:
+* To add custom settings to the chef-server configuration (`chef-server.rb`) you can pass them as the following example:
 
   ```ruby
-  node['delivery-cluster']['delivery']['attributes'] = { 'chef-server-12' => { 'delivery' => { 'password' => 'MY_NEW_PASSWORD' } } }
+  node['delivery-cluster']['chef-server']['attributes'] = { 'chef-server-12' => { 'extra_config' => 'notification_email "info@example.com"' } }
   ```
 * Finally, lets imagine you added a special cookbook called `corp-iptables` to create/configure iptables rules
 inside the chef-server, then you want to manipulate it to add some extra rules from this cookbook, then you will
