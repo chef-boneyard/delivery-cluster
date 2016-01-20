@@ -288,7 +288,7 @@ Here is an example of how you specify them
       },
       "chef-server": {
         "flavor": "c3.xlarge",
-        "organization": "aws-example"
+        "organization": "aws-example",
         "aws_tags": { "cool_tag": "awesomeness" }
       },
       "analytics": {
@@ -339,7 +339,8 @@ This is an example of how to specify this information
       },
       "chef-server": {
         "ip": "33.33.33.10",
-        "organization": "ssh-example"
+        "organization": "ssh-example",
+        "delivery_password": "SuperSecurePassword"
       },
       "delivery": {
         "ip": "33.33.33.11",
@@ -420,11 +421,10 @@ we have to pass the following attribute:
   node['delivery-cluster']['builders']['attributes'] = { 'runit' => { 'prefer_local_yum' => true } }
   ```
 
-* To change the password of the `delivery` user that is created in the chef-server automatically, you
-could do it passing this attribute:
+* To add custom settings to the chef-server configuration (`chef-server.rb`) you can pass them as the following example:
 
   ```ruby
-  node['delivery-cluster']['delivery']['attributes'] = { 'chef-server-12' => { 'delivery' => { 'password' => 'MY_NEW_PASSWORD' } } }
+  node['delivery-cluster']['chef-server']['attributes'] = { 'chef-server-12' => { 'extra_config' => 'notification_email "info@example.com"' } }
   ```
 * Finally, lets imagine you added a special cookbook called `corp-iptables` to create/configure iptables rules
 inside the chef-server, then you want to manipulate it to add some extra rules from this cookbook, then you will
@@ -450,6 +450,7 @@ in different ways.
 | `fqdn`          | The Chef Server FQDN to substitute the IP Address. |
 | `existing`      | Set this to `true` if you want to use an existing chef-server. |
 | `recipes`       | Additional recipes to run on your Chef Server. |
+| `delivery_password` | Password of the Delivery User in the Chef Server. |
 
 ### Delivery Server Settings
 

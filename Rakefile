@@ -1,6 +1,7 @@
 require 'fileutils'
 require 'erb'
 require 'json'
+require 'chef-config/config'
 
 # String Colorization
 class String
@@ -93,6 +94,20 @@ end
 def chef_apply(recipe)
   succeed = system "chef exec chef-apply recipes/#{recipe}.rb"
   fail 'Failed executing ChefApply run' unless succeed
+end
+
+def cluster_data_dir
+  File.expand_path('.chef/delivery-cluster-data')
+end
+
+def chef_config
+  knife_rb = File.join(cluster_data_dir, 'knife.rb')
+  ChefConfig::Config.from_file(knife_rb) if File.exist?(knife_rb)
+  ChefConfig::Config
+end
+
+def chef_server_url
+  chef_config[:chef_server_url]
 end
 
 def chefdk_version
@@ -451,18 +466,32 @@ end
 namespace :info do
   desc 'Show Delivery admin credentials'
   task :delivery_creds do
-    puts 'Delivery Server'.yellow
-    puts File.read(Dir['.chef/delivery-cluster-data/*.creds'].first)
-    puts "\nChef Server".yellow
-    puts 'Username: delivery'
-    puts 'Password: delivery'
-    system 'grep chef_server_url .chef/delivery-cluster-data/knife.rb'
+    deliv_password_file = File.join(cluster_data_dir, 'chef_server_delivery_password')
+    if File.exist?(deliv_password_file)
+      puts 'Chef Server'.yellow
+      puts 'Username: delivery'
+      puts "Password: #{File.read(deliv_password_file)}"
+      puts "Chef Server URL: #{chef_server_url}"
+    else
+      fail 'Could not find any cluster configuration. Run `rake setup:cluster` to create one.'.red
+    end
+
+    deliv_creds_file = Dir["#{cluster_data_dir}/*.creds"]
+    unless deliv_creds_file.empty?
+      puts "\nDelivery Server".yellow
+      puts File.read(deliv_creds_file.first)
+    end
   end
 
   desc 'List all your core services'
   task :list_core_services do
-    system 'knife search node \'name:*server* OR name:build-node*\' -a ipaddress'
-    system 'grep chef_server_url .chef/delivery-cluster-data/knife.rb'
+    deliv_password_file = File.join(cluster_data_dir, 'chef_server_delivery_password')
+    if File.exist?(deliv_password_file)
+      system 'knife search node \'name:*server* OR name:build-node*\' -a ipaddress'
+      puts "Chef Server URL: #{chef_server_url}"
+    else
+      fail 'Could not find any cluster configuration. Run `rake setup:cluster` to create one.'.red
+    end
   end
 end
 

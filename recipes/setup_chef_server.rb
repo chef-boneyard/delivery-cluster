@@ -39,6 +39,19 @@ machine chef_server_hostname do
   action :converge
 end
 
+directory cluster_data_dir do
+  recursive true
+  action :create
+end
+
+# Lay down the password of the delivery user in the Chef Server
+file "#{cluster_data_dir}/chef_server_delivery_password" do
+  mode '0644'
+  content chef_server_delivery_password
+  sensitive true
+  action :create
+end
+
 # Now that we've extracted the Chef Server's ipaddress we can fully
 # converge and complete the install.
 machine chef_server_hostname do
@@ -66,11 +79,6 @@ machine_file 'chef-server-cert' do
   machine chef_server_hostname
   local_path lazy { "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_fqdn}.crt" }
   action :download
-end
-
-directory cluster_data_dir do
-  recursive true
-  action :create
 end
 
 # Fetch our client and validator pems from the provisioned Chef Server

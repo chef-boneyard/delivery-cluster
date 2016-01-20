@@ -20,6 +20,8 @@
 # limitations under the License.
 #
 
+require 'securerandom'
+
 module DeliveryCluster
   module Helpers
     #
@@ -28,6 +30,23 @@ module DeliveryCluster
     # This module provides helpers related to the Chef Server Component
     module ChefServer
       module_function
+
+      # Password of the Delivery User
+      # Generate or load the password of the delivery user in the chef-server
+      #
+      # @param node [Chef::Node] Chef Node object
+      # @return [String] password of the delivery user
+      def chef_server_delivery_password(node)
+        @chef_server_delivery_password ||= begin
+          if File.exist?("#{DeliveryCluster::Helpers.cluster_data_dir(node)}/chef_server_delivery_password")
+            File.read("#{DeliveryCluster::Helpers.cluster_data_dir(node)}/chef_server_delivery_password")
+          elsif node['delivery-cluster']['chef-server']['delivery_password']
+            node['delivery-cluster']['chef-server']['delivery_password']
+          else
+            SecureRandom.base64(20)
+          end
+        end
+      end
 
       # Upload a specific cookbook to our chef-server
       #
@@ -78,7 +97,8 @@ module DeliveryCluster
         @chef_server_attributes = {
           'chef-server-12' => {
             'delivery' => {
-              'organization' => node['delivery-cluster']['chef-server']['organization']
+              'organization' => node['delivery-cluster']['chef-server']['organization'],
+              'password' => chef_server_delivery_password(node)
             },
             'api_fqdn' => chef_server_fqdn(node),
             'store_keys_databag' => false,
@@ -122,6 +142,11 @@ module DeliveryCluster
 
   # Module that exposes multiple helpers
   module DSL
+    # Password of the Delivery User
+    def chef_server_delivery_password
+      DeliveryCluster::Helpers::ChefServer.chef_server_delivery_password(node)
+    end
+
     # Return the chef-server config
     def upload_cookbook(cookbook)
       DeliveryCluster::Helpers::ChefServer.upload_cookbook(node, cookbook)
