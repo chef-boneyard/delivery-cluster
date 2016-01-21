@@ -35,6 +35,11 @@ if analytics_enabled?
       action :destroy
     end
 
+    # Delete Trusted Cert
+    file File.join(Chef::Config[:trusted_certs_dir], "#{analytics_server_fqdn}.crt") do
+      action :delete
+    end
+
     # Delete the lock file
     File.delete(analytics_lock_file)
   rescue StandardError => e

@@ -40,6 +40,11 @@ if File.exist?("#{cluster_data_dir}/delivery.pem")
     file File.join(cluster_data_dir, "#{node['delivery-cluster']['delivery']['enterprise']}.creds") do
       action :delete
     end
+
+    # Delete Trusted Cert
+    file File.join(Chef::Config[:trusted_certs_dir], "#{delivery_server_fqdn}.crt") do
+      action :delete
+    end
   rescue StandardError => e
     Chef::Log.warn("We can't proceed to destroy the Delivery Server.")
     Chef::Log.warn("We couldn't get the chef-server Public/Private IP: #{e.message}")
