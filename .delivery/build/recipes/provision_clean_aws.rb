@@ -187,29 +187,36 @@ ruby_block 'Get Services' do
     puts list_services.stdout
 
     if list_services.stdout
-      node.run_state['delivery'] ||= {}
-      node.run_state['delivery']['stage'] ||= {}
-      node.run_state['delivery']['stage']['data'] ||= {}
-      node.run_state['delivery']['stage']['data']['cluster_details'] ||= {}
+      node.run_state['delivery'] = {
+        'stage' => {
+          'data' => {
+            'cluster_details' => {
+              'delivery' => {},
+              'build_nodes' => [],
+              'supermarket_server' => {},
+              'chef_server' => {}
+            }
+          }
+        }
+      }
 
       previous_line = nil
-      list_services.stdout.each_line do |line|
-        if previous_line =~ /^delivery-server\S+:$/
+      out.each_line do |line|
+        case previous_line
+        when /^delivery-server\S+:$/
           ipaddress = line.match(/^  ipaddress: (\S+)$/)[1]
-          node.run_state['delivery']['stage']['data']['cluster_details']['delivery'] ||= {}
           node.run_state['delivery']['stage']['data']['cluster_details']['delivery']['url'] = ipaddress
-        elsif previous_line =~ /^build-node\S+:/
+        when /^build-node\S+:/
           ipaddress = line.match(/^  ipaddress: (\S+)$/)[1]
-          node.run_state['delivery']['stage']['data']['cluster_details']['build_nodes'] ||= []
           node.run_state['delivery']['stage']['data']['cluster_details']['build_nodes'] << ipaddress
-        elsif previous_line =~ /^supermarket-server\S+:/
+        when /^supermarket-server\S+:/
           ipaddress = line.match(/^  ipaddress: (\S+)$/)[1]
-          node.run_state['delivery']['stage']['data']['cluster_details']['supermarket_server'] ||= {}
           node.run_state['delivery']['stage']['data']['cluster_details']['supermarket_server']['url'] = ipaddress
-        elsif line =~ /^chef_server_url.*$/
-          ipaddress = URI(line.match(/^chef_server_url\s+'(\S+)'$/)[1]).host
-          node.run_state['delivery']['stage']['data']['cluster_details']['chef_server'] ||= {}
-          node.run_state['delivery']['stage']['data']['cluster_details']['chef_server']['url'] = ipaddress
+        else
+          if line =~ /^Chef Server URL.*$/
+            ipaddress = URI(line.match(/^Chef Server URL:\s+(\S+)$/)[1]).host
+            node.run_state['delivery']['stage']['data']['cluster_details']['chef_server']['url'] = ipaddress
+          end
         end
         previous_line = line
       end
