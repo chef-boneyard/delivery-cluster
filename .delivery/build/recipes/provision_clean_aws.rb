@@ -204,13 +204,13 @@ ruby_block 'Get Services' do
       out.each_line do |line|
         case previous_line
         when /^delivery-server\S+:$/
-          ipaddress = line.match(/^  ipaddress: (\S+)$/)[1]
+          ipaddress = line.match(/^\s+ipaddress: (\S+)$/)[1]
           node.run_state['delivery']['stage']['data']['cluster_details']['delivery']['url'] = ipaddress
         when /^build-node\S+:/
-          ipaddress = line.match(/^  ipaddress: (\S+)$/)[1]
+          ipaddress = line.match(/^\s+ipaddress: (\S+)$/)[1]
           node.run_state['delivery']['stage']['data']['cluster_details']['build_nodes'] << ipaddress
         when /^supermarket-server\S+:/
-          ipaddress = line.match(/^  ipaddress: (\S+)$/)[1]
+          ipaddress = line.match(/^\s+ipaddress: (\S+)$/)[1]
           node.run_state['delivery']['stage']['data']['cluster_details']['supermarket_server']['url'] = ipaddress
         else
           if line =~ /^Chef Server URL.*$/
