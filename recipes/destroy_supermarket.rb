@@ -35,6 +35,11 @@ if supermarket_enabled?
       action :destroy
     end
 
+    # Delete Trusted Cert
+    file File.join(Chef::Config[:trusted_certs_dir], "#{supermarket_server_fqdn}.crt") do
+      action :delete
+    end
+
     # Delete the lock file
     File.delete(supermarket_lock_file)
   rescue StandardError => e

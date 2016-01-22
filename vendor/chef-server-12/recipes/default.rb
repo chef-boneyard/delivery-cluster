@@ -38,11 +38,6 @@ template "/etc/opscode/chef-server.rb" do
   notifies :reconfigure, "chef_ingredient[chef-server]", :immediately
 end
 
-execute "reconfigure chef" do
-  command "chef-server-ctl reconfigure"
-  action :nothing
-end
-
 # Install Enabled Plugins
 node['chef-server-12']['plugin'].each do |feature, enabled|
   install_plugin(feature) if enabled

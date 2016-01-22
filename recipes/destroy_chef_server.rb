@@ -30,3 +30,8 @@ with_chef_server Chef::Config.chef_server_url
 machine chef_server_hostname do
   action :destroy
 end
+
+# Delete Trusted Cert
+file File.join(Chef::Config[:trusted_certs_dir], "#{chef_server_fqdn}.crt") do
+  action :delete
+end
