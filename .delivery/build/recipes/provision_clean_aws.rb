@@ -201,7 +201,7 @@ ruby_block 'Get Services' do
       }
 
       previous_line = nil
-      out.each_line do |line|
+      list_services.stdout.each_line do |line|
         case previous_line
         when /^delivery-server\S+:$/
           ipaddress = line.match(/^\s+ipaddress: (\S+)$/)[1]
