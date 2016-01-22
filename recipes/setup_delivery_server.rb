@@ -119,10 +119,12 @@ machine delivery_server_hostname do
 end
 
 # Set right permissions to delivery files
-machine_execute "Chown '/etc/delivery' to 'delivery' user" do
-  chef_server lazy { chef_server_config }
-  command 'chown -R delivery /etc/delivery'
-  machine delivery_server_hostname
+%w( delivery.pem builder_key builder_key.pub ).each do |file|
+  machine_execute "Chown '/etc/delivery/#{file}' to 'delivery' user" do
+    chef_server lazy { chef_server_config }
+    command "chown delivery /etc/delivery/#{file}"
+    machine delivery_server_hostname
+  end
 end
 
 machine_file 'delivery-server-cert' do
