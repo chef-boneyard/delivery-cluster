@@ -246,18 +246,20 @@ You also need to create a `security_group` with the following ports open
 | 5672           | TCP | Analytics MQ
 | 10012 - 10013  | TCP | Analytics Messages/Notifier
 
-The list of attributes that you need to specify are:
+The list of attributes that you have available are:
 
 | Attribute                | Description                                 |
 | ------------------------ | ------------------------------------------- |
 | `key_name`               | Key Pair to configure.                      |
 | `ssh_username`           | SSH username to use to connect to machines. |
+| `chef_version`           | The chef version to install on the machine. |
 | `chef_config`            | Anything you want dumped in `/etc/chef/client.rb` |
 | `image_id`               | AWS AMI.                                    |
 | `flavor`                 | Size/flavor of your machine.                |
 | `aws_tags`               | Hash of aws tags to add to an specific component. |
 | `security_group_ids`     | Security Group on AWS.                      |
 | `bootstrap_proxy`        | Automatically configure HTTPS proxy. |
+| `install_sh_path`        | Installation path of the shell script to install chef.|
 | `use_private_ip_for_ssh` | Set to `true` if you want to use the private  ipaddress. |
 
 Here is an example of how you specify them
@@ -318,6 +320,20 @@ You have to provide:
 1. Ip address or Hostname for all your machine resources.
 2. Username
 3. Either `key_file` or `password`
+
+The list of attributes that you have available are:
+
+| Attribute                | Description                                 |
+| ------------------------ | ------------------------------------------- |
+| `ssh_username`           | SSH username to use to connect to machines. |
+| `chef_config`            | Anything you want dumped in `/etc/chef/client.rb` |
+| `chef_version`           | The chef version to install on the machine. |
+| `key_file`               | The SSH Key to use to connect to the machines.   |
+| `password`               | The password to use to connect to the machines.  |
+| `prefix`                 | Prefix to add at the bigining of any ssh-command.|
+| `bootstrap_proxy`        | Automatically configure HTTPS proxy. |
+| `install_sh_path`        | Installation path of the shell script to install chef.|
+| `use_private_ip_for_ssh` | Set to `true` if you want to use the private  ipaddress. |
 
 This is an example of how to specify this information
 ```json

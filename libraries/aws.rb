@@ -31,15 +31,7 @@ module DeliveryCluster
     # @author Salim Afiune <afiune@chef.io>
     class Aws < DeliveryCluster::Provisioning::Base
       attr_accessor :node
-      attr_accessor :flavor
-      attr_accessor :key_name
-      attr_accessor :image_id
-      attr_accessor :subnet_id
-      attr_accessor :bootstrap_proxy
-      attr_accessor :chef_config
       attr_accessor :ssh_username
-      attr_accessor :security_group_ids
-      attr_accessor :use_private_ip_for_ssh
       alias_method :username, :ssh_username
 
       # Create a new Provisioning Driver Abstraction
@@ -49,17 +41,13 @@ module DeliveryCluster
         require 'chef/provisioning/aws_driver'
 
         DeliveryCluster::Helpers.check_attribute?(node['delivery-cluster'][driver], "node['delivery-cluster']['#{driver}']")
-        @node                   = node
-        @flavor                 = @node['delivery-cluster'][driver]['flavor'] || nil
-        @key_name               = @node['delivery-cluster'][driver]['key_name'] || nil
-        @image_id               = @node['delivery-cluster'][driver]['image_id'] || nil
-        @subnet_id              = @node['delivery-cluster'][driver]['subnet_id'] || nil
-        @bootstrap_proxy        = @node['delivery-cluster'][driver]['bootstrap_proxy'] || nil
-        @chef_config            = @node['delivery-cluster'][driver]['chef_config'] || nil
-        @chef_version           = @node['delivery-cluster'][driver]['chef_version'] || nil
-        @ssh_username           = @node['delivery-cluster'][driver]['ssh_username'] || nil
-        @security_group_ids     = @node['delivery-cluster'][driver]['security_group_ids'] || nil
-        @use_private_ip_for_ssh = @node['delivery-cluster'][driver]['use_private_ip_for_ssh'] || false
+        @node            = node
+        @driver_hash     = @node['delivery-cluster'][driver]
+
+        @driver_hash.each do |attr, value|
+          singleton_class.class_eval { attr_accessor attr }
+          instance_variable_set("@#{attr}", value)
+        end
       end
 
       # Return the machine options to use.
@@ -70,7 +58,8 @@ module DeliveryCluster
           convergence_options: {
             bootstrap_proxy: @bootstrap_proxy,
             chef_config: @chef_config,
-            chef_version: @chef_version
+            chef_version: @chef_version,
+            install_sh_path: @install_sh_path
           },
           bootstrap_options: {
             instance_type:      @flavor,
