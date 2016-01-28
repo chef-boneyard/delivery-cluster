@@ -59,7 +59,8 @@ describe DeliveryCluster::Provisioning::Vagrant do
         convergence_options: {
           bootstrap_proxy: vagrant_data['bootstrap_proxy'],
           chef_config: vagrant_data['chef_config'],
-          chef_version: vagrant_data['chef_version']
+          chef_version: vagrant_data['chef_version'],
+          install_sh_path: vagrant_data['install_sh_path']
         },
         vagrant_options: {
           'vm.box' => vagrant_data['vm_box'],

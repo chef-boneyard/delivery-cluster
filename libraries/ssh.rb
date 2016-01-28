@@ -32,11 +32,7 @@ module DeliveryCluster
     class Ssh < DeliveryCluster::Provisioning::Base
       attr_accessor :node
       attr_accessor :prefix
-      attr_accessor :key_file
-      attr_accessor :password
       attr_accessor :ssh_username
-      attr_accessor :bootstrap_proxy
-      attr_accessor :chef_config
       alias_method :username, :ssh_username
 
       # Create a new Provisioning Driver Abstraction
@@ -46,15 +42,15 @@ module DeliveryCluster
         require 'chef/provisioning/ssh_driver'
 
         DeliveryCluster::Helpers.check_attribute?(node['delivery-cluster'][driver], "node['delivery-cluster']['#{driver}']")
-        @node            = node
-        @prefix          = 'sudo '
-        @ssh_username    = @node['delivery-cluster'][driver]['ssh_username'] if @node['delivery-cluster'][driver]['ssh_username']
-        @password        = @node['delivery-cluster'][driver]['password'] if @node['delivery-cluster'][driver]['password']
-        @prefix          = @node['delivery-cluster'][driver]['prefix'] if @node['delivery-cluster'][driver]['prefix']
-        @key_file        = @node['delivery-cluster'][driver]['key_file'] if @node['delivery-cluster'][driver]['key_file']
-        @bootstrap_proxy = @node['delivery-cluster'][driver]['bootstrap_proxy'] if @node['delivery-cluster'][driver]['bootstrap_proxy']
-        @chef_config     = @node['delivery-cluster'][driver]['chef_config'] if @node['delivery-cluster'][driver]['chef_config']
-        @chef_version    = @node['delivery-cluster'][driver]['chef_version'] if @node['delivery-cluster'][driver]['chef_version']
+        @node         = node
+        @prefix       = 'sudo '
+        @driver_hash  = @node['delivery-cluster'][driver]
+
+        @driver_hash.each do |attr, value|
+          singleton_class.class_eval { attr_accessor attr }
+          instance_variable_set("@#{attr}", value)
+        end
+
         fail 'You should not specify both key_file and password.' if @password && @key_file
       end
 
@@ -66,7 +62,8 @@ module DeliveryCluster
           convergence_options: {
             bootstrap_proxy: @bootstrap_proxy,
             chef_config: @chef_config,
-            chef_version: @chef_version
+            chef_version: @chef_version,
+            install_sh_path: @install_sh_path
           },
           transport_options: {
             username: @ssh_username,

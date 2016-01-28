@@ -32,14 +32,6 @@ module DeliveryCluster
     class Vagrant < DeliveryCluster::Provisioning::Base
       attr_accessor :node
       attr_accessor :prefix
-      attr_accessor :vm_box
-      attr_accessor :image_url
-      attr_accessor :vm_hostname
-      attr_accessor :network
-      attr_accessor :vm_mem
-      attr_accessor :vm_cpus
-      attr_accessor :bootstrap_proxy
-      attr_accessor :chef_config
       attr_accessor :use_private_ip_for_ssh
 
       # Create a new Provisioning Driver Abstraction
@@ -49,20 +41,16 @@ module DeliveryCluster
         require 'chef/provisioning/vagrant_driver'
 
         DeliveryCluster::Helpers.check_attribute?(node['delivery-cluster'][driver], "node['delivery-cluster']['#{driver}']")
-        @node                   = node
-        @prefix                 = 'sudo '
-        @vm_box                 = @node['delivery-cluster'][driver]['vm_box'] if @node['delivery-cluster'][driver]['vm_box']
-        @image_url              = @node['delivery-cluster'][driver]['image_url'] if @node['delivery-cluster'][driver]['image_url']
-        @vm_hostname            = @node['delivery-cluster'][driver]['vm_hostname'] if @node['delivery-cluster'][driver]['vm_hostname']
-        @network                = @node['delivery-cluster'][driver]['network'] if @node['delivery-cluster'][driver]['network']
-        @vm_mem                 = @node['delivery-cluster'][driver]['vm_memory'] if @node['delivery-cluster'][driver]['vm_memory']
-        @vm_cpus                = @node['delivery-cluster'][driver]['vm_cpus'] if @node['delivery-cluster'][driver]['vm_cpus']
-        @key_file               = @node['delivery-cluster'][driver]['key_file'] if @node['delivery-cluster'][driver]['key_file']
-        @bootstrap_proxy        = @node['delivery-cluster'][driver]['bootstrap_proxy'] if @node['delivery-cluster'][driver]['bootstrap_proxy']
-        @chef_config            = @node['delivery-cluster'][driver]['chef_config'] if @node['delivery-cluster'][driver]['chef_config']
-        @chef_version           = @node['delivery-cluster'][driver]['chef_version'] if @node['delivery-cluster'][driver]['chef_version']
+        @node         = node
+        @prefix       = 'sudo '
+        @driver_hash  = @node['delivery-cluster'][driver]
         @use_private_ip_for_ssh = false
-        @use_private_ip_for_ssh = @node['delivery-cluster'][driver]['use_private_ip_for_ssh'] if @node['delivery-cluster'][driver]['use_private_ip_for_ssh']
+
+        @driver_hash.each do |attr, value|
+          singleton_class.class_eval { attr_accessor attr }
+          instance_variable_set("@#{attr}", value)
+        end
+
         fail 'You should not specify both key_file and password.' if @password && @key_file
       end
 
@@ -74,7 +62,8 @@ module DeliveryCluster
           convergence_options: {
             bootstrap_proxy: @bootstrap_proxy,
             chef_config: @chef_config,
-            chef_version: @chef_version
+            chef_version: @chef_version,
+            install_sh_path: @install_sh_path
           },
           vagrant_options: {
             'vm.box' => @vm_box,
