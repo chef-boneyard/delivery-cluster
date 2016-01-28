@@ -59,7 +59,8 @@ describe DeliveryCluster::Provisioning::Ssh do
         convergence_options: {
           bootstrap_proxy: ssh_data['bootstrap_proxy'],
           chef_config: ssh_data['chef_config'],
-          chef_version: ssh_data['chef_version']
+          chef_version: ssh_data['chef_version'],
+          install_sh_path: ssh_data['install_sh_path']
         },
         transport_options: {
           username: ssh_data['ssh_username'],

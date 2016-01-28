@@ -56,7 +56,8 @@ module SharedDriverData
       'use_private_ip_for_ssh' => false,
       'bootstrap_proxy' => 'http://my-proxy.com/',
       'chef_config' => "http_proxy 'http://my-proxy.com/'\nno_proxy 'localhost'",
-      'chef_version' => '12.0.0'
+      'chef_version' => '12.0.0',
+      'install_sh_path' => '/custom/path/awesome_install.sh'
     }
   end
 
@@ -70,7 +71,8 @@ module SharedDriverData
       'security_group_ids' => 'sg-cbacf8ae',
       'use_private_ip_for_ssh' => true,
       'bootstrap_proxy' => 'http://my-proxy.com/',
-      'chef_config' => "http_proxy 'http://my-proxy.com/'\nno_proxy 'localhost'"
+      'chef_config' => "http_proxy 'http://my-proxy.com/'\nno_proxy 'localhost'",
+      'install_sh_path' => '/wrong_place.sh'
     }
   end
 end

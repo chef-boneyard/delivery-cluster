@@ -60,7 +60,8 @@ describe DeliveryCluster::Provisioning::Aws do
         convergence_options: {
           bootstrap_proxy: aws_data['bootstrap_proxy'],
           chef_config: aws_data['chef_config'],
-          chef_version: aws_data['chef_version']
+          chef_version: aws_data['chef_version'],
+          install_sh_path: aws_data['install_sh_path']
         },
         bootstrap_options: {
           instance_type:      aws_data['flavor'],
