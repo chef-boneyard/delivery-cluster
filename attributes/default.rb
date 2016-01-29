@@ -167,6 +167,9 @@ default['delivery-cluster']['delivery']['release-channel']  = 'stable'
 # Use Chef Artifactory (Requires Chef VPN)
 default['delivery-cluster']['delivery']['artifactory'] = false
 
+# Enable Insights on Delivery
+default['delivery-cluster']['delivery']['insights']['enable'] = false
+
 # => Chef Server
 default['delivery-cluster']['chef-server']['hostname']     = nil
 default['delivery-cluster']['chef-server']['fqdn']         = nil
