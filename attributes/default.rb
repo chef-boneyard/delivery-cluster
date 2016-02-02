@@ -229,3 +229,6 @@ default['delivery-cluster']['builders']['delivery-cli']        = {}
 
 # Optional ChefDK version
 default['delivery-cluster']['builders']['chefdk_version']      = nil
+
+# verify_none is required for build nodes to report in aws
+default['delivery-cluster']['builders']['push_jobs']['ssl_verify_mode'] = :verify_none

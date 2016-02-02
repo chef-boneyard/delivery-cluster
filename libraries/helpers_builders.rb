@@ -83,6 +83,18 @@ module DeliveryCluster
           )
         end
 
+        # update ssl_verify_mode for push jobs
+        if node['delivery-cluster']['builders']['push_jobs']['ssl_verify_mode']
+          builders_attributes = Chef::Mixin::DeepMerge.hash_only_merge(
+            builders_attributes,
+            'push_jobs' => {
+              'chef' => {
+                'ssl_verify_mode' => node['delivery-cluster']['builders']['push_jobs']['ssl_verify_mode']
+              }
+            }
+          )
+        end
+
         # Add trusted_certs attributes
         builders_attributes = Chef::Mixin::DeepMerge.hash_only_merge(
           builders_attributes,
