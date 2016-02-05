@@ -48,6 +48,7 @@ describe DeliveryCluster::Helpers::Builders do
   end
   let(:result_internal_plus_global_certs) do
     {
+      'Chef Server Cert' => '/etc/chef/trusted_certs/chef-server.chef.io.crt',
       'Delivery Server Cert' => '/etc/chef/trusted_certs/delivery-server.chef.io.crt',
       'Supermarket Server' => '/etc/chef/trusted_certs/supermarket-server.chef.io.crt',
       'Proxy Cert' => '/etc/chef/trusted_certs/my_proxy.cer',
@@ -165,10 +166,11 @@ describe DeliveryCluster::Helpers::Builders do
         .and_return(delivery_node)
     end
 
-    it 'always return the Delivery server cert' do
+    it 'always return the Delivery and Chef Server Cert' do
       expect(described_class.builders_attributes(node)).to eq(
         'delivery_build' => {
           'trusted_certs' => {
+            'Chef Server Cert' => '/etc/chef/trusted_certs/chef-server.chef.io.crt',
             'Delivery Server Cert' => '/etc/chef/trusted_certs/delivery-server.chef.io.crt'
           }
         }
@@ -188,6 +190,7 @@ describe DeliveryCluster::Helpers::Builders do
         expect(described_class.builders_attributes(node)).to eq(
           'delivery_build' => {
             'trusted_certs' => {
+              'Chef Server Cert' => '/etc/chef/trusted_certs/chef-server.chef.io.crt',
               'Delivery Server Cert' => '/etc/chef/trusted_certs/delivery-server.chef.io.crt',
               'Supermarket Server' => '/etc/chef/trusted_certs/supermarket-server.chef.io.crt'
             }
