@@ -1,3 +1,18 @@
+v0.5.14 (2016-02-05)
+-------------------
+- Pass Chef Server trusted_cert to build-nodes
+- Reduce complex of Driver libs & add install_sh_path
+- Chowning specific files instead of recursing
+- Speed up chef-server converge.
+- Remove SSL Certificate at action :destroy
+- Customizable chef-server.rb config file
+- Customization of Chef Server user password
+- Consume chef-ingredient 0.15.0
+- Add Insights Toggle
+- Remove Chef::REST in favor of Chef::ServerAPI
+- Re-implement local package installs for Delivery
+- Ask for host attribute on generate_env rake task
+
 v0.5.2 (2015-12-30)
 -------------------
 - [#175] Allow passing extra attributes to components

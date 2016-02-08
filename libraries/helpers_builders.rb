@@ -129,6 +129,12 @@ module DeliveryCluster
           'Delivery Server Cert' => "/etc/chef/trusted_certs/#{delivery_fqdn}.crt"
         )
 
+        # Adding the Chef Server Cert
+        chef_server_fqdn = DeliveryCluster::Helpers::ChefServer.chef_server_fqdn(node)
+        trusted_certs_list.merge!(
+          'Chef Server Cert' => "/etc/chef/trusted_certs/#{chef_server_fqdn}.crt"
+        )
+
         # Adding the Supermarket Cert if it exists
         if DeliveryCluster::Helpers::Supermarket.supermarket_enabled?(node)
           supermarket_server_fqdn = DeliveryCluster::Helpers::Supermarket.supermarket_server_fqdn(node)
