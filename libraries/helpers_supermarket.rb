@@ -71,6 +71,7 @@ module DeliveryCluster
         {
           'supermarket-config' => {
             'fqdn' => supermarket_server_fqdn(node),
+            'host' => supermarket_server_fqdn(node),
             'chef_server_url' => "https://#{DeliveryCluster::Helpers::ChefServer.chef_server_fqdn(node)}",
             'chef_oauth2_app_id' => get_supermarket_attribute(node, 'uid'),
             'chef_oauth2_secret' => get_supermarket_attribute(node, 'secret'),
