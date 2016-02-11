@@ -115,6 +115,7 @@ describe DeliveryCluster::Helpers::Supermarket do
         expect(described_class.supermarket_config(node)).to eq(
           'supermarket-config' => {
             'fqdn' => 'supermarket-server.chef.io',
+            'host' => 'supermarket-server.chef.io',
             'chef_server_url' => 'https://chef-server.chef.io',
             'chef_oauth2_app_id' => '768fd17555298930830180eedc8ff6ca45736a8c392bbcbe866c804efb25262d',
             'chef_oauth2_secret' => '154b8a364e60deb3d83771df9159639362cd59a60661a63f9b126e794bd95daa',
