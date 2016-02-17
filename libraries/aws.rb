@@ -32,7 +32,7 @@ module DeliveryCluster
     class Aws < DeliveryCluster::Provisioning::Base
       attr_accessor :node
       attr_accessor :ssh_username
-      alias_method :username, :ssh_username
+      alias username ssh_username
 
       # Create a new Provisioning Driver Abstraction
       #

@@ -51,7 +51,7 @@ module DeliveryCluster
           instance_variable_set("@#{attr}", value)
         end
 
-        fail 'You should not specify both key_file and password.' if @password && @key_file
+        raise 'You should not specify both key_file and password.' if @password && @key_file
       end
 
       # Return the machine options to use.

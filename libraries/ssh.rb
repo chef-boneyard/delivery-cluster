@@ -33,7 +33,7 @@ module DeliveryCluster
       attr_accessor :node
       attr_accessor :prefix
       attr_accessor :ssh_username
-      alias_method :username, :ssh_username
+      alias username ssh_username
 
       # Create a new Provisioning Driver Abstraction
       #
@@ -51,7 +51,7 @@ module DeliveryCluster
           instance_variable_set("@#{attr}", value)
         end
 
-        fail 'You should not specify both key_file and password.' if @password && @key_file
+        raise 'You should not specify both key_file and password.' if @password && @key_file
       end
 
       # Return the machine options to use.
@@ -93,12 +93,10 @@ module DeliveryCluster
           elsif @node['delivery-cluster'][component][count.to_s]['ip']
             options << { transport_options: { ip_address: @node['delivery-cluster'][component][count.to_s]['ip'] } }
           end if @node['delivery-cluster'][component][count.to_s]
-        else
-          if @node['delivery-cluster'][component]['host']
-            options << { transport_options: { host: @node['delivery-cluster'][component]['host'] } }
-          elsif @node['delivery-cluster'][component]['ip']
-            options << { transport_options: { ip_address: @node['delivery-cluster'][component]['ip'] } }
-          end
+        elsif @node['delivery-cluster'][component]['host']
+          options << { transport_options: { host: @node['delivery-cluster'][component]['host'] } }
+        elsif @node['delivery-cluster'][component]['ip']
+          options << { transport_options: { ip_address: @node['delivery-cluster'][component]['ip'] } }
         end
         # Specify more specific machine_options to add
         options
