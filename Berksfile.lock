@@ -15,7 +15,7 @@ DEPENDENCIES
     metadata: true
   delivery_build
     git: https://github.com/chef-cookbooks/delivery_build.git
-    revision: 99a80217ddc6fccd2ce65962d39d0b48e103ea36
+    revision: cd5b6c8727748ed2c909413006a3bdfd40a5e793
   hostsfile
 
 GRAPH
@@ -36,7 +36,7 @@ GRAPH
   chef_handler (1.2.0)
   delivery-base (0.2.1)
     push-jobs (>= 0.0.0)
-  delivery-cluster (0.5.17)
+  delivery-cluster (0.5.18)
     apt (>= 0.0.0)
     chef-ingredient (>= 0.0.0)
     chef-server-12 (>= 0.0.0)
@@ -44,7 +44,7 @@ GRAPH
     delivery_build (>= 0.0.0)
     git (>= 0.0.0)
     yum (>= 0.0.0)
-  delivery_build (0.4.16)
+  delivery_build (0.4.17)
     build-essential (>= 0.0.0)
     chef-ingredient (>= 0.0.0)
     chef-sugar (>= 0.0.0)
