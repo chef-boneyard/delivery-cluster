@@ -79,7 +79,7 @@ def validate_environment
     puts '  # rake setup:generate_env'
     puts "\nOr if you just have a different chef environment name run:"
     puts "  # export CHEF_ENV=#{'my_new_environment'.yellow}"
-    fail
+    raise
   end
 
   begin
@@ -93,7 +93,7 @@ end
 
 def chef_apply(recipe)
   succeed = system "chef exec chef-apply recipes/#{recipe}.rb"
-  fail 'Failed executing ChefApply run' unless succeed
+  raise 'Failed executing ChefApply run' unless succeed
 end
 
 def cluster_data_dir
@@ -121,7 +121,7 @@ end
 def chef_zero(recipe)
   validate_environment
   succeed = system "chef exec chef-client -z -o delivery-cluster::#{recipe} -E #{ENV['CHEF_ENV']}"
-  fail 'Failed executing ChefZero run' unless succeed
+  raise 'Failed executing ChefZero run' unless succeed
 end
 
 def render_environment(environment, options)
@@ -129,7 +129,7 @@ def render_environment(environment, options)
 
   env_file = File.open("environments/#{environment}.json", 'w+')
   env_file << ERB.new(DeliveryEnvironment.template)
-    .result(DeliveryEnvironment.new(environment, options).do_binding)
+              .result(DeliveryEnvironment.new(environment, options).do_binding)
   env_file.close
 
   puts File.read("environments/#{environment}.json")
@@ -343,7 +343,7 @@ namespace :setup do
     if Gem::Version.new(chefdk_version) < Gem::Version.new('0.10.0')
       puts "Running ChefDK version #{chefdk_version}".red
       puts 'The required version is >= 0.10.0'.red
-      fail
+      raise
     else
       puts "Running ChefDK version #{chefdk_version}".green
     end
@@ -467,14 +467,11 @@ namespace :info do
   desc 'Show Delivery admin credentials'
   task :delivery_creds do
     deliv_password_file = File.join(cluster_data_dir, 'chef_server_delivery_password')
-    if File.exist?(deliv_password_file)
-      puts 'Chef Server'.yellow
-      puts 'Username: delivery'
-      puts "Password: #{File.read(deliv_password_file)}"
-      puts "Chef Server URL: #{chef_server_url}"
-    else
-      fail 'Could not find any cluster configuration. Run `rake setup:cluster` to create one.'.red
-    end
+    raise 'Could not find any cluster configuration. Run `rake setup:cluster` to create one.'.red unless File.exist?(deliv_password_file)
+    puts 'Chef Server'.yellow
+    puts 'Username: delivery'
+    puts "Password: #{File.read(deliv_password_file)}"
+    puts "Chef Server URL: #{chef_server_url}"
 
     deliv_creds_file = Dir["#{cluster_data_dir}/*.creds"]
     unless deliv_creds_file.empty?
@@ -486,12 +483,9 @@ namespace :info do
   desc 'List all your core services'
   task :list_core_services do
     deliv_password_file = File.join(cluster_data_dir, 'chef_server_delivery_password')
-    if File.exist?(deliv_password_file)
-      system 'knife search node \'name:*server* OR name:build-node*\' -a ipaddress'
-      puts "Chef Server URL: #{chef_server_url}"
-    else
-      fail 'Could not find any cluster configuration. Run `rake setup:cluster` to create one.'.red
-    end
+    raise 'Could not find any cluster configuration. Run `rake setup:cluster` to create one.'.red unless File.exist?(deliv_password_file)
+    system 'knife search node \'name:*server* OR name:build-node*\' -a ipaddress'
+    puts "Chef Server URL: #{chef_server_url}"
   end
 end
 

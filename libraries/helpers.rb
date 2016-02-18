@@ -177,7 +177,7 @@ module DeliveryCluster
     # @param node [Chef::Node] Chef Node object
     def validate_license_file(node)
       return unless node['delivery-cluster']['delivery']['license_file'].nil?
-      fail DeliveryCluster::Exceptions::LicenseNotFound, "node['delivery-cluster']['delivery']['license_file']"
+      raise DeliveryCluster::Exceptions::LicenseNotFound, "node['delivery-cluster']['delivery']['license_file']"
     end
 
     # Validate Attribute
@@ -187,7 +187,7 @@ module DeliveryCluster
     # @param attr_value [NotNilValue] The value of the attribute we want to check
     # @param attr_name [String] The name of the attribute
     def check_attribute?(attr_value, attr_name)
-      fail DeliveryCluster::Exceptions::AttributeNotFound, attr_name if attr_value.nil?
+      raise DeliveryCluster::Exceptions::AttributeNotFound, attr_name if attr_value.nil?
     end
   end
 
