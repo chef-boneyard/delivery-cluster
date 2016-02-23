@@ -1,4 +1,5 @@
 .kitchen/
+*.swp
 clients*
 cookbooks/
 data_bags/

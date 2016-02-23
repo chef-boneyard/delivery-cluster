@@ -42,7 +42,10 @@ chef_data_bag 'keys' do
   action :create
 end
 
-chef_data_bag_item 'keys/delivery_builder_keys' do
+chef_data_bag_item 'delivery_builder_keys' do
+  # Workaround until we release chefdk 0.11.1 with
+  # Cheffish fix: https://github.com/chef/cheffish/pull/99
+  data_bag 'keys'
   chef_server lazy { chef_server_config }
   raw_data lazy {
     {
