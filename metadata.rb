@@ -8,7 +8,7 @@ long_description 'Installs Chef Delivery, a solution for continuously ' \
 version '0.5.21'
 
 depends 'chef-server-12'
-depends 'chef-ingredient'
+depends 'chef-ingredient', '= 0.16.0'
 depends 'git'
 depends 'apt'
 depends 'yum'
