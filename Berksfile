@@ -13,9 +13,6 @@ cookbook 'runit',
   git: 'https://github.com/afiune/runit.git',
   branch: 'afiune/make-it-work-in-oel'
 
-cookbook 'chef-ingredient',
-  git: 'https://github.com/chef-cookbooks/chef-ingredient.git'
-
 cookbook 'chef-splunk',
   git: 'https://github.com/chef-cookbooks/chef-splunk.git'
 

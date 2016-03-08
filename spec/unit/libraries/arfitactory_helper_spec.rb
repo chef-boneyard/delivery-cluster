@@ -32,12 +32,12 @@ describe 'Library#artifactory_helper' do
   let(:node) { Chef::Node.new }
   let(:events) { Chef::EventDispatch::Dispatcher.new }
   let(:run_context) { Chef::RunContext.new(node, {}, events) }
-  let(:mock_delivery_artifact_for_v_0_3_607) do
+  let(:mock_delivery_artifact_for_v_0_4_6) do
     {
-      'name' => 'delivery_0.3.607-1_amd64.deb',
-      'version' => '0.3.607',
-      'checksum' => '3953b0babbfa379b45db692d8cc75ceff02141d201f32e5d943216a5deeb1ba7',
-      'uri' => 'http://artifactory.chef.co/omnibus-current-local/com/getchef/delivery/0.3.607/ubuntu/14.04/delivery_0.3.607-1_amd64.deb'
+      'name' => 'delivery_0.4.6-1_amd64.deb',
+      'version' => '0.4.6',
+      'checksum' => '479b513913dde1105de9ce1c8aef0e4263ac235d0cf24bfa81db05982acb210c',
+      'uri' => 'http://artifactory.chef.co/omnibus-stable-local/com/getchef/delivery/0.4.6/ubuntu/14.04/delivery_0.4.6-1_amd64.deb'
     }
   end
 
@@ -71,8 +71,8 @@ describe 'Library#artifactory_helper' do
         end
 
         it 'returns artifact of an specific version' do
-          expect(get_delivery_artifact(node, '0.3.607'))
-            .to eql(mock_delivery_artifact_for_v_0_3_607)
+          expect(get_delivery_artifact(node, '0.4.6'))
+            .to eql(mock_delivery_artifact_for_v_0_4_6)
         end
       end
     else
