@@ -37,6 +37,14 @@ module DeliveryCluster
         DeliveryCluster::Helpers::Component.component_hostname(node, 'delivery')
       end
 
+      # Get the Hostname of the Delivery Server
+      #
+      # @param node [Chef::Node] Chef Node object
+      # @return hostname [String] The hostname of the Delivery Dr Server
+      def delivery_server_dr_hostname(node)
+        DeliveryCluster::Helpers::Component.component_hostname(node, 'delivery', 'dr')
+      end
+
       # Returns the FQDN of the Delivery Server
       #
       # @param node [Chef::Node] Chef Node object
@@ -45,11 +53,27 @@ module DeliveryCluster
         @delivery_server_fqdn ||= DeliveryCluster::Helpers::Component.component_fqdn(node, 'delivery')
       end
 
+      # Returns the IP of the Delivery Server
+      #
+      # @param node [Chef::Node] Chef Node object
+      # @return [String] Delivery IP
+      def delivery_server_ip(node)
+        @delivery_server_ip ||= DeliveryCluster::Helpers::Component.component_ip(node, 'delivery')
+      end
+
+      # Returns the IP of the Delivery Standby Server
+      #
+      # @param node [Chef::Node] Chef Node object
+      # @return [String] Delivery Standby IP
+      def delivery_standby_ip(node)
+        @delivery_standby_ip ||= DeliveryCluster::Helpers::Component.component_ip(node, 'delivery', 'dr')
+      end
+
       # Generates the Delivery Server Attributes
       #
       # @param node [Chef::Node] Chef Node object
       # @return [Hash] Delivery attributes for a machine resource
-      def delivery_server_attributes(node)
+      def delivery_server_attributes(node, type = nil)
         # If we want to pull down the packages from Chef Artifactory
         if node['delivery-cluster']['delivery']['artifactory']
           artifact = delivery_artifact(node)
@@ -63,6 +87,22 @@ module DeliveryCluster
 
         # Ensure we have a Delivery FQDN
         node.set['delivery-cluster']['delivery']['fqdn'] = delivery_server_fqdn(node) unless node['delivery-cluster']['delivery']['fqdn']
+
+        unless type.nil?
+          # Store the ips for the DR configuration
+          node.set['delivery-cluster']['delivery']['ip'] = delivery_server_ip(node) unless node['delivery-cluster']['delivery']['ip']
+          node.set['delivery-cluster']['delivery']['dr']['ip'] = delivery_standby_ip(node) unless node['delivery-cluster']['delivery']['dr']['ip']
+          case type
+          when :primary
+            node.set['delivery-cluster']['delivery']['primary'] = true
+            node.set['delivery-cluster']['delivery']['standby'] = false
+          when :standby
+            node.set['delivery-cluster']['delivery']['primary'] = false
+            node.set['delivery-cluster']['delivery']['standby'] = true
+          else
+            raise "Unknown Server type #{type}"
+          end
+        end
 
         Chef::Mixin::DeepMerge.hash_only_merge(
           { 'delivery-cluster' => node['delivery-cluster'] },
@@ -151,14 +191,29 @@ module DeliveryCluster
       DeliveryCluster::Helpers::Delivery.delivery_server_hostname(node)
     end
 
+    # Hostname of the Delivery Dr Server
+    def delivery_server_dr_hostname
+      DeliveryCluster::Helpers::Delivery.delivery_server_dr_hostname(node)
+    end
+
     # FQDN of the Delivery Server
     def delivery_server_fqdn
       DeliveryCluster::Helpers::Delivery.delivery_server_fqdn(node)
     end
 
+    # IP of the Delivery Server
+    def delivery_server_ip
+      DeliveryCluster::Helpers::Delivery.delivery_server_ip(node)
+    end
+
+    # IP of the Delivery Standby Server
+    def delivery_standby_ip
+      DeliveryCluster::Helpers::Delivery.delivery_standby_ip(node)
+    end
+
     # Delivery Server Attributes
-    def delivery_server_attributes
-      DeliveryCluster::Helpers::Delivery.delivery_server_attributes(node)
+    def delivery_server_attributes(type = nil)
+      DeliveryCluster::Helpers::Delivery.delivery_server_attributes(node, type)
     end
 
     # Delivery Artifact

@@ -35,10 +35,10 @@ default['delivery-cluster']['aws']['key_name']                = ENV['USER']
 default['delivery-cluster']['aws']['ssh_username']            = nil
 default['delivery-cluster']['aws']['security_group_ids']      = nil
 default['delivery-cluster']['aws']['image_id']                = nil
-default['delivery_cluster']['aws']['subnet_id']               = nil
+default['delivery-cluster']['aws']['subnet_id']               = nil
 default['delivery-cluster']['aws']['bootstrap_proxy']         = ENV['HTTPS_PROXY'] || ENV['HTTP_PROXY']
-default['delivery_cluster']['aws']['chef_config']             = nil
-default['delivery_cluster']['aws']['chef_version']            = nil
+default['delivery-cluster']['aws']['chef_config']             = nil
+default['delivery-cluster']['aws']['chef_version']            = nil
 default['delivery-cluster']['aws']['use_private_ip_for_ssh']  = false
 
 # SSH Driver Attributes
@@ -46,22 +46,22 @@ default['delivery-cluster']['ssh']['key_file']                = nil
 default['delivery-cluster']['ssh']['prefix']                  = nil
 default['delivery-cluster']['ssh']['ssh_username']            = nil
 default['delivery-cluster']['ssh']['bootstrap_proxy']         = ENV['HTTPS_PROXY'] || ENV['HTTP_PROXY']
-default['delivery_cluster']['ssh']['chef_config']             = nil
-default['delivery_cluster']['ssh']['chef_version']            = nil
+default['delivery-cluster']['ssh']['chef_config']             = nil
+default['delivery-cluster']['ssh']['chef_version']            = nil
 default['delivery-cluster']['ssh']['use_private_ip_for_ssh']  = false
 
 # Vagrant Driver Attributes
 default['delivery-cluster']['vagrant']['key_file']            = nil
 default['delivery-cluster']['vagrant']['prefix']              = nil
 default['delivery-cluster']['vagrant']['ssh_username']        = nil
-default['delivery_cluster']['vagrant']['vm_box']              = nil
-default['delivery_cluster']['Vagrant']['image_url']           = nil
-default['delivery_cluster']['Vagrant']['vm_memory']           = nil
-default['delivery_cluster']['Vagrant']['vm_cpus']             = nil
-default['delivery_cluster']['vagrant']['network']             = nil
+default['delivery-cluster']['vagrant']['vm_box']              = nil
+default['delivery-cluster']['Vagrant']['image_url']           = nil
+default['delivery-cluster']['Vagrant']['vm_memory']           = nil
+default['delivery-cluster']['Vagrant']['vm_cpus']             = nil
+default['delivery-cluster']['vagrant']['network']             = nil
 default['delivery-cluster']['vagrant']['key_file']            = nil
-default['delivery_cluster']['vagrant']['chef_config']         = nil
-default['delivery_cluster']['vagrant']['chef_version']        = nil
+default['delivery-cluster']['vagrant']['chef_config']         = nil
+default['delivery-cluster']['vagrant']['chef_version']        = nil
 
 # Azure Driver Attributes
 default['delivery-cluster']['azure']['ssh_username']            = nil
@@ -169,6 +169,11 @@ default['delivery-cluster']['delivery']['artifactory'] = false
 
 # Enable Insights on Delivery
 default['delivery-cluster']['delivery']['insights']['enable'] = false
+
+# Disaster Recovery Attrs on Delivery
+default['delivery-cluster']['delivery']['dr']['enable'] = false
+default['delivery-cluster']['delivery']['primary'] = nil
+default['delivery-cluster']['delivery']['standby'] = nil
 
 # => Chef Server
 default['delivery-cluster']['chef-server']['hostname']     = nil

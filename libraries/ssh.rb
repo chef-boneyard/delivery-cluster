@@ -82,17 +82,17 @@ module DeliveryCluster
       # Create a array of machine_options specifics to a component
       #
       # @param component [String] component name
-      # @param count [Integer] component number
+      # @param id [Integer] component id
       # @return [Array] specific machine_options for the specific component
-      def specific_machine_options(component, count = nil)
+      def specific_machine_options(component, id = nil)
         return [] unless @node['delivery-cluster'][component]
         options = []
-        if count
-          if @node['delivery-cluster'][component][count.to_s]['host']
-            options << { transport_options: { host: @node['delivery-cluster'][component][count.to_s]['host'] } }
-          elsif @node['delivery-cluster'][component][count.to_s]['ip']
-            options << { transport_options: { ip_address: @node['delivery-cluster'][component][count.to_s]['ip'] } }
-          end if @node['delivery-cluster'][component][count.to_s]
+        if id && @node['delivery-cluster'][component][id.to_s]
+          if @node['delivery-cluster'][component][id.to_s]['host']
+            options << { transport_options: { host: @node['delivery-cluster'][component][id.to_s]['host'] } }
+          elsif @node['delivery-cluster'][component][id.to_s]['ip']
+            options << { transport_options: { ip_address: @node['delivery-cluster'][component][id.to_s]['ip'] } }
+          end
         elsif @node['delivery-cluster'][component]['host']
           options << { transport_options: { host: @node['delivery-cluster'][component]['host'] } }
         elsif @node['delivery-cluster'][component]['ip']

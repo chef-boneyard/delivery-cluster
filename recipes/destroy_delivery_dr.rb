@@ -1,8 +1,8 @@
 #
 # Cookbook Name:: delivery-cluster
-# Recipe:: destroy_delivery
+# Recipe:: destroy_delivery_dr
 #
-# Author:: Salim Afiune (<afiune@chef.io>)
+# Author:: Jon Morrow (<jmorrow@chef.io>)
 #
 # Copyright:: Copyright (c) 2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
@@ -23,9 +23,6 @@
 # Starting to abstract the specific configurations by providers
 include_recipe 'delivery-cluster::_settings'
 
-# => Delivery Standby Server
-include_recipe 'delivery-cluster::destroy_delivery_dr'
-
 # Only if we have the credentials to destroy it
 if File.exist?("#{cluster_data_dir}/delivery.pem")
   begin
@@ -34,24 +31,14 @@ if File.exist?("#{cluster_data_dir}/delivery.pem")
                      client_name: 'delivery',
                      signing_key_filename: "#{cluster_data_dir}/delivery.pem"
 
-    # Destroy Delivery Server
-    machine delivery_server_hostname do
+    # Destroy Delivery Standby Server
+    machine delivery_server_dr_hostname do
       action :destroy
     end
-
-    # Delete Enterprise Creds
-    file File.join(cluster_data_dir, "#{node['delivery-cluster']['delivery']['enterprise']}.creds") do
-      action :delete
-    end
-
-    # Delete Trusted Cert
-    file File.join(Chef::Config[:trusted_certs_dir], "#{delivery_server_fqdn}.crt") do
-      action :delete
-    end
   rescue StandardError => e
-    Chef::Log.warn("We can't proceed to destroy the Delivery Server.")
+    Chef::Log.warn("We can't proceed to destroy the Delivery Standby Server.")
     Chef::Log.warn("We couldn't get the chef-server Public/Private IP: #{e.message}")
   end
 else
-  log 'Skipping Delivery Server deletion because missing delivery.pem key'
+  log 'Skipping Delivery Standby Server deletion because missing delivery.pem key'
 end

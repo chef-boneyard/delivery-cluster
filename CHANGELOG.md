@@ -1,3 +1,36 @@
+v0.6.0 (2016-03-23)
+-------------------
+- Enable installing Delivery in DR setup
+
+v0.5.21 (2016-03-01)
+--------------------
+- Enable Delivery to work with OEL
+
+v0.5.20 (2016-02-23)
+--------------------
+- Cheffish fix for data bag parsing
+
+v0.5.19 (2016-02-17)
+--------------------
+- Fix rubocop offences
+
+v0.5.18 (2016-02-17)
+--------------------
+- Update to latest delivery-build cookbook
+
+v0.5.17 (2016-02-11)
+--------------------
+- Pass Supermarket Host in json config
+
+v0.5.16 (2016-02-10)
+--------------------
+- Update to latest delivery-build cookbook
+
+v0.5.15 (2016-02-08)
+--------------------
+- Update to latest delivery-base cookbook
+- Upgrade push-jobs to version 2.6.4 (Fixes Ubuntu)
+
 v0.5.14 (2016-02-05)
 -------------------
 - Pass Chef Server trusted_cert to build-nodes
