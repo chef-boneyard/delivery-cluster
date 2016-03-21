@@ -11,5 +11,13 @@ delivery['<%= attr %>'] = <%= value.pretty_inspect -%>
 <% end -%>
 
 insights['enable'] = <%= node['delivery-cluster']['delivery']['insights']['enable'] %>
+<% if node['delivery-cluster']['delivery']['insights']['enable'] -%>
+<%    rabbitmq = node['delivery-cluster']['delivery']['insights']['rabbitmq'] -%>
+rabbitmq['vhost'] = '<%= rabbitmq['vhost'] %>'
+rabbitmq['exchange'] = '<%= rabbitmq['exchange'] %>'
+rabbitmq['user'] = '<%= rabbitmq['user'] %>'
+rabbitmq['password'] = '<%= rabbitmq['password'] %>'
+rabbitmq['port'] = '<%= rabbitmq['port'] %>'
+<% end -%>
 
 <%= node['delivery-cluster']['delivery']['config'] if node['delivery-cluster']['delivery']['config'] -%>
