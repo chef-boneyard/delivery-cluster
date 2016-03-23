@@ -36,6 +36,7 @@ template "/etc/opscode/chef-server.rb" do
   owner "root"
   mode "0644"
   notifies :reconfigure, "chef_ingredient[chef-server]", :immediately
+  notifies :reconfigure, "chef_ingredient[reporting]" if node['chef-server-12']['plugin']['reporting']
 end
 
 # Install Enabled Plugins

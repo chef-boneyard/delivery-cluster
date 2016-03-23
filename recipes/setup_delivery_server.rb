@@ -159,3 +159,4 @@ ruby_block 'print-delivery-credentials' do
     puts File.read("#{cluster_data_dir}/#{node['delivery-cluster']['delivery']['enterprise']}.creds")
   end
 end
+

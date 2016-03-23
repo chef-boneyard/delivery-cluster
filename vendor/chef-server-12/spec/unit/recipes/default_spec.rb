@@ -23,6 +23,10 @@
 require 'spec_helper'
 
 describe "chef-server-12::default WITHOUT delivery setup" do
+  before do
+    stub_command("grep Fauxhai /etc/hosts").and_return(true)
+  end
+
   let(:chef_run) do
     runner = ChefSpec::SoloRunner.new(
       platform: 'redhat',
@@ -49,8 +53,23 @@ end
 
 describe "chef-server-12::default WITH delivery setup" do
   before do
+    stub_command("grep Fauxhai /etc/hosts").and_return(true)
     stub_command("chef-server-ctl org-list | grep -w chef_delivery").and_return(false)
     stub_command("chef-server-ctl user-list | grep -w delivery").and_return(false)
+  end
+
+  let(:insights_data) do
+    {
+      'enable' => false,
+      'rabbitmq' => {
+        'vip' => nil,
+        'vhost' => nil,
+        'exchange' => nil,
+        'port' => nil,
+        'user' => nil,
+        'password' => nil
+      }
+    }
   end
 
   let(:chef_run) do
@@ -60,6 +79,7 @@ describe "chef-server-12::default WITH delivery setup" do
       log_level: :error
     )
     runner.node.set['chef-server-12']['delivery_setup'] = true
+    runner.node.set['chef-server-12']['insights'] = insights_data
     Chef::Config.force_logger true
     runner.converge('recipe[chef-server-12::default]')
   end
@@ -82,5 +102,33 @@ describe "chef-server-12::default WITH delivery setup" do
 
   it 'creates /etc/opscode directory' do
     expect(chef_run).to create_directory('/etc/opscode')
+  end
+
+  context 'when external_rabbitmq vip is specified' do
+    let(:insights_data) do
+      {
+        'rabbitmq' => {
+          'vip' => 'delivery-server.chef.io',
+          'vhost' => '/insights',
+          'exchange' => 'chefspec-insights',
+          'port' => '5672',
+          'user' => 'chefspec-insights',
+          'password' => 'chefspec-chefrocks'
+        }
+      }
+    end
+
+    it 'configures chef-server to use external rabbitmq' do
+      expect(chef_run).to render_file('/etc/opscode/chef-server.rb')
+        .with_content { |content|
+          expect(content).to include("external_rabbitmq['enable'] = true")
+          expect(content).to include("external_rabbitmq['actions_vhost'] = '/insights'")
+          expect(content).to include("external_rabbitmq['actions_exchange'] = 'chefspec-insights'")
+          expect(content).to include("external_rabbitmq['actions_user'] = 'chefspec-insights'")
+          expect(content).to include("external_rabbitmq['actions_password'] = 'chefspec-chefrocks'")
+          expect(content).to include("external_rabbitmq['node_port'] = '5672'")
+          expect(content).to include("external_rabbitmq['vip'] = 'delivery-server.chef.io'")
+        }
+    end
   end
 end
