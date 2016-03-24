@@ -159,29 +159,3 @@ ruby_block 'print-delivery-credentials' do
     puts File.read("#{cluster_data_dir}/#{node['delivery-cluster']['delivery']['enterprise']}.creds")
   end
 end
-
-machine chef_server_hostname do
-  provisioning.specific_machine_options('chef-server').each do |option|
-    add_machine_options(option)
-  end
-
-  rabbitmq = node['delivery-cluster']['delivery']['insights']['rabbitmq']
-
-  attributes lazy {
-    {
-      'chef-server-12' => {
-        'extra_config' => <<-EOM
-external_rabbitmq['enable'] = true
-external_rabbitmq['actions_vhost'] = '#{rabbitmq['vhost']}'
-external_rabbitmq['actions_exchange'] = '#{rabbitmq['exchange']}'
-external_rabbitmq['vip'] = '#{delivery_server_fqdn}'
-external_rabbitmq['node_port'] = '#{rabbitmq['port']}'
-external_rabbitmq['actions_user'] = '#{rabbitmq['user']}'
-external_rabbitmq['actions_password'] = '#{rabbitmq['password']}'
-    EOM
-      }
-    }
-  }
-  only_if { node['delivery-cluster']['delivery']['insights']['enable'] }
-  action :converge
-end

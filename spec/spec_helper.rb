@@ -102,15 +102,7 @@ module SharedCommonData
         'enterprise' => 'chefspec',
         'artifactory' => false,
         'config' => "nginx['enable_non_ssl'] = true",
-        'license_file' => '/Users/afiune/delivery.license',
-        'insights' => {
-          'enable' => true,
-          'rabbitmq' => {
-            'exchange' => 'chefspec-insights',
-            'user' => 'chefspec-insights',
-            'password' => 'chefspec-chefrocks'
-          }
-        }
+        'license_file' => '/Users/afiune/delivery.license'
       },
       'analytics' => {
         'fqdn' => 'analytics-server.chef.io',

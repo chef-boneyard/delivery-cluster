@@ -23,12 +23,9 @@
 require 'spec_helper'
 
 describe 'delivery-cluster::delivery' do
-  let(:insights_enabled) { false }
-
   let(:chef_run) do
     ChefSpec::SoloRunner.new do |node|
       node.set['delivery-cluster'] = cluster_data
-      node.set['delivery-cluster']['delivery']['insights']['enable'] = insights_enabled
     end.converge(described_recipe)
   end
 
@@ -44,32 +41,11 @@ describe 'delivery-cluster::delivery' do
     expect(chef_run).to create_directory('/etc/delivery')
   end
 
-  context 'when insights is disabled' do
-    let(:insights_enabled) { false }
-
-    it 'creates /etc/delivery/delivery.rb configuration file' do
-      expect(chef_run).to render_file('/etc/delivery/delivery.rb')
-        .with_content { |content|
-          expect(content).to include('delivery_fqdn')
-          expect(content).to include("insights['enable'] = false")
-        }
-    end
-  end
-
-  context 'when insights is enabled' do
-    let(:insights_enabled) { true }
-
-    it 'creates /etc/delivery/delivery.rb configuration file' do
-      expect(chef_run).to render_file('/etc/delivery/delivery.rb')
-        .with_content { |content|
-          expect(content).to include('delivery_fqdn')
-          expect(content).to include("insights['enable'] = true")
-          expect(content).to include("rabbitmq['vhost'] = '/insights'")
-          expect(content).to include("rabbitmq['exchange'] = 'chefspec-insights'")
-          expect(content).to include("rabbitmq['user'] = 'chefspec-insights'")
-          expect(content).to include("rabbitmq['password'] = 'chefspec-chefrocks'")
-          expect(content).to include("rabbitmq['port'] = '5672'")
-        }
-    end
+  it 'creates /etc/delivery/delivery.rb configuration file' do
+    expect(chef_run).to render_file('/etc/delivery/delivery.rb')
+      .with_content { |content|
+        expect(content).to include('delivery_fqdn')
+        expect(content).to include("insights['enable'] = false")
+      }
   end
 end
