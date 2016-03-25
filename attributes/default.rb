@@ -170,6 +170,13 @@ default['delivery-cluster']['delivery']['artifactory'] = false
 # Enable Insights on Delivery
 default['delivery-cluster']['delivery']['insights']['enable'] = false
 
+default['delivery-cluster']['insights']['rabbitmq']['vip'] = nil
+default['delivery-cluster']['insights']['rabbitmq']['vhost'] = '/insights'
+default['delivery-cluster']['insights']['rabbitmq']['exchange'] = 'insights'
+default['delivery-cluster']['insights']['rabbitmq']['port'] = '5672'
+default['delivery-cluster']['insights']['rabbitmq']['user'] = 'insights'
+default['delivery-cluster']['insights']['rabbitmq']['password'] = 'chefrocks'
+
 # Disaster Recovery Attrs on Delivery
 default['delivery-cluster']['delivery']['dr']['enable'] = false
 default['delivery-cluster']['delivery']['primary'] = nil

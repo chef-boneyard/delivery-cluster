@@ -119,6 +119,10 @@ module DeliveryCluster
           @chef_server_attributes,
           DeliveryCluster::Helpers::Component.component_attributes(node, 'chef-server')
         )
+        @chef_server_attributes = Chef::Mixin::DeepMerge.hash_only_merge(
+          @chef_server_attributes,
+          DeliveryCluster::Helpers::Insights.insights_config(node)
+        )
         @chef_server_attributes
       end
 

@@ -44,7 +44,9 @@ machine analytics_server_hostname do
 end
 
 # Activate Analytics
-activate_analytics
+ruby_block 'Activate Analytics' do
+  block { activate_analytics }
+end
 
 # Configuring Analytics on the Chef Server
 machine chef_server_hostname do

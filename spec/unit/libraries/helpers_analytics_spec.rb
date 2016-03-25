@@ -69,13 +69,23 @@ describe DeliveryCluster::Helpers::Analytics do
 
     context 'is enabled' do
       before { allow(File).to receive(:exist?).and_return(true) }
-
-      it 'say that analytics component is enabled' do
-        expect(described_class.analytics_enabled?(node)).to eq true
+      context 'and Insights is enabled at the same time' do
+        it 'throws an error saying you cant activate both' do
+          expect { described_class.activate_analytics(node) }.to raise_error(RuntimeError)
+        end
       end
+      context do
+        before do
+          node.default['delivery-cluster']['delivery']['insights']['enable'] = false
+          allow(DeliveryCluster::Helpers::Insights).to receive(:insights_enabled?).and_return(false)
+        end
 
-      it 'return the analytics attributes' do
-        expect(described_class.analytics_server_attributes(node)).to eq('chef-server-12' => mock_analytics_server_attributes)
+        it 'say that analytics component is enabled' do
+          expect(described_class.analytics_enabled?(node)).to eq true
+        end
+        it 'return the analytics attributes' do
+          expect(described_class.analytics_server_attributes(node)).to eq('chef-server-12' => mock_analytics_server_attributes)
+        end
       end
     end
   end

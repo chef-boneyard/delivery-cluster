@@ -160,3 +160,17 @@ ruby_block 'print-delivery-credentials' do
   end
 end
 
+# Activate Insights
+ruby_block 'Activate Insights' do
+  block { activate_insights }
+  only_if { node['delivery-cluster']['delivery']['insights']['enable'] }
+end
+
+machine chef_server_hostname do
+  provisioning.specific_machine_options('chef-server').each do |option|
+    add_machine_options(option)
+  end
+  attributes lazy { chef_server_attributes }
+  only_if { node['delivery-cluster']['delivery']['insights']['enable'] }
+  action :converge
+end
