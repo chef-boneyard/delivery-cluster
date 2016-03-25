@@ -1,3 +1,7 @@
+v0.6.1 (2016-03-25)
+-------------------
+- Configure Chef Server to send events to Insights (if Insights is enabled)
+
 v0.6.0 (2016-03-23)
 -------------------
 - Enable installing Delivery in DR setup
