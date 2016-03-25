@@ -36,7 +36,7 @@ module DeliveryCluster
       # @param node [Chef::Node] Chef Node object
       # @param component [String] The name of the component
       # @return node [Chef::Node] Chef Node object
-      def component_node(node, component)
+      def component_node(node, component, id = nil)
         # Inflate the Hash returned from Chef::ServerAPI
         # In the future we might need to substitute this for `Chef::Node.from_hash`
         Chef::Node.json_create(
@@ -44,8 +44,27 @@ module DeliveryCluster
             DeliveryCluster::Helpers::ChefServer.chef_server_config(node)[:chef_server_url],
             client_name: DeliveryCluster::Helpers::ChefServer.chef_server_config(node)[:options][:client_name],
             signing_key_filename: DeliveryCluster::Helpers::ChefServer.chef_server_config(node)[:options][:signing_key_filename]
-          ).get("nodes/#{component_hostname(node, component)}")
+          ).get("nodes/#{component_hostname(node, component, id)}")
         )
+      end
+
+      # Returns the IP of the component
+      # If the component_node is specified, we use it. Otherwise we extract it
+      #
+      # @param node [Chef::Node] Chef Node object
+      # @param component [String] The name of the component
+      # @param id [String] The id to point to an specific component
+      # @param component_node [Chef::Node] The Chef Node object of the component
+      # @return [String]
+      def component_ip(node, component, id = nil, c_node = component_node(node, component, id))
+        DeliveryCluster::Helpers.check_attribute?(node['delivery-cluster'][component], "node['delivery-cluster']['#{component}']")
+        if id
+          node['delivery-cluster'][component][id]['ip'] ||
+            DeliveryCluster::Helpers.get_ip(node, c_node)
+        else
+          node['delivery-cluster'][component]['ip'] ||
+            DeliveryCluster::Helpers.get_ip(node, c_node)
+        end
       end
 
       # Returns the FQDN of the component
@@ -58,7 +77,7 @@ module DeliveryCluster
       def component_fqdn(node, component, c_node = component_node(node, component))
         node['delivery-cluster'][component]['fqdn'] ||
           node['delivery-cluster'][component]['host'] ||
-          DeliveryCluster::Helpers.get_ip(node, c_node)
+          component_ip(node, component, nil, c_node) # So a bit ikky but until we revisit this function this should make it backwards compat.
       end
 
       # Returns the Hostname of the component
@@ -106,7 +125,8 @@ module DeliveryCluster
       def multiple_component_hostname(node, component, id)
         unless hostname?(get_component(node, component, id))
           unless node['delivery-cluster'][component]['hostname_prefix']
-            node.set['delivery-cluster'][component]['hostname_prefix'] = "build-node-#{DeliveryCluster::Helpers.delivery_cluster_id(node)}"
+            component_prefix = component.eql?('builders') ? 'build-node' : "#{component}-server"
+            node.set['delivery-cluster'][component]['hostname_prefix'] = "#{component_prefix}-#{DeliveryCluster::Helpers.delivery_cluster_id(node)}"
           end
           node.set['delivery-cluster'][component][id]['hostname'] = "#{node['delivery-cluster'][component]['hostname_prefix']}-#{id}"
         end
@@ -168,6 +188,11 @@ module DeliveryCluster
     # The component fqdn
     def component_fqdn(component, component_node = nil)
       DeliveryCluster::Helpers::Component.component_fqdn(node, component, component_node)
+    end
+
+    # The component ip
+    def component_ip(component, component_node = nil)
+      DeliveryCluster::Helpers::Component.component_ip(node, component, component_node)
     end
 
     # The component hostname

@@ -37,7 +37,8 @@ describe 'delivery-cluster::destroy_all' do
 
     includes = %w(
       _settings destroy_builders destroy_analytics destroy_supermarket
-      destroy_splunk destroy_delivery destroy_chef_server destroy_cluster_data
+      destroy_splunk destroy_delivery destroy_delivery_dr destroy_chef_server
+      destroy_cluster_data
     )
 
     includes.each do |recipename|

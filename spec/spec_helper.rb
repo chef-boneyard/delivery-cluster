@@ -89,6 +89,7 @@ module SharedCommonData
         'organization' => 'chefspec',
         'fqdn' => 'chef-server.chef.io',
         'host' => 'chef-server.chef.io',
+        'ip' => '10.1.1.1',
         'existing' => false,
         'aws_tags' => {
           'cool_tag' => 'awesomeness',
@@ -96,9 +97,15 @@ module SharedCommonData
         }
       },
       'delivery' => {
+        'dr' => {
+          'enable' => true,
+          'host' => 'delivery-dr-server.chef.io',
+          'ip' => '10.1.1.6'
+        },
         'version' => 'latest',
         'fqdn' => 'delivery-server.chef.io',
         'host' => 'delivery-server.chef.io',
+        'ip' => '10.1.1.2',
         'enterprise' => 'chefspec',
         'artifactory' => false,
         'config' => "nginx['enable_non_ssl'] = true",
@@ -106,15 +113,18 @@ module SharedCommonData
       },
       'analytics' => {
         'fqdn' => 'analytics-server.chef.io',
-        'host' => 'analytics-server.chef.io'
+        'host' => 'analytics-server.chef.io',
+        'ip' => '10.1.1.4'
       },
       'supermarket' => {
         'fqdn' => 'supermarket-server.chef.io',
-        'host' => 'supermarket-server.chef.io'
+        'host' => 'supermarket-server.chef.io',
+        'ip' => '10.1.1.3'
       },
       'splunk' => {
         'fqdn' => 'splunk-server.chef.io',
-        'host' => 'splunk-server.chef.io'
+        'host' => 'splunk-server.chef.io',
+        'ip' => '10.1.1.5'
       },
       'builders' => {
         'count' => '3',
@@ -149,6 +159,18 @@ module SharedCommonData
           'vagrant' => {}
         },
         'ipaddress' => '10.1.1.2'
+      },
+      'recipes' => []
+    }
+  end
+  let(:delivery_dr_node) do
+    {
+      'normal' => {
+        'delivery-cluster' => {
+          'driver' => 'vagrant',
+          'vagrant' => {}
+        },
+        'ipaddress' => '10.1.1.6'
       },
       'recipes' => []
     }

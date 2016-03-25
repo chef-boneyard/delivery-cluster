@@ -43,6 +43,9 @@ describe DeliveryCluster::Helpers::Component do
     allow_any_instance_of(Chef::ServerAPI).to receive(:get)
       .with('nodes/splunk-server-chefspec')
       .and_return(splunk_node)
+    allow_any_instance_of(Chef::ServerAPI).to receive(:get)
+      .with('nodes/delivery-server-chefspec-dr')
+      .and_return(delivery_dr_node)
   end
 
   context 'when fqdn' do
@@ -103,6 +106,7 @@ describe DeliveryCluster::Helpers::Component do
         before do
           node.default['delivery-cluster']['chef-server']['host'] = nil
           node.default['delivery-cluster']['delivery']['host']    = nil
+          node.default['delivery-cluster']['delivery']['dr']['host'] = nil
           node.default['delivery-cluster']['supermarket']['host'] = nil
           node.default['delivery-cluster']['analytics']['host']   = nil
           node.default['delivery-cluster']['splunk']['host']      = nil
@@ -143,6 +147,10 @@ describe DeliveryCluster::Helpers::Component do
 
       it 'generate a hostname for chef-server' do
         expect(described_class.component_hostname(node, 'chef-server')).to eq 'chef-server-chefspec'
+      end
+
+      it 'generate a hostname for delivery dr server' do
+        expect(described_class.component_hostname(node, 'delivery', 'dr')).to eq 'delivery-server-chefspec-dr'
       end
     end
 
@@ -187,6 +195,72 @@ describe DeliveryCluster::Helpers::Component do
 
     it 'raise an error when you try to access a multiple_component_hostname' do
       expect { described_class.component_hostname(node, 'machines', '1') }.to raise_error(RuntimeError)
+    end
+  end
+
+  context 'when ip' do
+    before do
+      node.default['delivery-cluster']['driver'] = 'ssh'
+      node.default['delivery-cluster']['ssh'] = ssh_data
+    end
+
+    context 'is speficied' do
+      it 'return chef-server component ip' do
+        expect(described_class.component_ip(node, 'chef-server')).to eq cluster_data['chef-server']['ip']
+      end
+
+      it 'return delivery component ip' do
+        expect(described_class.component_ip(node, 'delivery')).to eq cluster_data['delivery']['ip']
+      end
+
+      it 'return delivery component dr ip' do
+        expect(described_class.component_ip(node, 'delivery', 'dr')).to eq cluster_data['delivery']['dr']['ip']
+      end
+
+      it 'return supermarket component ip' do
+        expect(described_class.component_ip(node, 'supermarket')).to eq cluster_data['supermarket']['ip']
+      end
+
+      it 'return analytics component ip' do
+        expect(described_class.component_ip(node, 'analytics')).to eq cluster_data['analytics']['ip']
+      end
+
+      it 'return splunk component ip' do
+        expect(described_class.component_ip(node, 'splunk')).to eq cluster_data['splunk']['ip']
+      end
+    end
+
+    context 'is not speficied' do
+      before do
+        node.default['delivery-cluster']['chef-server']['ip'] = nil
+        node.default['delivery-cluster']['delivery']['ip']    = nil
+        node.default['delivery-cluster']['supermarket']['ip'] = nil
+        node.default['delivery-cluster']['analytics']['ip']   = nil
+        node.default['delivery-cluster']['splunk']['ip']      = nil
+      end
+      it 'return chef-server component ip' do
+        expect(described_class.component_ip(node, 'chef-server')).to eq '10.1.1.1'
+      end
+
+      it 'return delivery component ip' do
+        expect(described_class.component_ip(node, 'delivery')).to eq '10.1.1.2'
+      end
+
+      it 'return delivery component dr ip' do
+        expect(described_class.component_ip(node, 'delivery', 'dr')).to eq '10.1.1.6'
+      end
+
+      it 'return supermarket component ip' do
+        expect(described_class.component_ip(node, 'supermarket')).to eq '10.1.1.3'
+      end
+
+      it 'return analytics component ip' do
+        expect(described_class.component_ip(node, 'analytics')).to eq '10.1.1.4'
+      end
+
+      it 'return splunk component ip' do
+        expect(described_class.component_ip(node, 'splunk')).to eq '10.1.1.5'
+      end
     end
   end
 end

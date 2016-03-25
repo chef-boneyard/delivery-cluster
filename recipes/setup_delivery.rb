@@ -21,4 +21,9 @@
 #
 
 include_recipe 'delivery-cluster::setup_delivery_server'
+
+if node['delivery-cluster']['delivery']['dr']['enable']
+  include_recipe 'delivery-cluster::setup_delivery_dr'
+end
+
 include_recipe 'delivery-cluster::setup_delivery_builders'

@@ -452,9 +452,14 @@ namespace :destroy do
     chef_zero 'destroy_builders'
   end
 
-  desc 'Destroy Delivery Server'
+  desc 'Destroy Delivery Server and Standby Server'
   task :delivery do
     chef_zero 'destroy_delivery'
+  end
+
+  desc 'Destroy Delivery Standby Server'
+  task :delivery_standby do
+    chef_zero 'destroy_delivery_dr'
   end
 
   desc 'Destroy Chef Server'

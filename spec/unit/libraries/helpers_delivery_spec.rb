@@ -56,6 +56,10 @@ describe DeliveryCluster::Helpers::Delivery do
     expect(described_class.delivery_server_hostname(node)).to eq 'delivery-server-chefspec'
   end
 
+  it 'return the delivery dr hostname for a machine resource' do
+    expect(described_class.delivery_server_dr_hostname(node)).to eq 'delivery-server-chefspec-dr'
+  end
+
   it 'return the delivery fqdn' do
     expect(described_class.delivery_server_fqdn(node)).to eq 'delivery-server.chef.io'
   end
@@ -67,6 +71,17 @@ describe DeliveryCluster::Helpers::Delivery do
     expect(attributes['delivery-cluster']['delivery']['checksum']).to eq nil
     expect(attributes['delivery-cluster']['delivery']['chef_server']).to eq 'https://chef-server.chef.io/organizations/chefspec'
     expect(attributes['delivery-cluster']['delivery']['fqdn']).to eq 'delivery-server.chef.io'
+  end
+
+  it 'return the just the delivery attributes with ips when dr without artifactory' do
+    attributes = described_class.delivery_server_attributes(node)
+    expect(attributes['delivery-cluster']['delivery']['version']).to eq 'latest'
+    expect(attributes['delivery-cluster']['delivery']['artifact']).to eq nil
+    expect(attributes['delivery-cluster']['delivery']['checksum']).to eq nil
+    expect(attributes['delivery-cluster']['delivery']['chef_server']).to eq 'https://chef-server.chef.io/organizations/chefspec'
+    expect(attributes['delivery-cluster']['delivery']['fqdn']).to eq 'delivery-server.chef.io'
+    expect(attributes['delivery-cluster']['delivery']['ip']).to eq '10.1.1.2'
+    expect(attributes['delivery-cluster']['delivery']['dr']['ip']).to eq '10.1.1.6'
   end
 
   context 'when we want to pull delivery from artifactory' do

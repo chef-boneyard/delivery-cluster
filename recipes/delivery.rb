@@ -63,15 +63,6 @@ directory '/etc/delivery' do
   recursive true
 end
 
-template '/etc/delivery/delivery.rb' do
-  variables(
-    default_search: '((recipes:delivery_build OR ' \
-                    'recipes:delivery_build\\\\\\\\:\\\\\\\\:default) ' \
-                    "AND chef_environment:#{node.chef_environment})"
-  )
-  notifies :run, 'execute[reconfigure delivery]'
-end
-
 unless ::File.exist?('/etc/delivery/delivery.pem')
   # We are assuming that there is already a "encrypted_data_bag_secret"
   # configured on "solo.rb" file. This is not any secret key. This MUST
@@ -83,6 +74,15 @@ unless ::File.exist?('/etc/delivery/delivery.pem')
     mode 0644
     notifies :run, 'execute[reconfigure delivery]'
   end
+end
+
+template '/etc/delivery/delivery.rb' do
+  variables(
+    default_search: '((recipes:delivery_build OR ' \
+                    'recipes:delivery_build\\\\\\\\:\\\\\\\\:default) ' \
+                    "AND chef_environment:#{node.chef_environment})"
+  )
+  notifies :run, 'execute[reconfigure delivery]', :immediately
 end
 
 execute 'reconfigure delivery' do
