@@ -37,6 +37,15 @@ default['chef-server-12']['api_fqdn']     = node['ipaddress']
 default['chef-server-12']['topology']     = 'standalone'
 default['chef-server-12']['extra_config'] = nil
 
+# Insights Parameters
+# => defaults are set in delivery-cluster and passed in only when necessary
+default['chef-server-12']['insights']['rabbitmq']['vip'] = nil
+default['chef-server-12']['insights']['rabbitmq']['vhost'] = nil
+default['chef-server-12']['insights']['rabbitmq']['exchange'] = nil
+default['chef-server-12']['insights']['rabbitmq']['port'] = nil
+default['chef-server-12']['insights']['rabbitmq']['user'] = nil
+default['chef-server-12']['insights']['rabbitmq']['password'] = nil
+
 # Analytics Server Parameters
 default['chef-server-12']['analytics'] = nil
 

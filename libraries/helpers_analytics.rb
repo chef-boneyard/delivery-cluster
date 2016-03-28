@@ -4,7 +4,7 @@
 #
 # Author:: Salim Afiune (<afiune@chef.io>)
 #
-# Copyright:: Copyright (c) 2015 Chef Software, Inc.
+# Copyright:: Copyright (c) 2016 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -67,6 +67,7 @@ module DeliveryCluster
       #
       # @param node [Chef::Node] Chef Node object
       def activate_analytics(node)
+        raise "You can't activate Analytics when Insights is already active." if DeliveryCluster::Helpers::Insights.insights_enabled?(node)
         FileUtils.touch(analytics_lock_file(node))
       end
 
