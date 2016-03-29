@@ -18,36 +18,93 @@
 # limitations under the License.
 #
 
+require 'aws-sdk'
+
+# The s3 bucket to use
+def s3_bucket
+  'delivery-cluster-cache'
+end
+
+# Backup Dir Name
+def backup_dir_name(node)
+  "delivery-cluster-#{node['delivery']['change']['pipeline']}-cache"
+end
+
+# Zip file name
+def zip_file_name(node)
+  "#{backup_dir_name(node)}.zip"
+end
+
 # Backup directory
 #
 # This directory must be outside the project path so it is persistent
 # across changes. Here we will store the critical cluster data for aws
-def backup_dir
-  '/var/opt/delivery/workspace/delivery-cluster-aws-cache'
+def backup_dir(node)
+  "#{node['delivery']['workspace_path']}/#{backup_dir_name(node)}"
+end
+
+# Zip file
+#
+# This zip file must be outside the project path so it is persistent
+# across changes. Here we will store the critical cluster data for aws
+def zip_file(node)
+  "#{node['delivery']['workspace_path']}/#{zip_file_name(node)}"
 end
 
 # Backup Cluster Data
 #
 # Method that will copy the Cluster Data from the `running phase path` to
 # the Brackup Directory
-def backup_cluster_data(path)
+def backup_cluster_data(path, node)
   critical_cluster_dirs.each do |dir|
     src = ::Dir.glob(::File.join(path, dir))
-    dst = ::File.dirname(::File.join(backup_dir, dir))
+    dst = ::File.dirname(::File.join(backup_dir(node), dir))
     unless src.empty?
       FileUtils.mkdir_p(dst)
       FileUtils.cp_r(src, dst)
     end
   end
+
+  # zip backup_dir
+  `tar -cvzf #{zip_file(node)} -C #{backup_dir(node)}/.. #{backup_dir_name(node)}`
+
+  # upload to s3
+  s3 = AWS::S3.new(
+    region: 'us-west-2',
+    access_key_id: delivery_secrets['access_key_id'],
+    secret_access_key: delivery_secrets['secret_access_key']
+   )
+
+  # Create bucket if not exists
+  s3.create_bucket(bucket: s3_bucket) unless s3.bucket(s3_bucket).exists?
+
+  s3.bucket(s3_bucket).
+    object(node['delivery']['change']['pipeline']).
+    upload_file(zip_file(node))
 end
 
 # Restore Cluster Data
 #
 # Method that will move the Cluster Data from the Brackup Directory to
 # the `running phase path`
-def restore_cluster_data(path)
+def restore_cluster_data(path, node)
+  # download from s3
+  s3 = AWS::S3.new(
+    region: 'us-west-2',
+    access_key_id: delivery_secrets['access_key_id'],
+    secret_access_key: delivery_secrets['secret_access_key']
+   )
+
+  s3.bucket(s3_bucket).
+    object(node['delivery']['change']['pipeline']).
+    get(response_target: zip_file(node))
+
+  # Unzip the cache file
+  `rm -rf #{backup_dir(node)}/*`
+  `tar -xvf #{zip_file(node)} -C #{backup_dir(node)}/..`
+
   critical_cluster_dirs.each do |dir|
-    src = ::Dir.glob(::File.join(backup_dir, dir))
+    src = ::Dir.glob(::File.join(backup_dir(node), dir))
     dst = ::File.dirname(::File.join(path, dir))
     unless src.empty?
       FileUtils.mkdir_p(dst)

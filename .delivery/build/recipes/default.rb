@@ -35,7 +35,7 @@ include_recipe 'delivery-matrix::default'
 include_recipe 'delivery-truck::default'
 
 # Temporal cache directory to store delivery-cluster-data
-directory backup_dir do
+directory backup_dir(node) do
   owner node['delivery_builder']['build_user']
   group node['delivery_builder']['build_user']
 end

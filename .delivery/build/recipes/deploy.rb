@@ -27,7 +27,7 @@ if node['delivery']['change']['pipeline'] == 'upgrade_aws' &&
 
   ruby_block 'Restore Provisioning Bits' do
     block do
-      restore_cluster_data(root)
+      restore_cluster_data(root, node)
     end
   end
 
