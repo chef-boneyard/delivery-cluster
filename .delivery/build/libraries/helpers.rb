@@ -95,20 +95,24 @@ def restore_cluster_data(path, node, delivery_secrets)
     secret_access_key: delivery_secrets['secret_access_key']
    )
 
-  s3.bucket(s3_bucket).
-    object(node['delivery']['change']['pipeline']).
-    get(response_target: zip_file(node))
+  bucket = s3.bucket(s3_bucket)
+  object = bucket.object(node['delivery']['change']['pipeline'])
 
-  # Unzip the cache file
-  `rm -rf #{backup_dir(node)}/*`
-  `tar -xvf #{zip_file(node)} -C #{backup_dir(node)}/..`
+  unless bucket.exists? && object.exists?
 
-  critical_cluster_dirs.each do |dir|
-    src = ::Dir.glob(::File.join(backup_dir(node), dir))
-    dst = ::File.dirname(::File.join(path, dir))
-    unless src.empty?
-      FileUtils.mkdir_p(dst)
-      FileUtils.mv(src, dst)
+    object.get(response_target: zip_file(node))
+
+    # Unzip the cache file
+    `rm -rf #{backup_dir(node)}/*`
+    `tar -xvf #{zip_file(node)} -C #{backup_dir(node)}/..`
+
+    critical_cluster_dirs.each do |dir|
+      src = ::Dir.glob(::File.join(backup_dir(node), dir))
+      dst = ::File.dirname(::File.join(path, dir))
+      unless src.empty?
+        FileUtils.mkdir_p(dst)
+        FileUtils.mv(src, dst)
+      end
     end
   end
 end
