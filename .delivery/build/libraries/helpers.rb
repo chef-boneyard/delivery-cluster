@@ -55,7 +55,7 @@ end
 #
 # Method that will copy the Cluster Data from the `running phase path` to
 # the Brackup Directory
-def backup_cluster_data(path, node)
+def backup_cluster_data(path, node, delivery_secrets)
   critical_cluster_dirs.each do |dir|
     src = ::Dir.glob(::File.join(path, dir))
     dst = ::File.dirname(::File.join(backup_dir(node), dir))
@@ -69,7 +69,6 @@ def backup_cluster_data(path, node)
   `tar -cvzf #{zip_file(node)} -C #{backup_dir(node)}/.. #{backup_dir_name(node)}`
 
   # upload to s3
-  delivery_secrets = DeliverySugar::DSL.get_project_secrets
   s3 = Aws::S3::Resource.new(
     region: 'us-west-2',
     access_key_id: delivery_secrets['access_key_id'],
@@ -88,9 +87,8 @@ end
 #
 # Method that will move the Cluster Data from the Brackup Directory to
 # the `running phase path`
-def restore_cluster_data(path, node)
+def restore_cluster_data(path, node, delivery_secrets)
   # download from s3
-  delivery_secrets = DeliverySugar::DSL.get_project_secrets
   s3 = Aws::S3::Resource.new(
     region: 'us-west-2',
     access_key_id: delivery_secrets['access_key_id'],
