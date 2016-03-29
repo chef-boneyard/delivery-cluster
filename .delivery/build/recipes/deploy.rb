@@ -21,13 +21,15 @@
 chef_gem "chef-rewind"
 require 'chef/rewind'
 
+delivery_secrets = get_project_secrets
+
 if node['delivery']['change']['pipeline'] == 'upgrade_aws' &&
   node['delivery']['change']['stage'] == 'acceptance'
   root = node['delivery']['workspace']['root']
 
   ruby_block 'Restore Provisioning Bits' do
     block do
-      restore_cluster_data(root, node)
+      restore_cluster_data(root, node, delivery_secrets)
     end
   end
 

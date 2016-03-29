@@ -101,7 +101,7 @@ end
 # TODO: We need to figure a better way to do this
 ruby_block 'Destroy old Delivery Cluster' do
   block do
-    restore_cluster_data(root, node)
+    restore_cluster_data(root, node, delivery_secrets)
     shell_out(
       'rake destroy:all',
       :cwd => path,
@@ -160,7 +160,7 @@ ruby_block 'Create a new Delivery Cluster' do
     end
 
     # Finally we backup the cluster data
-    backup_cluster_data(root, node)
+    backup_cluster_data(root, node, delivery_secrets)
   end
 end
 
