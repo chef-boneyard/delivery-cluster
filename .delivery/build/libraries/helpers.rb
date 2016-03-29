@@ -69,6 +69,7 @@ def backup_cluster_data(path, node)
   `tar -cvzf #{zip_file(node)} -C #{backup_dir(node)}/.. #{backup_dir_name(node)}`
 
   # upload to s3
+  delivery_secrets = DeliverySugar::DSL.get_project_secrets
   s3 = Aws::S3::Resource.new(
     region: 'us-west-2',
     access_key_id: delivery_secrets['access_key_id'],
@@ -89,6 +90,7 @@ end
 # the `running phase path`
 def restore_cluster_data(path, node)
   # download from s3
+  delivery_secrets = DeliverySugar::DSL.get_project_secrets
   s3 = Aws::S3::Resource.new(
     region: 'us-west-2',
     access_key_id: delivery_secrets['access_key_id'],
