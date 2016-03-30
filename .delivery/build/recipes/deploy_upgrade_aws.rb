@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: build
-# Recipe:: deploy
+# Recipe:: deploy_upgrade_aws
 #
 # Copyright:: Copyright (c) 2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
@@ -18,11 +18,23 @@
 # limitations under the License.
 #
 
-if node['delivery']['change']['stage'] == 'acceptance'
-  # In the deploy check to see if we are in an upgrade scenario and include
-  # upgrade deploy recipes
-  case node['delivery']['change']['pipeline']
-  when 'upgrade_aws','upgrade_to_dr_aws'
-    include_recipe "build::deploy_#{node['delivery']['change']['pipeline']}"
+chef_gem "chef-rewind"
+require 'chef/rewind'
+
+delivery_secrets = get_project_secrets
+
+root = node['delivery']['workspace']['root']
+
+ruby_block 'Restore Provisioning Bits' do
+  block do
+    restore_cluster_data(root, node, delivery_secrets)
   end
+end
+
+include_recipe 'build::provision_clean_aws'
+
+unwind 'ruby_block[Destroy old Delivery Cluster]'
+
+rewind 'ruby_block[Create a new Delivery Cluster]' do
+  name 'Upgrade Delivery Cluster'
 end

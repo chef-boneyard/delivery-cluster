@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: build
-# Recipe:: deploy
+# Recipe:: provision_upgrade_to_dr_aws
 #
 # Copyright:: Copyright (c) 2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
@@ -18,11 +18,6 @@
 # limitations under the License.
 #
 
-if node['delivery']['change']['stage'] == 'acceptance'
-  # In the deploy check to see if we are in an upgrade scenario and include
-  # upgrade deploy recipes
-  case node['delivery']['change']['pipeline']
-  when 'upgrade_aws','upgrade_to_dr_aws'
-    include_recipe "build::deploy_#{node['delivery']['change']['pipeline']}"
-  end
-end
+# Create a standalone Delivery configuration that we will upgrade to DR
+# configuration in the deploy phase
+include_recipe 'build::provision_clean_aws'
