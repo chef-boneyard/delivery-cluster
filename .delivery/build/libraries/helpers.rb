@@ -96,8 +96,7 @@ def restore_cluster_data(path, node, delivery_secrets)
    )
 
   bucket = s3.bucket(s3_bucket)
-  object = bucket.object(node['delivery']['change']['pipeline'])
-  #object = bucket.object(zip_file_name(node))
+  object = bucket.object(zip_file_name(node))
 
   if bucket.exists? && object.exists?
 
