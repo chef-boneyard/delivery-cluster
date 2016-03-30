@@ -90,30 +90,7 @@ ruby_block 'Setup Prerequisites' do
 end
 
 # Destroy the old Delivery Cluster
-#
-# The current clycle for this cookbook is to destroy the old cluster we
-# have running and then create a brand new one from scratch.
-# For now are using a temporal cache directory outside of the workspace
-# to save the state of our clusters and don't loose control, therefore
-# the first thing we do is move the data back to the repository path
-# before we trigger the destroy_all rake task.
-#
-# TODO: We need to figure a better way to do this
-ruby_block 'Destroy old Delivery Cluster' do
-  block do
-    restore_cluster_data(root, node, delivery_secrets)
-    shell_out(
-      'rake destroy:all',
-      :cwd => path,
-      :timeout => cluster_timeout,
-      :live_stream => STDOUT,
-      :environment => {
-        'CHEF_ENV' => cluster_name,
-        'AWS_CONFIG_FILE' => "#{cache}/.aws/config"
-      }
-    )
-  end
-end
+include_recipe 'build::destroy_cluster_and_cache'
 
 # Create a new Delivery Cluster
 #

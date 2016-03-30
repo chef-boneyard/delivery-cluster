@@ -22,4 +22,7 @@
 # in the node attribute node['delivery-matrix']['acceptance']['matrix']
 if node['delivery']['change']['stage'] == 'acceptance'
   include_recipe 'delivery-matrix::provision'
+elsif node['delivery']['change']['stage'] == 'union'
+  # include a delete recipe for cluster and clean up S3
+  include_recipe 'build::destroy_cluster_and_cache'
 end
