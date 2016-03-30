@@ -32,7 +32,7 @@ end
 
 # Zip file name
 def zip_file_name(node)
-  "#{backup_dir_name(node)}.zip"
+  "#{backup_dir_name(node)}.tgz"
 end
 
 # Backup directory
@@ -79,7 +79,7 @@ def backup_cluster_data(path, node, delivery_secrets)
   s3.create_bucket(bucket: s3_bucket) unless s3.bucket(s3_bucket).exists?
 
   s3.bucket(s3_bucket).
-    object(node['delivery']['change']['pipeline']).
+    object(zip_file_name(node)).
     upload_file(zip_file(node))
 end
 
@@ -97,6 +97,7 @@ def restore_cluster_data(path, node, delivery_secrets)
 
   bucket = s3.bucket(s3_bucket)
   object = bucket.object(node['delivery']['change']['pipeline'])
+  #object = bucket.object(zip_file_name(node))
 
   if bucket.exists? && object.exists?
 
