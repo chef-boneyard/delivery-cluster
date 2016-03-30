@@ -1,0 +1,43 @@
+{
+  "name": "<%= @cluster_name %>",
+  "description": "Delivery Cluster cluster_name - <%= @cluster_name %>",
+  "json_class": "Chef::Environment",
+  "chef_type": "environment",
+  "override_attributes": {
+    "delivery-cluster": {
+      "id": "<%= @cluster_name %>",
+      "driver": "aws",
+      "aws": {
+        "key_name": "chef-delivery-cluster",
+        "ssh_username": "ubuntu",
+        "image_id": "ami-3d50120d",
+        "subnet_id": "subnet-19ac017c",
+        "security_group_ids": "sg-cbacf8ae",
+        "use_private_ip_for_ssh": true
+      },
+      "chef-server": {
+        "organization": "<%= @cluster_name %>",
+        "existing": false,
+        "flavor": "c3.xlarge",
+        "aws_tags": { "cool_tag": "awesomeness" }
+      },
+      "delivery": {
+        "version": "<%= @delivery_version %>",
+        "enterprise": "<%= @cluster_name %>",
+        "artifactory": false,
+        "license_file": "<%= @delivery_license %>",
+        "flavor": "c3.xlarge",
+        "dr": {
+          "enable": true
+        }
+      },
+      "supermarket": {
+        "flavor": "c3.large"
+      },
+      "builders": {
+        "count": "1",
+        "flavor": "c3.large"
+      }
+    }
+  }
+}

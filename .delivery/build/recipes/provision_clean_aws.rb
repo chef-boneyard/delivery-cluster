@@ -47,7 +47,7 @@ end
 
 template 'Create Environment Template' do
   path File.join(path, "environments/#{cluster_name}.json")
-  source 'environment.json.erb'
+  source 'aws-clean-env.json.erb'
   variables(
     :delivery_license => "#{cache}/delivery.license",
     :delivery_version => 'latest',
