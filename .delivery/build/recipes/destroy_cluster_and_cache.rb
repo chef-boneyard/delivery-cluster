@@ -2,6 +2,7 @@
 delivery_secrets = get_project_secrets
 cluster_name     = "#{node['delivery']['change']['stage']}_#{node['delivery']['change']['pipeline']}"
 root             = node['delivery']['workspace']['root']
+path             = node['delivery']['workspace']['repo']
 
 ruby_block 'Destroy Delivery Cluster and Delete Cache in S3' do
   block do
