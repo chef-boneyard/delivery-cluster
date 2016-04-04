@@ -83,19 +83,6 @@ def backup_cluster_data(path, node, delivery_secrets)
     upload_file(zip_file(node))
 end
 
-def destroy_cluster_data(path, node, delivery_secrets)
-  s3 = Aws::S3::Resource.new(
-    region: 'us-west-2',
-    access_key_id: delivery_secrets['access_key_id'],
-    secret_access_key: delivery_secrets['secret_access_key']
-  )
-
-  if bucket.exists? && object.exists?
-    s3.bucket(s3_bucket).
-    object(zip_file_name(node)).delete
-  end
-end
-
 # Restore Cluster Data
 #
 # Method that will move the Cluster Data from the Brackup Directory to
