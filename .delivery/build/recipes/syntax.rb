@@ -18,4 +18,6 @@
 # limitations under the License.
 #
 
-include_recipe 'delivery-truck::syntax'
+if node['delivery']['change']['pipeline'] == 'master'
+  include_recipe 'delivery-truck::syntax'
+end
