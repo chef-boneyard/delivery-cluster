@@ -89,16 +89,17 @@ module DeliveryCluster
         node.set['delivery-cluster']['delivery']['fqdn'] = delivery_server_fqdn(node) unless node['delivery-cluster']['delivery']['fqdn']
 
         unless type.nil?
+          # We use node.default here so if the user edits the env file we revert to defaults.
           # Store the ips for the DR configuration
-          node.set['delivery-cluster']['delivery']['ip'] = delivery_server_ip(node) unless node['delivery-cluster']['delivery']['ip']
-          node.set['delivery-cluster']['delivery']['dr']['ip'] = delivery_standby_ip(node) unless node['delivery-cluster']['delivery']['dr']['ip']
+          node.default['delivery-cluster']['delivery']['ip'] = delivery_server_ip(node) unless node['delivery-cluster']['delivery']['ip']
+          node.default['delivery-cluster']['delivery']['dr']['ip'] = delivery_standby_ip(node) unless node['delivery-cluster']['delivery']['dr']['ip']
           case type
           when :primary
-            node.set['delivery-cluster']['delivery']['primary'] = true
-            node.set['delivery-cluster']['delivery']['standby'] = false
+            node.default['delivery-cluster']['delivery']['primary'] = true
+            node.default['delivery-cluster']['delivery']['standby'] = false
           when :standby
-            node.set['delivery-cluster']['delivery']['primary'] = false
-            node.set['delivery-cluster']['delivery']['standby'] = true
+            node.default['delivery-cluster']['delivery']['primary'] = false
+            node.default['delivery-cluster']['delivery']['standby'] = true
           else
             raise "Unknown Server type #{type}"
           end

@@ -138,6 +138,14 @@ machine_file 'delivery-server-cert' do
   action :download
 end
 
+machine_file 'delivery-server-cert-key' do
+  chef_server lazy { chef_server_config }
+  path lazy { "/var/opt/delivery/nginx/ca/#{delivery_server_fqdn}.key" }
+  machine delivery_server_hostname
+  local_path lazy { "#{Chef::Config[:trusted_certs_dir]}/#{delivery_server_fqdn}.key" }
+  action :download
+end
+
 # Create the default Delivery enterprise
 machine_execute 'Creating Enterprise' do
   chef_server lazy { chef_server_config }

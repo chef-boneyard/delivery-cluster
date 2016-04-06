@@ -170,3 +170,11 @@ machine_file 'delivery-server-cert' do
   local_path lazy { "#{Chef::Config[:trusted_certs_dir]}/#{delivery_server_fqdn}.crt" }
   action :upload
 end
+
+machine_file 'delivery-server-cert-key' do
+  chef_server lazy { chef_server_config }
+  path lazy { "/var/opt/delivery/nginx/ca/#{delivery_server_fqdn}.key" }
+  machine delivery_server_dr_hostname
+  local_path lazy { "#{Chef::Config[:trusted_certs_dir]}/#{delivery_server_fqdn}.key" }
+  action :upload
+end
