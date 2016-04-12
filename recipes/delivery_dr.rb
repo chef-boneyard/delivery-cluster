@@ -41,12 +41,6 @@ if node['delivery-cluster']['delivery']['primary']
     owner 'delivery'
     mode 0644
   end
-
-  file "#{ssh_dir}/authorized_keys" do
-    content standby_keys['public_key']
-    owner 'delivery'
-    mode 0600
-  end
 else
   file "#{ssh_dir}/id_rsa" do
     content standby_keys['private_key']
