@@ -22,7 +22,7 @@
 
 include_recipe 'delivery-cluster::setup_delivery_server'
 
-if node['delivery-cluster']['delivery']['dr']['enable']
+if node['delivery-cluster']['delivery']['disaster_recovery']['enable']
   include_recipe 'delivery-cluster::setup_delivery_dr'
 end
 

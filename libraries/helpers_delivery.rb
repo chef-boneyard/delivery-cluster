@@ -42,7 +42,7 @@ module DeliveryCluster
       # @param node [Chef::Node] Chef Node object
       # @return hostname [String] The hostname of the Delivery Dr Server
       def delivery_server_dr_hostname(node)
-        DeliveryCluster::Helpers::Component.component_hostname(node, 'delivery', 'dr')
+        DeliveryCluster::Helpers::Component.component_hostname(node, 'delivery', 'disaster_recovery')
       end
 
       # Returns the FQDN of the Delivery Server
@@ -66,7 +66,7 @@ module DeliveryCluster
       # @param node [Chef::Node] Chef Node object
       # @return [String] Delivery Standby IP
       def delivery_standby_ip(node)
-        @delivery_standby_ip ||= DeliveryCluster::Helpers::Component.component_ip(node, 'delivery', 'dr')
+        @delivery_standby_ip ||= DeliveryCluster::Helpers::Component.component_ip(node, 'delivery', 'disaster_recovery')
       end
 
       # Generates the Delivery Server Attributes
@@ -92,7 +92,7 @@ module DeliveryCluster
           # We use node.default here so if the user edits the env file we revert to defaults.
           # Store the ips for the DR configuration
           node.default['delivery-cluster']['delivery']['ip'] = delivery_server_ip(node) unless node['delivery-cluster']['delivery']['ip']
-          node.default['delivery-cluster']['delivery']['dr']['ip'] = delivery_standby_ip(node) unless node['delivery-cluster']['delivery']['dr']['ip']
+          node.default['delivery-cluster']['delivery']['disaster_recovery']['ip'] = delivery_standby_ip(node) unless node['delivery-cluster']['delivery']['disaster_recovery']['ip']
           case type
           when :primary
             node.default['delivery-cluster']['delivery']['primary'] = true

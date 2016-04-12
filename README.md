@@ -19,6 +19,7 @@ This cookbook will setup a full delivery cluster which includes:
 Additionally it enables extra optional infrastructure:
 *  1 -  Analytics Server (Not Required)
 *  1 -  Splunk Server (Not Required)
+*  1 -  DR Standby Delivery server (Not Required)
 
 It will install the appropriate platform-specific delivery package
 and perform the initial configuration.
@@ -53,13 +54,14 @@ rake maintenance:upgrade      # Upgrade Delivery
 
 Destroy Tasks
 The following tasks should be used to destroy your cluster
-rake destroy:all          # Destroy Everything
-rake destroy:analytics    # Destroy Analytics Server
-rake destroy:builders     # Destroy Build Nodes
-rake destroy:chef_server  # Destroy Chef Server
-rake destroy:delivery     # Destroy Delivery Server
-rake destroy:splunk       # Destroy Splunk Server
-rake destroy:supermarket  # Destroy Supermarket Server
+rake destroy:all              # Destroy Everything
+rake destroy:analytics        # Destroy Analytics Server
+rake destroy:builders         # Destroy Build Nodes
+rake destroy:chef_server      # Destroy Chef Server
+rake destroy:delivery         # Destroy Delivery Server and Standby Delivery Server
+rake destroy:delivery_standby # Destroy Delivery Standby Server
+rake destroy:splunk           # Destroy Splunk Server
+rake destroy:supermarket      # Destroy Supermarket Server
 
 Cluster Information
 The following tasks should be used to get information about your cluster
@@ -99,6 +101,9 @@ You can accept the default options by pressing `<enter>`. Note that you must cus
 configuration for Delivery's license file.
 
 Remember to export your environment by running: `export CHEF_ENV=my_environment_name`
+
+If this is a disaster recovery (DR) cluster, see the Disaster Recovery section below in additional
+features **_BEFORE_** proceeding to step 4.
 
 #### 4) Provision your Delivery Cluster
 
@@ -144,6 +149,35 @@ Would you like to try our Splunk Server Integration with Analytics? If yes, prov
 ```
 $ rake setup:splunk
 ```
+
+Disaster Recovery
+-----------------
+
+To setup disaster recovery, you'll need to edit `environments/<clust-name>.json` and
+add the `disaster_recovery` block to the `delivery` property:
+
+    * If you are using the aws provisioner:
+
+            "delivery": {
+                "disaster_recovery": {
+                    "enable": true
+                },
+                ...
+            }
+
+    * If you are using the ssh provisioner:
+
+            "delivery": {
+                "disaster_recovery": {
+                    "enable": true,
+                    "ip": "10.194.8.8"
+                },
+                ...
+            }
+
+This needs to be done after creating the environment (`rake setup:generate_env`) but **before** converging the cluster (`rake setup:cluster`).
+
+The `fqdn` parameter is also required in the `delivery` JSON hash when building Delivery in a DR configuration.
 
 Available Provisioning Methods
 ------------
@@ -484,6 +518,7 @@ in different ways.
 | `license_file` | Absolute path to the `delivery.license` file on your provisioner node. To acquire this file, please speak with your CHEF account representative. |
 | `{rhel or debian}`   | Optional Hash of delivery attrs: `{ "artifact": "http://my.delivery.pkg", "checksum": "123456789ABCDEF"}` |
 | `recipes`      | Additional recipes to run on your Delivery Server. |
+| `disaster_recovery`  | Optional hash when using a disaster recovery configuration: `{ "enable": true, "ip": "192.168.33.33" }`. ``ip`` (or ``host``) is required for the cold standby if you're using the ssh provisioner. You must also set an `fqdn` in the main `delivery` attribute. |
 
 ### Delivery Build Nodes Settings
 
