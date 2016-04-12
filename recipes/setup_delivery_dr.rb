@@ -76,7 +76,7 @@ end
 # Phase 2: Create Standby so it is on chef server for queries
 machine delivery_server_dr_hostname do
   chef_server lazy { chef_server_config }
-  provisioning.specific_machine_options('delivery', 'dr').each do |option|
+  provisioning.specific_machine_options('delivery', 'disaster_recovery').each do |option|
     add_machine_options option
   end
   attributes lazy { delivery_server_attributes }
@@ -137,7 +137,7 @@ end
 # converge and complete the install.
 machine delivery_server_dr_hostname do
   chef_server lazy { chef_server_config }
-  provisioning.specific_machine_options('delivery', 'dr').each do |option|
+  provisioning.specific_machine_options('delivery', 'disaster_recovery').each do |option|
     add_machine_options option
   end
   common_cluster_recipes.each { |r| recipe r }

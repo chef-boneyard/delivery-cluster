@@ -97,7 +97,7 @@ module SharedCommonData
         }
       },
       'delivery' => {
-        'dr' => {
+        'disaster_recovery' => {
           'enable' => true,
           'host' => 'delivery-dr-server.chef.io',
           'ip' => '10.1.1.6'

@@ -178,7 +178,7 @@ default['delivery-cluster']['insights']['rabbitmq']['user'] = 'insights'
 default['delivery-cluster']['insights']['rabbitmq']['password'] = 'chefrocks'
 
 # Disaster Recovery Attrs on Delivery
-default['delivery-cluster']['delivery']['dr']['enable'] = false
+default['delivery-cluster']['delivery']['disaster_recovery']['enable'] = false
 default['delivery-cluster']['delivery']['primary'] = nil
 default['delivery-cluster']['delivery']['standby'] = nil
 

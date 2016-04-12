@@ -22,17 +22,17 @@ rabbitmq['port'] = '<%= rabbitmq['port'] %>'
 
 <%= node['delivery-cluster']['delivery']['config'] if node['delivery-cluster']['delivery']['config'] -%>
 
-<% if node['delivery-cluster']['delivery']['dr']['enable'] -%>
+<% if node['delivery-cluster']['delivery']['disaster_recovery']['enable'] -%>
 <% if node['delivery-cluster']['delivery']['primary'] -%>
 # Primary DR Config
 delivery['primary'] = true
-postgresql['trust_auth_cidr_addresses'] = [ '127.0.0.1/32', '::1/128', '<%= node['delivery-cluster']['delivery']['ip'] %>/32', '<%= node['delivery-cluster']['delivery']['dr']['ip'] %>/32' ]
+postgresql['trust_auth_cidr_addresses'] = [ '127.0.0.1/32', '::1/128', '<%= node['delivery-cluster']['delivery']['ip'] %>/32', '<%= node['delivery-cluster']['delivery']['disaster_recovery']['ip'] %>/32' ]
 postgresql['listen_address'] = 'localhost,<%= node['delivery-cluster']['delivery']['ip'] %>'
-delivery['standby_ip'] = '<%= node['delivery-cluster']['delivery']['dr']['ip'] %>'
+delivery['standby_ip'] = '<%= node['delivery-cluster']['delivery']['disaster_recovery']['ip'] %>'
 <% elsif node['delivery-cluster']['delivery']['standby'] -%>
 # Standby DR Config
 delivery['primary'] = false
 delivery['primary_ip'] = '<%= node['delivery-cluster']['delivery']['ip'] %>'
-postgresql['listen_address'] = 'localhost,<%= node['delivery-cluster']['delivery']['dr']['ip'] %>'
+postgresql['listen_address'] = 'localhost,<%= node['delivery-cluster']['delivery']['disaster_recovery']['ip'] %>'
 <% end -%>
 <% end -%>

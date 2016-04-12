@@ -44,7 +44,7 @@ describe DeliveryCluster::Helpers::Component do
       .with('nodes/splunk-server-chefspec')
       .and_return(splunk_node)
     allow_any_instance_of(Chef::ServerAPI).to receive(:get)
-      .with('nodes/delivery-server-chefspec-dr')
+      .with('nodes/delivery-server-chefspec-disaster_recovery')
       .and_return(delivery_dr_node)
   end
 
@@ -106,7 +106,7 @@ describe DeliveryCluster::Helpers::Component do
         before do
           node.default['delivery-cluster']['chef-server']['host'] = nil
           node.default['delivery-cluster']['delivery']['host']    = nil
-          node.default['delivery-cluster']['delivery']['dr']['host'] = nil
+          node.default['delivery-cluster']['delivery']['disaster_recovery']['host'] = nil
           node.default['delivery-cluster']['supermarket']['host'] = nil
           node.default['delivery-cluster']['analytics']['host']   = nil
           node.default['delivery-cluster']['splunk']['host']      = nil
@@ -150,7 +150,7 @@ describe DeliveryCluster::Helpers::Component do
       end
 
       it 'generate a hostname for delivery dr server' do
-        expect(described_class.component_hostname(node, 'delivery', 'dr')).to eq 'delivery-server-chefspec-dr'
+        expect(described_class.component_hostname(node, 'delivery', 'disaster_recovery')).to eq 'delivery-server-chefspec-disaster_recovery'
       end
     end
 
@@ -214,7 +214,7 @@ describe DeliveryCluster::Helpers::Component do
       end
 
       it 'return delivery component dr ip' do
-        expect(described_class.component_ip(node, 'delivery', 'dr')).to eq cluster_data['delivery']['dr']['ip']
+        expect(described_class.component_ip(node, 'delivery', 'disaster_recovery')).to eq cluster_data['delivery']['disaster_recovery']['ip']
       end
 
       it 'return supermarket component ip' do
@@ -247,7 +247,7 @@ describe DeliveryCluster::Helpers::Component do
       end
 
       it 'return delivery component dr ip' do
-        expect(described_class.component_ip(node, 'delivery', 'dr')).to eq '10.1.1.6'
+        expect(described_class.component_ip(node, 'delivery', 'disaster_recovery')).to eq '10.1.1.6'
       end
 
       it 'return supermarket component ip' do
