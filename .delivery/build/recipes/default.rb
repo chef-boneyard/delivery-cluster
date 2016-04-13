@@ -46,3 +46,9 @@ end
     action :install
   end
 end
+
+# Remove rest-client gem in case of dependency mismatch/missing
+# Ensure rest-client gem is installed at correct version by s3_file cookbook
+chef_gem 'rest-client' do
+  action :remove
+end
