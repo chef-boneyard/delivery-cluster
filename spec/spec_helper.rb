@@ -107,7 +107,6 @@ module SharedCommonData
         'host' => 'delivery-server.chef.io',
         'ip' => '10.1.1.2',
         'enterprise' => 'chefspec',
-        'artifactory' => false,
         'config' => "nginx['enable_non_ssl'] = true",
         'license_file' => '/Users/afiune/delivery.license',
         'insights' => {

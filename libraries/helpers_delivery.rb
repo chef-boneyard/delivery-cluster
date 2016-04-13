@@ -74,14 +74,6 @@ module DeliveryCluster
       # @param node [Chef::Node] Chef Node object
       # @return [Hash] Delivery attributes for a machine resource
       def delivery_server_attributes(node, type = nil)
-        # If we want to pull down the packages from Chef Artifactory
-        if node['delivery-cluster']['delivery']['artifactory']
-          artifact = delivery_artifact(node)
-          node.set['delivery-cluster']['delivery']['version']   = artifact['version']
-          node.set['delivery-cluster']['delivery']['artifact']  = artifact['artifact']
-          node.set['delivery-cluster']['delivery']['checksum']  = artifact['checksum']
-        end
-
         # Configuring the chef-server url for delivery
         node.set['delivery-cluster']['delivery']['chef_server'] = DeliveryCluster::Helpers::ChefServer.chef_server_url(node) unless node['delivery-cluster']['delivery']['chef_server']
 
@@ -109,48 +101,6 @@ module DeliveryCluster
           { 'delivery-cluster' => node['delivery-cluster'] },
           DeliveryCluster::Helpers::Component.component_attributes(node, 'delivery')
         )
-      end
-
-      # Delivery Artifact
-      # We will get the Delivery Package from artifactory (Require Chef VPN)
-      #
-      # Get the latest artifact:
-      # => artifact = get_delivery_artifact('latest', 'redhat', '6.5')
-      #
-      # Get specific artifact:
-      # => artifact = get_delivery_artifact('0.2.21', 'ubuntu', '12.04', '/var/tmp')
-      #
-      # @param node [Chef::Node] Chef Node object
-      # @return [Hash] Delivery Artifact
-      def delivery_artifact(node)
-        @delivery_artifact ||= begin
-          artifact = get_delivery_artifact(
-            node,
-            node['delivery-cluster']['delivery']['version'],
-            DeliveryCluster::Helpers::Component.component_node(node, 'delivery')['platform'],
-            DeliveryCluster::Helpers::Component.component_node(node, 'delivery')['platform_version'],
-            node['delivery-cluster']['delivery']['pass-through'] ? nil : DeliveryCluster::Helpers.cluster_data_dir(node)
-          )
-
-          delivery_artifact = {
-            'version'  => artifact['version'],
-            'checksum' => artifact['checksum']
-          }
-          # Upload Artifact to Delivery Server only if we have donwloaded the artifact
-          if artifact['local_path']
-            machine_file = Chef::Resource::MachineFile.new("/var/tmp/#{artifact['name']}", run_context)
-            machine_file.chef_server(DeliveryCluster::Helpers::ChefServer.chef_server_config(node))
-            machine_file.machine(node['delivery-cluster']['delivery']['hostname'])
-            machine_file.local_path(artifact['local_path'])
-            machine_file.run_action(:upload)
-
-            delivery_artifact['artifact'] = "/var/tmp/#{artifact['name']}"
-          else
-            delivery_artifact['artifact'] = artifact['uri']
-          end
-
-          delivery_artifact
-        end
       end
 
       # Return the delivery-ctl command
