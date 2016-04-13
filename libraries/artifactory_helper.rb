@@ -76,7 +76,9 @@ def get_delivery_artifact(node, version = 'latest', platform = 'ubuntu', platfor
     'omnibus.platform_version' => supported['version'],
     'omnibus.project' => 'delivery',
     'omnibus.version' => deliv_version
-  ).first
+  ).reject do |a|
+    a.download_uri.end_with?('.metadata.json')
+  end.first
 
   # If we specify a temporal directoy we will download the artifact
   # otherwise we will return NO `local_path` attribute
