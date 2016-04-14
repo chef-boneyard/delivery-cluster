@@ -21,5 +21,5 @@
 # By including this recipe we trigger a matrix of acceptance envs specified
 # in the node attribute node['delivery-matrix']['acceptance']['matrix']
 if node['delivery']['change']['stage'] == 'acceptance'
-  include_recipe 'delivery-matrix::provision'
+  #include_recipe 'delivery-matrix::provision'
 end
