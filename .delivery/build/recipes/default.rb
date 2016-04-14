@@ -19,7 +19,7 @@
 #
 
 # Gems for our tests
-%w{watir-webdriver phantomjs artifactory}.each do |g|
+%w{watir-webdriver phantomjs}.each do |g|
   chef_gem g
 end
 

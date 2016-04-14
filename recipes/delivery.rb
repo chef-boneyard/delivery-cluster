@@ -20,22 +20,19 @@
 # limitations under the License.
 #
 
-# Specific Artifact to Install
+local_pkg_path = nil
+
+# the user requested a specific artifact
 if node['delivery-cluster']['delivery']['artifact']
 
-  # Temporal pkg file
-  case node['platform_family']
-  when 'rhel'
-    pkg = "#{Chef::Config[:file_cache_path]}/delivery.rpm"
-  when 'debian'
-    pkg = "#{Chef::Config[:file_cache_path]}/delivery.deb"
-  end
-
-  # Install a local/remote artifact
   if node['delivery-cluster']['delivery']['artifact'] =~ %r{^\/}
-    pkg = node['delivery-cluster']['delivery']['artifact']
+    # the artifact is either local path on the delivery server instance
+    local_pkg_path = node['delivery-cluster']['delivery']['artifact']
   else
-    remote_file pkg do
+    # or it's a URL and we need to fetch it
+    local_pkg_path = ::File.join(Chef::Config[:file_cache_path], ::File.basename(node['delivery-cluster']['delivery']['artifact']))
+
+    remote_file local_pkg_path do
       checksum node['delivery-cluster']['delivery']['checksum'] if node['delivery-cluster']['delivery']['checksum']
       source node['delivery-cluster']['delivery']['artifact']
       owner 'root'
@@ -43,20 +40,19 @@ if node['delivery-cluster']['delivery']['artifact']
       mode '0644'
     end
   end
+end
 
-  package 'delivery' do
-    source pkg
-    version node['delivery-cluster']['delivery']['version']
-    provider Chef::Provider::Package::Dpkg if node['platform_family'].eql?('debian')
-    notifies :run, 'execute[reconfigure delivery]'
-  end
-else
-  chef_ingredient 'delivery' do
+chef_ingredient 'delivery' do
+  if local_pkg_path
+    # install from local source
+    package_source local_pkg_path
+  else
+    # Allow chef-ingredient to resolve/fetch the package
     version node['delivery-cluster']['delivery']['version']
     channel node['delivery-cluster']['delivery']['release-channel'].to_sym
-    notifies :run, 'execute[reconfigure delivery]'
-    action :upgrade
   end
+  notifies :run, 'execute[reconfigure delivery]'
+  action :upgrade
 end
 
 directory '/etc/delivery' do

@@ -28,13 +28,7 @@ describe DeliveryCluster::Helpers::Delivery do
   let(:node) { Chef::Node.new }
   let(:events) { Chef::EventDispatch::Dispatcher.new }
   let(:run_context) { Chef::RunContext.new(node, {}, events) }
-  let(:mock_delivery_artifact) do
-    {
-      'version' => '0.3.0',
-      'artifact' => 'https://artifactory.chef.io/delivery/delivery-artifact-0.3.0.pkg',
-      'checksum' => 'checksumchecksumchecksumchecksumchecksumchecksum'
-    }
-  end
+
   let(:extra_delivery_attributes) do
     {
       'passed-something' => %w(super cool),
@@ -64,7 +58,7 @@ describe DeliveryCluster::Helpers::Delivery do
     expect(described_class.delivery_server_fqdn(node)).to eq 'delivery-server.chef.io'
   end
 
-  it 'return the just the delivery attributes without artifactory' do
+  it 'return the just the delivery attributes without a remote artifact url' do
     attributes = described_class.delivery_server_attributes(node)
     expect(attributes['delivery-cluster']['delivery']['version']).to eq 'latest'
     expect(attributes['delivery-cluster']['delivery']['artifact']).to eq nil
@@ -73,7 +67,7 @@ describe DeliveryCluster::Helpers::Delivery do
     expect(attributes['delivery-cluster']['delivery']['fqdn']).to eq 'delivery-server.chef.io'
   end
 
-  it 'return the just the delivery attributes with ips when dr without artifactory' do
+  it 'return the just the delivery attributes with ips when dr without a remote artifact url' do
     attributes = described_class.delivery_server_attributes(node)
     expect(attributes['delivery-cluster']['delivery']['version']).to eq 'latest'
     expect(attributes['delivery-cluster']['delivery']['artifact']).to eq nil
@@ -82,22 +76,6 @@ describe DeliveryCluster::Helpers::Delivery do
     expect(attributes['delivery-cluster']['delivery']['fqdn']).to eq 'delivery-server.chef.io'
     expect(attributes['delivery-cluster']['delivery']['ip']).to eq '10.1.1.2'
     expect(attributes['delivery-cluster']['delivery']['disaster_recovery']['ip']).to eq '10.1.1.6'
-  end
-
-  context 'when we want to pull delivery from artifactory' do
-    before do
-      node.default['delivery-cluster']['delivery']['artifactory'] = true
-      allow(DeliveryCluster::Helpers::Delivery).to receive(:delivery_artifact).and_return(mock_delivery_artifact)
-    end
-
-    it 'return the right delivery attributes from artifactory' do
-      attributes = described_class.delivery_server_attributes(node)
-      expect(attributes['delivery-cluster']['delivery']['version']).to eq(mock_delivery_artifact['version'])
-      expect(attributes['delivery-cluster']['delivery']['artifact']).to eq(mock_delivery_artifact['artifact'])
-      expect(attributes['delivery-cluster']['delivery']['checksum']).to eq(mock_delivery_artifact['checksum'])
-      expect(attributes['delivery-cluster']['delivery']['chef_server']).to eq 'https://chef-server.chef.io/organizations/chefspec'
-      expect(attributes['delivery-cluster']['delivery']['fqdn']).to eq 'delivery-server.chef.io'
-    end
   end
 
   context 'when driver is NOT specified' do

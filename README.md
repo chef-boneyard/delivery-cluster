@@ -226,7 +226,6 @@ Here is an example of the environment file using the vagrant driver.
       "delivery": {
         "version": "latest",
         "enterprise": "test",
-        "artifactory": false,
         "license_file": "/Users/username/delivery.license",
         "vm_hostname": "delivery.example.com",
         "network": ":private_network, {ip: '33.33.33.11'}",
@@ -507,8 +506,6 @@ in different ways.
 | Attribute      | Description                       |
 | ---------------| --------------------------------- |
 | `version`      | Delivery Version. See `attributes/default.rb` |
-| `pass-through` | Allow the Artifact pass-through the delivery server. Set this parameter to `false` if your delivery server does not have VPN Access. With that, the artifact will be downloaded locally and uploaded to the server.|
-| `artifactory`  | Set to `true` if you want to use Chef Artifactory. (Requires Chef VPN)|
 | `hostname`     | Hostname of your Delivery Server. |
 | `enterprise`   | A Delivery Enterprise that it will create. |
 | `ldap`         | LDAP config attributes. |

@@ -111,15 +111,6 @@ default['delivery-cluster']['delivery']['enterprise']      = 'my_enterprise'
 default['delivery-cluster']['delivery']['recipes']         = []
 default['delivery-cluster']['delivery']['attributes']      = {}
 
-# => pass-through
-# This attribute will allow the Artifact pass-through the delivery server.
-# This feature requires that the delivery server has VPN Access.
-#
-# NOTE: If your delivery server does NOT have access to Chef VPN you have to
-# set this to `false` so it can download the artifact locally and then
-# upload it to the delivery server.
-default['delivery-cluster']['delivery']['pass-through'] = true
-
 # => LDAP config
 # => Available Attributes
 #   => ldap_hosts
@@ -152,7 +143,7 @@ default['delivery-cluster']['delivery']['config'] = nil
 #
 # 2) If you want to deploy a specific version you can also specify it
 #    To see the available versions go to:
-#      * https://packagecloud.io/chef/current
+#      * https://bintray.com/chef/stable/delivery
 # => default['delivery-cluster']['delivery']['version']   = '0.3.9'
 #
 # 3) You can also specify the artifact
@@ -163,9 +154,6 @@ default['delivery-cluster']['delivery']['config'] = nil
 #
 default['delivery-cluster']['delivery']['version']          = 'latest'
 default['delivery-cluster']['delivery']['release-channel']  = 'stable'
-
-# Use Chef Artifactory (Requires Chef VPN)
-default['delivery-cluster']['delivery']['artifactory'] = false
 
 # Enable Insights on Delivery
 default['delivery-cluster']['delivery']['insights']['enable'] = false
