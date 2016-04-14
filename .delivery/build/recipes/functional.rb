@@ -23,7 +23,7 @@
 
 if node['delivery']['change']['pipeline'] == 'master'
   if node['delivery']['change']['stage'] == 'acceptance'
-    #include_recipe "delivery-matrix::functional"
+    include_recipe "delivery-matrix::functional"
   elsif node['delivery']['change']['stage'] == 'delivered'
     # This was lifted from delivery-truck publish
     secrets = get_project_secrets
