@@ -23,14 +23,14 @@ require 'chef/rewind'
 
 cluster_name     = "#{node['delivery']['change']['stage']}_#{node['delivery']['change']['pipeline']}"
 cache            = node['delivery']['workspace']['cache']
-delivery_version = get_delivery_versions[1]
+previous_delivery_version = get_delivery_versions[1]
 
 include_recipe 'build::provision_clean_aws'
 
 rewind 'template[Create Environment Template]' do
   variables(
     :delivery_license => "#{cache}/delivery.license",
-    :delivery_version => delivery_version,
+    :delivery_version => previous_delivery_version,
     :cluster_name => cluster_name
   )
 end
