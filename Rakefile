@@ -3,6 +3,9 @@ require 'erb'
 require 'json'
 require 'chef-config/config'
 
+# Notes:
+# User input of 'yes/no' are converted to 'true/false' in the bool function
+
 # String Colorization
 class String
   def colorize(color_code)
@@ -146,6 +149,7 @@ def bool(string)
   end
 end
 
+# User input of 'yes/no' are converted to 'true/false' in the above bool function
 def ask_for(thing, default = nil)
   thing = "#{thing} [#{default.yellow}]: " if default
   stdin = nil
@@ -275,6 +279,17 @@ namespace :setup do
       options['delivery']['network'] = ask_for('Network Config', ":private_network, {:ip => '33.33.33.11'}")
       options['delivery']['vm_memory'] = ask_for('Memory allocation', '2048')
       options['delivery']['vm_cpus'] = ask_for('Cpus allocation', '2')
+    end
+
+    options['delivery']['disaster_recovery'] = {}
+    options['delivery']['disaster_recovery']['enable'] = ask_for('Enable Disaster Recovery', 'no')
+    case options['delivery']['disaster_recovery']['enable']
+    when 'true'
+      options['delivery']['fqdn'] = ask_for('Delivery FQDN', 'delivery.example.com')
+      case options['driver_name']
+      when 'ssh'
+        options['delivery']['disaster_recovery']['ip'] = ask_for('Standby IP', '33.33.33.14')
+      end
     end
 
     puts "\nAnalytics Server".pink
