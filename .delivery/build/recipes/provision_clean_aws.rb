@@ -221,10 +221,9 @@ ruby_block 'Get Services' do
         previous_line = line
       end
       ## Note: There is a temporal issue here where a new artifact could be promoted
-      ## between provsioning and this call. We also need to unwind the addition of '-1'
-      ## tot he version number we do in this helper function. Ahrg!!! Artifactory.
-      delivery_version = get_delivery_versions[0]
-      node.run_state['delivery']['stage']['data']['cluster_details']['delivery']['version'] = delivery_version[0,delivery_version.index('-', -2)]
+      ## between provsioning and this call.
+      latest_delivery_version = get_delivery_versions.first
+      node.run_state['delivery']['stage']['data']['cluster_details']['delivery']['version'] = latest_delivery_version
     end
   end
 end
