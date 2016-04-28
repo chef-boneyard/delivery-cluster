@@ -29,7 +29,7 @@ if node['chef-server-12']['analytics'] || node['chef-server-12']['supermarket']
     }
   }) if node['chef-server-12']['supermarket']
 %>
-oc_id['vip'] = 'localhost'
+oc_id['vip'] = '127.0.0.1'
 oc_id['applications'] = <%= @applications.inspect -%>
 
 <%  if node['chef-server-12']['analytics'] -%>
