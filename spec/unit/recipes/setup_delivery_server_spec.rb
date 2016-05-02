@@ -39,6 +39,7 @@ describe 'delivery-cluster::setup_delivery_server' do
   let(:chef_server_attributes) do
     {
       'chef-server-12' => {
+        'accept_license' => cluster_data['accept_license'],
         'delivery' => {
           'organization' => 'chefspec',
           'password' => 'SECRET'

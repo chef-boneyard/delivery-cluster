@@ -30,5 +30,6 @@ EOF
 end
 
 chef_ingredient 'analytics' do
+  accept_license node['delivery-cluster']['accept_license']
   action [:install, :reconfigure]
 end

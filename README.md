@@ -179,6 +179,27 @@ This needs to be done after creating the environment (`rake setup:generate_env`)
 
 The `fqdn` parameter is also required in the `delivery` JSON hash when building Delivery in a DR configuration.
 
+Accept License
+-----------------
+In order to accept the Chef Software License Agreement (https://www.chef.io/online-master-agreement/) you have to set the
+attribute `default['delivery-cluster']['accept_license']` to `true`. Modify your environment file as follow:
+```
+{
+  "name": "Accept Chef License Example",
+  "json_class": "Chef::Environment",
+  "chef_type": "environment",
+  "override_attributes": {
+    "delivery-cluster": {
+      "accept_license": true,
+      ... 
+      < all your other attributes goes here >
+      ... 
+    }
+  }
+}
+```
+
+
 Available Provisioning Methods
 ------------
 This cookbook uses [chef-provisioning](https://github.com/chef/chef-provisioning) to manipulate the infrastructure acting as the orchestrator, it uses the default driver `vagrant` but you can switch drivers by modifying the attribute `['delivery-cluster']['driver']`

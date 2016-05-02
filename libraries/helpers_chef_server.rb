@@ -96,6 +96,7 @@ module DeliveryCluster
       def chef_server_attributes(node)
         @chef_server_attributes = {
           'chef-server-12' => {
+            'accept_license' => node['delivery-cluster']['accept_license'],
             'delivery' => {
               'organization' => node['delivery-cluster']['chef-server']['organization'],
               'password' => chef_server_delivery_password(node)

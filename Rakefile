@@ -51,6 +51,7 @@ class DeliveryEnvironment
       'chef_type' => 'environment',
       'override_attributes' => {
         'delivery-cluster' => {
+          'accept_license' => @accept_license,
           'id' => @cluster_id,
           'driver' => @driver_name,
           @driver_name => @driver,
@@ -342,6 +343,13 @@ namespace :setup do
         cpu = ask_for("Cpus allocation for Build Node #{i}", '2')
         options['builders'][i] = { 'network' => net, 'vm_memory' => mem, 'vm_cpus' => cpu }
       end
+    end
+
+    puts "\nChef Software License Agreement".pink
+    options['accept_license'] = ask_for('Do you accept the Chef Software License Agreement:', 'yes')
+    unless options['accept_license']
+      puts 'You must accept the Chef Software License to install Delivery'.red
+      exit 1
     end
 
     msg "Rendering Environment => environments/#{environment}.json"

@@ -20,6 +20,13 @@
 # limitations under the License.
 #
 
+# Chef Products License
+#
+# By switching this attribute to `true` you are accepting the
+# Chef Software Master License and Services Agreement
+# => https://www.chef.io/online-master-agreement/
+default['delivery-cluster']['accept_license'] = false
+
 # Provisioning Driver
 default['delivery-cluster']['driver'] = 'vagrant'
 
