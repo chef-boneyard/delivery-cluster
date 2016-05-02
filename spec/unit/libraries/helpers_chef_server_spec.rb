@@ -34,6 +34,7 @@ describe DeliveryCluster::Helpers::ChefServer do
   end
   let(:mock_chef_server_attributes) do
     {
+      'accept_license' => cluster_data['accept_license'],
       'delivery' => {
         'organization' => 'chefspec',
         'password' => chef_server_delivery_password

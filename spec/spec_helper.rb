@@ -83,6 +83,7 @@ module SharedCommonData
 
   let(:cluster_data) do
     {
+      'accept_license' => true,
       'id' => 'chefspec',
       'trusted_certs' => {},
       'chef-server' => {

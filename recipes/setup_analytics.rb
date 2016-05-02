@@ -82,6 +82,7 @@ machine analytics_server_hostname do
   attributes lazy {
     {
       'delivery-cluster' => {
+        'accept_license' => node['delivery-cluster']['accept_license'],
         'analytics' => {
           'fqdn' => analytics_server_fqdn,
           'features' => splunk_enabled? ? 'true' : 'false'

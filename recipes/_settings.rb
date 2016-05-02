@@ -29,3 +29,10 @@ with_machine_options(provisioning.machine_options)
 link File.join(current_dir, '.chef', 'delivery-cluster-data') do
   to cluster_data_dir
 end
+
+# Verify Chef Software License
+unless node['delivery-cluster']['accept_license']
+  raise 'It is required to accept the Chef Software License Agreement ' \
+        "(https://www.chef.io/online-master-agreement/).\nSee also: " \
+        'https://github.com/chef-cookbooks/delivery-cluster#accept-license'
+end

@@ -22,6 +22,7 @@
 
 def install_plugin(plugin)
   chef_ingredient plugin do
+    accept_license node['chef-server-12']['accept_license']
     action :install
     notifies :reconfigure, "chef_ingredient[chef-server]", :immediately
   end
