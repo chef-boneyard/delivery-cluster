@@ -180,5 +180,13 @@ machine chef_server_hostname do
   end
   attributes lazy { chef_server_attributes }
   only_if { node['delivery-cluster']['delivery']['insights']['enable'] }
+  not_if { node['delivery-cluster']['chef-server']['existing'] }
   action :converge
+end
+
+# Print Insights Config to add to Existing Chef Server
+ruby_block 'Print Insights Config' do
+  block { pretty_insights_config }
+  only_if { node['delivery-cluster']['delivery']['insights']['enable'] }
+  only_if { node['delivery-cluster']['chef-server']['existing'] }
 end

@@ -22,6 +22,16 @@
 
 include_recipe 'delivery-cluster::_settings'
 
+# If the delivery-cluster is configured to use and existing chef-server
+# we can't manipulate the `chef-server.rb` config so we can't configure
+# a Supermarket Server.
+#
+# This process must to be done manually.
+if node['delivery-cluster']['chef-server']['existing']
+  raise  "Unable to configure a Supermarket Server with an existing chef-server.\n This" \
+         "process must be done manually. \nMore info: https://docs.chef.io/supermarket.html"
+end
+
 # There are two ways to provision the Supermarket Server
 #
 # 1) Provisioning the entire "delivery-cluster::setup" or
