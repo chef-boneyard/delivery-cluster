@@ -28,8 +28,8 @@ include_recipe 'delivery-cluster::_settings'
 #
 # This process must to be done manually.
 if node['delivery-cluster']['chef-server']['existing']
-  raise  "Unable to configure a Supermarket Server with an existing chef-server.\n This" \
-         "process must be done manually. \nMore info: https://docs.chef.io/supermarket.html"
+  raise  "Unable to configure a Supermarket Server with an existing chef-server.\nThis " \
+         "process must be done manually.\nMore info: https://docs.chef.io/supermarket.html"
 end
 
 # There are two ways to provision the Supermarket Server
