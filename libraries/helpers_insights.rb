@@ -29,6 +29,35 @@ module DeliveryCluster
     module Insights
       module_function
 
+      # Print pretty Insights Config
+      #
+      # @param node [Chef::Node] Chef Node object
+      def pretty_insights_config(node)
+        return {} unless insights_enabled?(node)
+        rabbitmq = config_with_vip(node)
+        puts <<-EOF
+Enable Insights:
+
+To enable Insights on the existing chef-server, please modify the `/etc/opscode/chef-server.rb`
+file by adding the following config:
+------------------------------------------------------------------------------------
+external_rabbitmq['enable'] = true
+external_rabbitmq['actions_vhost'] = '#{rabbitmq['vhost']}}'
+external_rabbitmq['actions_exchange'] = '#{rabbitmq['exchange']}'
+external_rabbitmq['vip'] = '#{rabbitmq['vip']}'
+external_rabbitmq['node_port'] = '#{rabbitmq['port']}'
+external_rabbitmq['actions_user'] = '#{rabbitmq['user']}'
+external_rabbitmq['actions_password'] = '#{rabbitmq['password']}'
+------------------------------------------------------------------------------------
+
+After that, run a reconfigure for Core and Reporting addons in the chef-server:
+------------------------------------------------------------------------------------
+chef-server-ctl reconfigure
+opscode-reporting-ctl reconfigure
+------------------------------------------------------------------------------------
+        EOF
+      end
+
       # Generates the Insights Config
       #
       # @param node [Chef::Node] Chef Node object
@@ -86,6 +115,11 @@ module DeliveryCluster
 
   # Module that exposes multiple helpers
   module DSL
+    # Print pretty Insights Config
+    def pretty_insights_config
+      DeliveryCluster::Helpers::Insights.pretty_insights_config(node)
+    end
+
     # Generates the Insights Config
     def insights_config
       DeliveryCluster::Helpers::Insights.insights_config(node)
