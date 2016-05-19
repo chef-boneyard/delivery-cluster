@@ -31,5 +31,6 @@ ingredient_config 'supermarket' do
 end
 
 chef_ingredient 'supermarket' do
+  platform_version_compatibility_mode true
   action [:install, :reconfigure]
 end

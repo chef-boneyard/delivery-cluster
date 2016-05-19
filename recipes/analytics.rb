@@ -31,5 +31,6 @@ end
 
 chef_ingredient 'analytics' do
   accept_license node['delivery-cluster']['accept_license']
+  platform_version_compatibility_mode true
   action [:install, :reconfigure]
 end

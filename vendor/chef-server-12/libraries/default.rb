@@ -23,6 +23,7 @@
 def install_plugin(plugin)
   chef_ingredient plugin do
     accept_license node['chef-server-12']['accept_license']
+    platform_version_compatibility_mode true
     action :install
     notifies :reconfigure, "chef_ingredient[chef-server]", :immediately
   end
