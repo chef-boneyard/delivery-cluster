@@ -30,7 +30,9 @@ directory "/etc/opscode" do
   recursive true
 end
 
-chef_ingredient 'chef-server'
+chef_ingredient 'chef-server' do
+  platform_version_compatibility_mode true
+end
 
 template "/etc/opscode/chef-server.rb" do
   owner "root"

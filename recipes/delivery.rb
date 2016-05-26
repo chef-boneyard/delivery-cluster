@@ -50,6 +50,7 @@ chef_ingredient 'delivery' do
     # Allow chef-ingredient to resolve/fetch the package
     version node['delivery-cluster']['delivery']['version']
     channel node['delivery-cluster']['delivery']['release-channel'].to_sym
+    platform_version_compatibility_mode true
   end
   notifies :run, 'execute[reconfigure delivery]'
   action :upgrade

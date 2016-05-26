@@ -232,4 +232,10 @@ RSpec.configure do |config|
   config.filter_run_excluding ignore: true
   config.platform = 'ubuntu'
   config.version = '14.04'
+  # Prime things so that the compat_resource cookbook
+  # is loaded instead of the default
+  config.before(:suite) do
+    runner = ChefSpec::SoloRunner.new
+    runner.converge('recipe[delivery-cluster::default]')
+  end
 end

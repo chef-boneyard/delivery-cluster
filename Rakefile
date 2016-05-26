@@ -362,6 +362,9 @@ namespace :setup do
 
   desc 'Install all the prerequisites on you system'
   task :prerequisites do
+    # Clean the cache before running prerequisites
+    Rake::Task['maintenance:clean_cache'].invoke
+
     msg 'Verifying ChefDK version'
     if Gem::Version.new(chefdk_version) < Gem::Version.new('0.10.0')
       puts "Running ChefDK version #{chefdk_version}".red
