@@ -172,6 +172,9 @@ default['delivery-cluster']['insights']['rabbitmq']['port'] = '5672'
 default['delivery-cluster']['insights']['rabbitmq']['user'] = 'insights'
 default['delivery-cluster']['insights']['rabbitmq']['password'] = 'chefrocks'
 
+# Allow for external Elasticsearch nodes - nil assumes use the bundled install
+default['delivery-cluster']['delivery']['elasticsearch']['urls'] = nil
+
 # Disaster Recovery Attrs on Delivery
 default['delivery-cluster']['delivery']['disaster_recovery']['enable'] = false
 default['delivery-cluster']['delivery']['primary'] = nil
