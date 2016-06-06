@@ -18,6 +18,9 @@ rabbitmq['exchange'] = '<%= rabbitmq['exchange'] %>'
 rabbitmq['user'] = '<%= rabbitmq['user'] %>'
 rabbitmq['password'] = '<%= rabbitmq['password'] %>'
 rabbitmq['port'] = '<%= rabbitmq['port'] %>'
+<%   if node['delivery-cluster']['delivery']['elasticsearch']['urls'] -%>
+elasticsearch['urls'] = <%= Array(node['delivery-cluster']['delivery']['elasticsearch']['urls']).to_s %>
+<%   end -%>
 <% end -%>
 
 <%= node['delivery-cluster']['delivery']['config'] if node['delivery-cluster']['delivery']['config'] -%>
