@@ -54,4 +54,21 @@ describe 'delivery-cluster::delivery' do
         expect(content).to include("rabbitmq['port'] = '5672'")
       }
   end
+
+  context 'when external elasticsearch nodes are specified' do
+    let(:chef_run) do
+      ChefSpec::SoloRunner.new do |node|
+        node.set['delivery-cluster'] = cluster_data
+        node.set['delivery-cluster']['delivery']['insights']['enable'] = true
+        node.set['delivery-cluster']['delivery']['elasticsearch']['urls'] = ['https://es-node-1', 'https://es-node-2']
+      end.converge(described_recipe)
+    end
+
+    it 'includes the elasticsearch nodes in the delivery.rb config file' do
+      expect(chef_run).to render_file('/etc/delivery/delivery.rb')
+        .with_content { |content|
+          expect(content).to include(%(elasticsearch['urls'] = ["https://es-node-1", "https://es-node-2"]))
+        }
+    end
+  end
 end
