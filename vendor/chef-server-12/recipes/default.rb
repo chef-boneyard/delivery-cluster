@@ -32,6 +32,7 @@ end
 
 chef_ingredient 'chef-server' do
   platform_version_compatibility_mode true
+  channel node['chef-server-12']['package_channel'].to_sym
 end
 
 template "/etc/opscode/chef-server.rb" do
