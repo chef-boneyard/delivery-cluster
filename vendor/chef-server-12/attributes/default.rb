@@ -25,7 +25,7 @@ default['chef-server-12']['version']       = 'latest'
 # Plugins / Feautures
 #
 # To Install plugins into the Chef-Server simply enable them setting the value `true`
-# If there is more plugins you just need to add them as follow:
+# If there is more plugins you just need to add them as follow:
 # => default['chef-server-12']['plugin']['PLUGIN_NAME'] = true
 default['chef-server-12']['plugin']['manage']           = true
 default['chef-server-12']['plugin']['reporting']        = true
@@ -78,3 +78,8 @@ default['chef-server-12']['delivery']['validator_pem'] = "/tmp/validator.pem"
 default['chef-server-12']['delivery']['delivery_pem']  = "/tmp/delivery.pem"
 default['chef-server-12']['delivery']['db']            = "delivery"
 default['chef-server-12']['delivery']['item']          = "delivery_pem"
+
+# Chef Ingredient Settings
+#
+# override to 'current' or 'unstable' depending on your needs
+default['chef-server-12']['package_channel'] = 'stable'
