@@ -1,4 +1,4 @@
-# `delivery-cluster`
+# `delivery-cluster` cookbook
 This cookbook installs Chef Delivery, a solution for continuously delivering
 applications and infrastructure safely at speed.
 
@@ -191,9 +191,9 @@ attribute `default['delivery-cluster']['accept_license']` to `true`. Modify your
   "override_attributes": {
     "delivery-cluster": {
       "accept_license": true,
-      ... 
+      ...
       < all your other attributes goes here >
-      ... 
+      ...
     }
   }
 }
