@@ -101,6 +101,7 @@ class Chef
             stripped_url
           else
             ::Chef::Log.error("Failed to create duplicate change.")
+            ::Chef::Log.error("'delivery review' output: #{delivery_review.stdout}")
             raise "Failed to create duplicate change."
           end
         end
