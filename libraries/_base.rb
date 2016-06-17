@@ -41,6 +41,13 @@ module DeliveryCluster
         raise "#{self.class}#machine_options must be implemented"
       end
 
+      # Return the driver options to use.
+      #
+      # @return [Hash] the driver_options for the specific driver
+      def driver_options
+        raise "#{self.class}#driver_options must be implemented"
+      end
+
       # Create a array of machine_options specifics to a component
       #
       # @param component [String] component name

@@ -57,16 +57,17 @@ module DeliveryCluster
       def machine_options
         opts = {
           convergence_options: {
-            bootstrap_proxy: @bootstrap_proxy,
-            chef_config: @chef_config,
-            chef_version: @chef_version,
-            install_sh_path: @install_sh_path
+            bootstrap_proxy:      @bootstrap_proxy,
+            chef_config:          @chef_config,
+            chef_version:         @chef_version,
+            install_sh_path:      @install_sh_path
           },
           bootstrap_options: {
-            flavor_ref:         @flavor_ref,
-            image_ref:               @image_ref,
-            key_name:           @key_name,
-            security_groups: @security_groups
+            flavor_ref:           @flavor_ref,
+            image_ref:            @image_ref,
+            key_name:             @key_name,
+            nics:                 @nics,
+            security_groups:      @security_groups
           },
           ssh_username:           @ssh_username,
           use_private_ip_for_ssh: @use_private_ip_for_ssh
@@ -103,12 +104,25 @@ module DeliveryCluster
         'fog:OpenStack'
       end
 
+      # Return the driver options to use.
+      #
+      # @return [Hash] the driver_options for the specific driver
+      def driver_options
+        options = {}
+        creds = Fog.credentials.find_all{ |k,v|
+          k.to_s.start_with?('openstack') }
+        creds.each { |k,v|
+          options[k] = v
+        }
+        options
+      end
+
       # Return the ipaddress from the machine.
       #
       # @param node [Chef::Node]
       # @return [String] an ipaddress
       def ipaddress(node)
-        @use_private_ip_for_ssh ? node['ec2']['local_ipv4'] : node['ec2']['public_ipv4']
+        @use_private_ip_for_ssh ? node['cloud']['local_ipv4'] : node['cloud']['public_ipv4']
       end
     end
   end
