@@ -47,6 +47,10 @@ describe 'delivery-cluster::setup_delivery_server' do
         'api_fqdn' => 'chef-server.chef.io',
         'store_keys_databag' => false,
         'plugin' => { 'reporting' => true },
+        'data_collector' => {
+          'root_url' => nil,
+          'token' => nil
+        },
         'insights' => insights_attributes
       }
     }
@@ -69,6 +73,9 @@ describe 'delivery-cluster::setup_delivery_server' do
     allow_any_instance_of(Chef::ServerAPI).to receive(:get)
       .with('nodes/chef-server-chefspec')
       .and_return(chef_node)
+    allow_any_instance_of(Chef::ServerAPI).to receive(:get)
+      .with('nodes/delivery-server-chefspec')
+      .and_return(delivery_node)
     allow(Chef::Config).to receive(:chef_repo_path).and_return('/repo/delivery-cluster-dir')
     allow(File).to receive(:exist?).and_call_original
     allow(File).to receive(:exist?)
