@@ -91,19 +91,42 @@ class Chef
         delivery_review.run_command
 
         if delivery_review.stdout && delivery_review.stdout[-2]
-          raw_url = delivery_review.stdout.lines[-2]
-          stripped_url = URI.escape(raw_url.chomp.gsub(/\e\[K|\e\(B|\e\[\d+m/,''))
-          ## Check that it is a url.
-          if stripped_url =~ URI::regexp
-            change_id = stripped_url.split('/').last
+          change_url = url_from_review_output(delivery_review.stdout)
+          if change_url =~ URI::regexp
+            change_id = change_url.split('/').last
             ::Chef::Log.info("Created change: #{change_id} on pipeline: #{pipeline}.")
-            ::Chef::Log.info("    #{stripped_url}")
-            stripped_url
+            ::Chef::Log.info("    #{change_url}")
+            change_url
           else
             ::Chef::Log.error("Failed to create duplicate change.")
+            ::Chef::Log.error("#{change_url} not a valid URL")
             ::Chef::Log.error("'delivery review' output: #{delivery_review.stdout}")
             raise "Failed to create duplicate change."
           end
+        end
+      end
+
+      #
+      # `delivery review` sends color escape codes and sgr0 resets
+      # to stdout. To avoid attempting to parse the different
+      # values we might get for sgr0 based on the value of TERM,
+      # we assume that a valid url starts with http and doesn't
+      # include the escape character.
+      #
+      # Note that this doesn't handle the presence of a
+      # single-character CSI (0x9b) or the 0x80-0x9F control range.
+      # If you are reading this comment because of that ommission I am
+      # sorry.
+      #
+      # A bug to fix this is here: https://github.com/chef/delivery-cli/issues/16
+      #
+      def url_from_review_output(output)
+        raw_url = output.lines[-2]
+        if raw_url =~ /(https?:\/\/[^\e]+)/
+          URI.escape($1.chomp)
+        else
+          ::Chef::Log.error("Could not parse output of delivery review: #{raw_url}")
+          raise "Failed to parse delivery review output"
         end
       end
 
