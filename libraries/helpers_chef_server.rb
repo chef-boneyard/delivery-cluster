@@ -105,6 +105,10 @@ module DeliveryCluster
             'store_keys_databag' => false,
             'plugin' => {
               'reporting' => node['delivery-cluster']['chef-server']['enable-reporting']
+            },
+            'data_collector' => {
+              'root_url' => node['delivery-cluster']['chef-server']['data_collector']['root_url'],
+              'token' => node['delivery-cluster']['chef-server']['data_collector']['token']
             }
           }
         }

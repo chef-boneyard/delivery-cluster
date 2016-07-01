@@ -83,3 +83,7 @@ default['chef-server-12']['delivery']['item']          = "delivery_pem"
 #
 # override to 'current' or 'unstable' depending on your needs
 default['chef-server-12']['package_channel'] = 'stable'
+
+# Data Collector configuration
+default['chef-server-12']['data_collector']['root_url'] = nil
+default['chef-server-12']['data_collector']['token']    = nil
