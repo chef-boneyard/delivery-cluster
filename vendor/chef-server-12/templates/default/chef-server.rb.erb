@@ -37,3 +37,9 @@ rabbitmq['vip'] = '<%= node['chef-server-12']['api_fqdn'] %>'
 rabbitmq['node_ip_address'] = '0.0.0.0'
 <%  end -%>
 <% end -%>
+
+<% %w(root_url token).each do |param| %>
+<%   unless node['chef-server-12']['data_collector'][param].nil? %>
+data_collector['<%= param %>'] = '<%= node['chef-server-12']['data_collector'][param] %>'
+<%   end -%>
+<% end -%>

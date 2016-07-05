@@ -43,6 +43,10 @@ describe DeliveryCluster::Helpers::ChefServer do
       'store_keys_databag' => false,
       'plugin' => {
         'reporting' => true
+      },
+      'data_collector' => {
+        'root_url' => nil,
+        'token' => nil
       }
     }
   end
@@ -64,6 +68,7 @@ describe DeliveryCluster::Helpers::ChefServer do
   before do
     node.default['delivery-cluster'] = cluster_data
     node.default['delivery-cluster']['chef-server']['enable-reporting'] = true
+    node.default['delivery-cluster']['chef-server']['data_collector'] = {}
     allow(Chef::Node).to receive(:load).and_return(Chef::Node.new)
     allow(Chef::ServerAPI).to receive(:new).and_return(rest)
     allow_any_instance_of(Chef::ServerAPI).to receive(:get)

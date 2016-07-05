@@ -181,13 +181,14 @@ default['delivery-cluster']['delivery']['primary'] = nil
 default['delivery-cluster']['delivery']['standby'] = nil
 
 # => Chef Server
-default['delivery-cluster']['chef-server']['hostname']     = nil
-default['delivery-cluster']['chef-server']['fqdn']         = nil
-default['delivery-cluster']['chef-server']['organization'] = 'my_enterprise'
-default['delivery-cluster']['chef-server']['flavor']       = 't2.medium'
-default['delivery-cluster']['chef-server']['existing']     = false
-default['delivery-cluster']['chef-server']['recipes']      = []
-default['delivery-cluster']['chef-server']['attributes']   = {}
+default['delivery-cluster']['chef-server']['hostname']       = nil
+default['delivery-cluster']['chef-server']['fqdn']           = nil
+default['delivery-cluster']['chef-server']['organization']   = 'my_enterprise'
+default['delivery-cluster']['chef-server']['flavor']         = 't2.medium'
+default['delivery-cluster']['chef-server']['existing']       = false
+default['delivery-cluster']['chef-server']['recipes']        = []
+default['delivery-cluster']['chef-server']['attributes']     = {}
+default['delivery-cluster']['chef-server']['data_collector'] = {}
 
 # Password of the Delivery User in the Chef Server
 #
