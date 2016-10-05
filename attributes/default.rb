@@ -163,7 +163,7 @@ default['delivery-cluster']['delivery']['version']          = 'latest'
 default['delivery-cluster']['delivery']['release-channel']  = 'stable'
 
 # Enable Insights on Delivery
-default['delivery-cluster']['delivery']['insights']['enable'] = false
+default['delivery-cluster']['delivery']['insights']['enable'] = true
 
 default['delivery-cluster']['insights']['rabbitmq']['vip'] = nil
 default['delivery-cluster']['insights']['rabbitmq']['vhost'] = '/insights'
