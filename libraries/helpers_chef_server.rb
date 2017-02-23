@@ -99,18 +99,18 @@ module DeliveryCluster
             'accept_license' => node['delivery-cluster']['accept_license'],
             'delivery' => {
               'organization' => node['delivery-cluster']['chef-server']['organization'],
-              'password' => chef_server_delivery_password(node)
+              'password' => chef_server_delivery_password(node),
             },
             'api_fqdn' => chef_server_fqdn(node),
             'store_keys_databag' => false,
             'plugin' => {
-              'reporting' => node['delivery-cluster']['chef-server']['enable-reporting']
+              'reporting' => node['delivery-cluster']['chef-server']['enable-reporting'],
             },
             'data_collector' => {
               'root_url' => node['delivery-cluster']['chef-server']['data_collector']['root_url'],
-              'token' => node['delivery-cluster']['chef-server']['data_collector']['token']
-            }
-          }
+              'token' => node['delivery-cluster']['chef-server']['data_collector']['token'],
+            },
+          },
         }
         @chef_server_attributes = Chef::Mixin::DeepMerge.hash_only_merge(
           @chef_server_attributes,
@@ -142,8 +142,8 @@ module DeliveryCluster
           chef_server_url: chef_server_url(node),
           options: {
             client_name: 'delivery',
-            signing_key_filename: "#{DeliveryCluster::Helpers.cluster_data_dir(node)}/delivery.pem"
-          }
+            signing_key_filename: "#{DeliveryCluster::Helpers.cluster_data_dir(node)}/delivery.pem",
+          },
         }
       end
     end

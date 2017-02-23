@@ -61,13 +61,13 @@ describe DeliveryCluster::Provisioning::Aws do
           bootstrap_proxy: aws_data['bootstrap_proxy'],
           chef_config: aws_data['chef_config'],
           chef_version: aws_data['chef_version'],
-          install_sh_path: aws_data['install_sh_path']
+          install_sh_path: aws_data['install_sh_path'],
         },
         bootstrap_options: {
           instance_type:      aws_data['flavor'],
           key_name:           aws_data['key_name'],
           subnet_id:          aws_data['subnet_id'],
-          security_group_ids: aws_data['security_group_ids']
+          security_group_ids: aws_data['security_group_ids'],
         },
         ssh_username:           aws_data['ssh_username'],
         image_id:               aws_data['image_id'],
@@ -96,9 +96,9 @@ describe DeliveryCluster::Provisioning::Aws do
           {
             aws_tags: {
               'cool_tag' => 'awesomeness',
-              'important' => 'thing'
-            }
-          }
+              'important' => 'thing',
+            },
+          },
         ]
       end
     end

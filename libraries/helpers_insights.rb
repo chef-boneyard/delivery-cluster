@@ -69,8 +69,8 @@ opscode-reporting-ctl reconfigure
           DeliveryCluster::Helpers::Component.component_attributes(node, 'insights'),
           'chef-server-12' => {
             'insights' => {
-              'rabbitmq' => config_with_vip(node)
-            }
+              'rabbitmq' => config_with_vip(node),
+            },
           }
         )
       end

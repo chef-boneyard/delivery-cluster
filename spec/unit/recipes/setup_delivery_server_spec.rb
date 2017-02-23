@@ -32,8 +32,8 @@ describe 'delivery-cluster::setup_delivery_server' do
         'exchange' => 'chefspec-insights',
         'port' => '5672',
         'user' => 'chefspec-insights',
-        'password' => 'chefspec-chefrocks'
-      }
+        'password' => 'chefspec-chefrocks',
+      },
     }
   end
   let(:chef_server_attributes) do
@@ -42,17 +42,17 @@ describe 'delivery-cluster::setup_delivery_server' do
         'accept_license' => cluster_data['accept_license'],
         'delivery' => {
           'organization' => 'chefspec',
-          'password' => 'SECRET'
+          'password' => 'SECRET',
         },
         'api_fqdn' => 'chef-server.chef.io',
         'store_keys_databag' => false,
         'plugin' => { 'reporting' => true },
         'data_collector' => {
           'root_url' => nil,
-          'token' => nil
+          'token' => nil,
         },
-        'insights' => insights_attributes
-      }
+        'insights' => insights_attributes,
+      },
     }
   end
   let(:chef_run) do

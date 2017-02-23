@@ -63,19 +63,19 @@ module DeliveryCluster
             bootstrap_proxy: @bootstrap_proxy,
             chef_config: @chef_config,
             chef_version: @chef_version,
-            install_sh_path: @install_sh_path
+            install_sh_path: @install_sh_path,
           },
           transport_options: {
             username: @ssh_username,
             ssh_options: {
               user: @ssh_username,
               password: @password,
-              keys: @key_file.nil? ? [] : [@key_file]
+              keys: @key_file.nil? ? [] : [@key_file],
             },
             options: {
-              prefix: @prefix
-            }
-          }
+              prefix: @prefix,
+            },
+          },
         }
       end
 
