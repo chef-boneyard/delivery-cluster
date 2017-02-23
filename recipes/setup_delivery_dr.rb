@@ -47,7 +47,7 @@ chef_data_bag_item 'delivery_primary_keys' do
   raw_data lazy {
     {
       private_key: delivery_primary_private_key,
-      public_key: delivery_primary_public_key
+      public_key: delivery_primary_public_key,
     }
   }
   secret_path "#{cluster_data_dir}/encrypted_data_bag_secret"
@@ -64,7 +64,7 @@ chef_data_bag_item 'delivery_standby_keys' do
   raw_data lazy {
     {
       private_key: delivery_standby_private_key,
-      public_key: delivery_standby_public_key
+      public_key: delivery_standby_public_key,
     }
   }
   secret_path "#{cluster_data_dir}/encrypted_data_bag_secret"
@@ -83,7 +83,7 @@ machine delivery_server_dr_hostname do
   files lazy {
     {
       "/etc/chef/trusted_certs/#{chef_server_fqdn}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_fqdn}.crt",
-      '/etc/chef/encrypted_data_bag_secret' => "#{DeliveryCluster::Helpers.cluster_data_dir(node)}/encrypted_data_bag_secret"
+      '/etc/chef/encrypted_data_bag_secret' => "#{DeliveryCluster::Helpers.cluster_data_dir(node)}/encrypted_data_bag_secret",
     }
   }
   action :converge
@@ -101,7 +101,7 @@ machine delivery_server_hostname do
   files lazy {
     {
       "/etc/chef/trusted_certs/#{chef_server_fqdn}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_fqdn}.crt",
-      '/etc/chef/encrypted_data_bag_secret' => "#{DeliveryCluster::Helpers.cluster_data_dir(node)}/encrypted_data_bag_secret"
+      '/etc/chef/encrypted_data_bag_secret' => "#{DeliveryCluster::Helpers.cluster_data_dir(node)}/encrypted_data_bag_secret",
     }
   }
   action :converge

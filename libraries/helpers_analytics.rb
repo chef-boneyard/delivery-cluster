@@ -56,8 +56,8 @@ module DeliveryCluster
           DeliveryCluster::Helpers::Component.component_attributes(node, 'analytics'),
           'chef-server-12' => {
             'analytics' => {
-              'fqdn' => analytics_server_fqdn(node)
-            }
+              'fqdn' => analytics_server_fqdn(node),
+            },
           }
         )
       end

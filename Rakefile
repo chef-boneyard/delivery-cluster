@@ -57,11 +57,11 @@ class DeliveryEnvironment
           @driver_name => @driver,
           'chef-server' => @chef_server,
           'delivery' => @delivery,
-          'analytics' => (@analytics if @analytics && ! @analytics.empty?),
-          'supermarket' => (@supermarket if @supermarket && ! @supermarket.empty?),
-          'builders' => @builders
-        }.delete_if { |_k, v| v.nil? }
-      }
+          'analytics' => (@analytics if @analytics && !@analytics.empty?),
+          'supermarket' => (@supermarket if @supermarket && !@supermarket.empty?),
+          'builders' => @builders,
+        }.delete_if { |_k, v| v.nil? },
+      },
     }
   end
 

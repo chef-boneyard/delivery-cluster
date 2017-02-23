@@ -42,7 +42,7 @@ module SharedDriverData
       'key_file' => '/Users/afiune/.vagrant.d/insecure_private_key',
       'bootstrap_proxy' => 'http://my-proxy.com/',
       'chef_config' => "http_proxy 'http://my-proxy.com/'\nno_proxy 'localhost'",
-      'chef_version' => '12.3.0'
+      'chef_version' => '12.3.0',
     }
   end
 
@@ -57,7 +57,7 @@ module SharedDriverData
       'bootstrap_proxy' => 'http://my-proxy.com/',
       'chef_config' => "http_proxy 'http://my-proxy.com/'\nno_proxy 'localhost'",
       'chef_version' => '12.0.0',
-      'install_sh_path' => '/custom/path/awesome_install.sh'
+      'install_sh_path' => '/custom/path/awesome_install.sh',
     }
   end
 
@@ -72,7 +72,7 @@ module SharedDriverData
       'use_private_ip_for_ssh' => true,
       'bootstrap_proxy' => 'http://my-proxy.com/',
       'chef_config' => "http_proxy 'http://my-proxy.com/'\nno_proxy 'localhost'",
-      'install_sh_path' => '/wrong_place.sh'
+      'install_sh_path' => '/wrong_place.sh',
     }
   end
 end
@@ -94,14 +94,14 @@ module SharedCommonData
         'existing' => false,
         'aws_tags' => {
           'cool_tag' => 'awesomeness',
-          'important' => 'thing'
-        }
+          'important' => 'thing',
+        },
       },
       'delivery' => {
         'disaster_recovery' => {
           'enable' => true,
           'host' => 'delivery-dr-server.chef.io',
-          'ip' => '10.1.1.6'
+          'ip' => '10.1.1.6',
         },
         'version' => 'latest',
         'fqdn' => 'delivery-server.chef.io',
@@ -111,35 +111,35 @@ module SharedCommonData
         'config' => "nginx['enable_non_ssl'] = true",
         'license_file' => '/Users/afiune/delivery.license',
         'insights' => {
-          'enable' => true
-        }
+          'enable' => true,
+        },
       },
       'insights' => {
         'rabbitmq' => {
           'exchange' => 'chefspec-insights',
           'user' => 'chefspec-insights',
-          'password' => 'chefspec-chefrocks'
-        }
+          'password' => 'chefspec-chefrocks',
+        },
       },
       'analytics' => {
         'fqdn' => 'analytics-server.chef.io',
         'host' => 'analytics-server.chef.io',
-        'ip' => '10.1.1.4'
+        'ip' => '10.1.1.4',
       },
       'supermarket' => {
         'fqdn' => 'supermarket-server.chef.io',
         'host' => 'supermarket-server.chef.io',
-        'ip' => '10.1.1.3'
+        'ip' => '10.1.1.3',
       },
       'splunk' => {
         'fqdn' => 'splunk-server.chef.io',
         'host' => 'splunk-server.chef.io',
-        'ip' => '10.1.1.5'
+        'ip' => '10.1.1.5',
       },
       'builders' => {
         'count' => '3',
-        'delivery-cli' => {}
-      }
+        'delivery-cli' => {},
+      },
     }
   end
   let(:rest) do
@@ -154,11 +154,11 @@ module SharedCommonData
       'normal' => {
         'delivery-cluster' => {
           'driver' => 'ssh',
-          'ssh' => {}
+          'ssh' => {},
         },
-        'ipaddress' => '10.1.1.1'
+        'ipaddress' => '10.1.1.1',
       },
-      'recipes' => []
+      'recipes' => [],
     }
   end
   let(:delivery_node) do
@@ -166,11 +166,11 @@ module SharedCommonData
       'normal' => {
         'delivery-cluster' => {
           'driver' => 'vagrant',
-          'vagrant' => {}
+          'vagrant' => {},
         },
-        'ipaddress' => '10.1.1.2'
+        'ipaddress' => '10.1.1.2',
       },
-      'recipes' => []
+      'recipes' => [],
     }
   end
   let(:delivery_dr_node) do
@@ -178,11 +178,11 @@ module SharedCommonData
       'normal' => {
         'delivery-cluster' => {
           'driver' => 'vagrant',
-          'vagrant' => {}
+          'vagrant' => {},
         },
-        'ipaddress' => '10.1.1.6'
+        'ipaddress' => '10.1.1.6',
       },
-      'recipes' => []
+      'recipes' => [],
     }
   end
   let(:supermarket_node) do
@@ -190,14 +190,14 @@ module SharedCommonData
       'normal' => {
         'delivery-cluster' => {
           'driver' => 'aws',
-          'aws' => {}
+          'aws' => {},
         },
         'ec2' => {
-          'local_ipv4' => '10.1.1.3'
+          'local_ipv4' => '10.1.1.3',
         },
-        'ipaddress' => '10.1.1.3'
+        'ipaddress' => '10.1.1.3',
       },
-      'recipes' => []
+      'recipes' => [],
     }
   end
   let(:analytics_node) do
@@ -205,11 +205,11 @@ module SharedCommonData
       'normal' => {
         'delivery-cluster' => {
           'driver' => 'ssh',
-          'ssh' => {}
+          'ssh' => {},
         },
-        'ipaddress' => '10.1.1.4'
+        'ipaddress' => '10.1.1.4',
       },
-      'recipes' => []
+      'recipes' => [],
     }
   end
   let(:splunk_node) do
@@ -217,11 +217,11 @@ module SharedCommonData
       'normal' => {
         'delivery-cluster' => {
           'driver' => 'vagrant',
-          'vagrant' => {}
+          'vagrant' => {},
         },
-        'ipaddress' => '10.1.1.5'
+        'ipaddress' => '10.1.1.5',
       },
-      'recipes' => []
+      'recipes' => [],
     }
   end
 end

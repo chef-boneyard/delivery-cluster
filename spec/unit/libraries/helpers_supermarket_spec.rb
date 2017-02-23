@@ -27,8 +27,8 @@ describe DeliveryCluster::Helpers::Supermarket do
   let(:mock_supermarket_server_attributes) do
     {
       'supermarket' => {
-        'fqdn' => 'supermarket-server.chef.io'
-      }
+        'fqdn' => 'supermarket-server.chef.io',
+      },
     }
   end
   let(:mock_supermarket_json) do
@@ -119,7 +119,7 @@ describe DeliveryCluster::Helpers::Supermarket do
             'chef_server_url' => 'https://chef-server.chef.io',
             'chef_oauth2_app_id' => '768fd17555298930830180eedc8ff6ca45736a8c392bbcbe866c804efb25262d',
             'chef_oauth2_secret' => '154b8a364e60deb3d83771df9159639362cd59a60661a63f9b126e794bd95daa',
-            'chef_oauth2_verify_ssl' => false
+            'chef_oauth2_verify_ssl' => false,
           }
         )
       end

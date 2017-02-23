@@ -29,21 +29,21 @@ describe DeliveryCluster::Helpers::Builders do
     {
       'runit' => { 'prefer_local_yum' => true },
       'custom_behavior' => 'super-cool',
-      'chef_ingredient' => 'custom-custom-custom'
+      'chef_ingredient' => 'custom-custom-custom',
     }
   end
   let(:delivery_actifact) do
     {
       'version' => '0.3.0',
       'artifact' => 'http://my.delivery-cli.pkg',
-      'checksum' => '123456789ABCDEF'
+      'checksum' => '123456789ABCDEF',
     }
   end
   let(:mock_global_trusted_certs) do
     {
       'Proxy Cert' => 'my_proxy.cer',
       'Corp Cert' => 'corporate.crt',
-      'Open Cert' => 'other_open.crt'
+      'Open Cert' => 'other_open.crt',
     }
   end
   let(:result_internal_plus_global_certs) do
@@ -53,7 +53,7 @@ describe DeliveryCluster::Helpers::Builders do
       'Supermarket Server' => '/etc/chef/trusted_certs/supermarket-server.chef.io.crt',
       'Proxy Cert' => '/etc/chef/trusted_certs/my_proxy.cer',
       'Corp Cert' => '/etc/chef/trusted_certs/corporate.crt',
-      'Open Cert' => '/etc/chef/trusted_certs/other_open.crt'
+      'Open Cert' => '/etc/chef/trusted_certs/other_open.crt',
     }
   end
 
@@ -171,8 +171,8 @@ describe DeliveryCluster::Helpers::Builders do
         'delivery_build' => {
           'trusted_certs' => {
             'Chef Server Cert' => '/etc/chef/trusted_certs/chef-server.chef.io.crt',
-            'Delivery Server Cert' => '/etc/chef/trusted_certs/delivery-server.chef.io.crt'
-          }
+            'Delivery Server Cert' => '/etc/chef/trusted_certs/delivery-server.chef.io.crt',
+          },
         }
       )
     end
@@ -192,8 +192,8 @@ describe DeliveryCluster::Helpers::Builders do
             'trusted_certs' => {
               'Chef Server Cert' => '/etc/chef/trusted_certs/chef-server.chef.io.crt',
               'Delivery Server Cert' => '/etc/chef/trusted_certs/delivery-server.chef.io.crt',
-              'Supermarket Server' => '/etc/chef/trusted_certs/supermarket-server.chef.io.crt'
-            }
+              'Supermarket Server' => '/etc/chef/trusted_certs/supermarket-server.chef.io.crt',
+            },
           }
         )
       end
@@ -206,7 +206,7 @@ describe DeliveryCluster::Helpers::Builders do
         it 'returns all of the certificates' do
           expect(described_class.builders_attributes(node)).to eq(
             'delivery_build' => {
-              'trusted_certs' => result_internal_plus_global_certs
+              'trusted_certs' => result_internal_plus_global_certs,
             }
           )
         end
@@ -231,7 +231,7 @@ describe DeliveryCluster::Helpers::Builders do
         [
           '/chefspec/trusted_certs/cool.crt',
           '/chefspec/trusted_certs/super.crt',
-          '/chefspec/trusted_certs/cocina.crt'
+          '/chefspec/trusted_certs/cocina.crt',
         ]
       end
       before { allow(Dir).to receive(:glob).and_return(mock_cert_file) }
@@ -266,7 +266,7 @@ describe DeliveryCluster::Helpers::Builders do
       it 'returns the delivery-cli attributes' do
         expect(described_class.builders_attributes(node)).to eq(
           'delivery_build' => {
-            'delivery-cli' => delivery_actifact
+            'delivery-cli' => delivery_actifact,
           }
         )
       end
@@ -280,7 +280,7 @@ describe DeliveryCluster::Helpers::Builders do
           expect(described_class.builders_attributes(node)).to eq(
             'delivery_build' => {
               'delivery-cli' => delivery_actifact,
-              'chefdk_version' => chefdk_version
+              'chefdk_version' => chefdk_version,
             }
           )
         end
@@ -290,7 +290,7 @@ describe DeliveryCluster::Helpers::Builders do
             allow(described_class).to receive(:trusted_certs_attributes)
               .and_return(
                 'delivery_build' => {
-                  'trusted_certs' => result_internal_plus_global_certs
+                  'trusted_certs' => result_internal_plus_global_certs,
                 })
           end
 
@@ -299,7 +299,7 @@ describe DeliveryCluster::Helpers::Builders do
               'delivery_build' => {
                 'delivery-cli' => delivery_actifact,
                 'chefdk_version' => chefdk_version,
-                'trusted_certs' => result_internal_plus_global_certs
+                'trusted_certs' => result_internal_plus_global_certs,
               }
             )
           end
@@ -315,7 +315,7 @@ describe DeliveryCluster::Helpers::Builders do
                   'delivery_build' => {
                     'delivery-cli' => delivery_actifact,
                     'chefdk_version' => chefdk_version,
-                    'trusted_certs' => result_internal_plus_global_certs
+                    'trusted_certs' => result_internal_plus_global_certs,
                   }
                 )
               )

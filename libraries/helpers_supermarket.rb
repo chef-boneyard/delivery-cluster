@@ -56,8 +56,8 @@ module DeliveryCluster
           DeliveryCluster::Helpers::Component.component_attributes(node, 'supermarket'),
           'chef-server-12' => {
             'supermarket' => {
-              'fqdn' => supermarket_server_fqdn(node)
-            }
+              'fqdn' => supermarket_server_fqdn(node),
+            },
           }
         )
       end
@@ -75,8 +75,8 @@ module DeliveryCluster
             'chef_server_url' => "https://#{DeliveryCluster::Helpers::ChefServer.chef_server_fqdn(node)}",
             'chef_oauth2_app_id' => get_supermarket_attribute(node, 'uid'),
             'chef_oauth2_secret' => get_supermarket_attribute(node, 'secret'),
-            'chef_oauth2_verify_ssl' => false
-          }
+            'chef_oauth2_verify_ssl' => false,
+          },
         }
       end
 

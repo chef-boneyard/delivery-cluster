@@ -47,7 +47,7 @@ machine analytics_server_hostname do
   end
   files lazy {
     {
-      "/etc/chef/trusted_certs/#{chef_server_fqdn}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_fqdn}.crt"
+      "/etc/chef/trusted_certs/#{chef_server_fqdn}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_fqdn}.crt",
     }
   }
   action :converge
@@ -95,9 +95,9 @@ machine analytics_server_hostname do
         'accept_license' => node['delivery-cluster']['accept_license'],
         'analytics' => {
           'fqdn' => analytics_server_fqdn,
-          'features' => splunk_enabled? ? 'true' : 'false'
-        }
-      }
+          'features' => splunk_enabled? ? 'true' : 'false',
+        },
+      },
     }
   }
   converge true

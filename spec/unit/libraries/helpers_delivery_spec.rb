@@ -33,7 +33,7 @@ describe DeliveryCluster::Helpers::Delivery do
     {
       'passed-something' => %w(super cool),
       'a-custom-attribute' => 'carambola',
-      'port-for-something' => 1234
+      'port-for-something' => 1234,
     }
   end
   before do
