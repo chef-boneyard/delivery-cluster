@@ -175,6 +175,9 @@ default['delivery-cluster']['insights']['rabbitmq']['password'] = 'chefrocks'
 # Allow for external Elasticsearch nodes - nil assumes use the bundled install
 default['delivery-cluster']['delivery']['elasticsearch']['urls'] = nil
 
+# Enable Compliance Profiles on Automate
+default['delivery-cluster']['delivery']['compliance_profiles']['enable'] = true
+
 # Disaster Recovery Attrs on Delivery
 default['delivery-cluster']['delivery']['disaster_recovery']['enable'] = false
 default['delivery-cluster']['delivery']['primary'] = nil

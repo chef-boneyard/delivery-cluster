@@ -7,6 +7,9 @@
   "delivery-truck": {
     "publish": {
       "github": "chef-cookbooks/delivery-cluster"
+    },
+    "lint": {
+      "enable_cookstyle": true
     }
   },
   "skip_phases": [
