@@ -27,8 +27,8 @@ describe DeliveryCluster::Helpers::Analytics do
   let(:mock_analytics_server_attributes) do
     {
       'analytics' => {
-        'fqdn' => 'analytics-server.chef.io'
-      }
+        'fqdn' => 'analytics-server.chef.io',
+      },
     }
   end
 

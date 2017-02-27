@@ -29,7 +29,7 @@ describe DeliveryCluster::Helpers::ChefServer do
     {
       'passed-something' => %w(super cool),
       'a-custom-attribute' => 'carambola',
-      'port-for-something' => 1234
+      'port-for-something' => 1234,
     }
   end
   let(:mock_chef_server_attributes) do
@@ -37,31 +37,31 @@ describe DeliveryCluster::Helpers::ChefServer do
       'accept_license' => cluster_data['accept_license'],
       'delivery' => {
         'organization' => 'chefspec',
-        'password' => chef_server_delivery_password
+        'password' => chef_server_delivery_password,
       },
       'api_fqdn' => 'chef-server.chef.io',
       'store_keys_databag' => false,
       'plugin' => {
-        'reporting' => true
+        'reporting' => true,
       },
       'data_collector' => {
         'root_url' => nil,
-        'token' => nil
-      }
+        'token' => nil,
+      },
     }
   end
   let(:mock_analytics_server_attributes) do
     {
       'analytics' => {
-        'fqdn' => 'analytics-server.chef.io'
-      }
+        'fqdn' => 'analytics-server.chef.io',
+      },
     }
   end
   let(:mock_supermarket_server_attributes) do
     {
       'supermarket' => {
-        'fqdn' => 'supermarket-server.chef.io'
-      }
+        'fqdn' => 'supermarket-server.chef.io',
+      },
     }
   end
 
@@ -102,7 +102,7 @@ describe DeliveryCluster::Helpers::ChefServer do
       chef_server_url: 'https://chef-server.chef.io/organizations/chefspec',
       options: {
         client_name: 'delivery',
-        signing_key_filename: File.join(Chef::Config.chef_repo_path, '.chef', 'delivery-cluster-data-chefspec', 'delivery.pem')
+        signing_key_filename: File.join(Chef::Config.chef_repo_path, '.chef', 'delivery-cluster-data-chefspec', 'delivery.pem'),
       }
     )
   end

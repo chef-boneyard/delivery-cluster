@@ -63,20 +63,20 @@ module DeliveryCluster
             bootstrap_proxy: @bootstrap_proxy,
             chef_config: @chef_config,
             chef_version: @chef_version,
-            install_sh_path: @install_sh_path
+            install_sh_path: @install_sh_path,
           },
           vagrant_options: {
             'vm.box' => @vm_box,
             'vm.box_url' => @image_url,
-            'vm.hostname' => @vm_hostname
+            'vm.hostname' => @vm_hostname,
           },
           vagrant_config: @vagrant_config, # memory and cpu, required
           transport_options: {
             options: {
-              prefix: @prefix
-            }
+              prefix: @prefix,
+            },
           },
-          use_private_ip_for_ssh: @use_private_ip_for_ssh
+          use_private_ip_for_ssh: @use_private_ip_for_ssh,
         }
       end
 

@@ -44,7 +44,7 @@ module DeliveryCluster
       # @return [Hash] Builders files to upload through a machine resource
       def builders_files(node)
         builders_files = {
-          '/etc/chef/encrypted_data_bag_secret' => "#{DeliveryCluster::Helpers.cluster_data_dir(node)}/encrypted_data_bag_secret"
+          '/etc/chef/encrypted_data_bag_secret' => "#{DeliveryCluster::Helpers.cluster_data_dir(node)}/encrypted_data_bag_secret",
         }
 
         Dir.glob("#{Chef::Config[:trusted_certs_dir]}/*").each do |cert_path|
@@ -68,7 +68,7 @@ module DeliveryCluster
           builders_attributes = Chef::Mixin::DeepMerge.hash_only_merge(
             builders_attributes,
             'delivery_build' => {
-              'delivery-cli' => node['delivery-cluster']['builders']['delivery-cli']
+              'delivery-cli' => node['delivery-cluster']['builders']['delivery-cli'],
             }
           )
         end
@@ -78,7 +78,7 @@ module DeliveryCluster
           builders_attributes = Chef::Mixin::DeepMerge.hash_only_merge(
             builders_attributes,
             'delivery_build' => {
-              'chefdk_version' => node['delivery-cluster']['builders']['chefdk_version']
+              'chefdk_version' => node['delivery-cluster']['builders']['chefdk_version'],
             }
           )
         end

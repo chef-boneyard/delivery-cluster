@@ -50,7 +50,7 @@ chef_data_bag_item 'delivery_builder_keys' do
   raw_data lazy {
     {
       builder_key:  builder_private_key,
-      delivery_pem: File.read("#{cluster_data_dir}/delivery.pem")
+      delivery_pem: File.read("#{cluster_data_dir}/delivery.pem"),
     }
   }
   secret_path "#{cluster_data_dir}/encrypted_data_bag_secret"
@@ -71,7 +71,7 @@ machine delivery_server_hostname do
   end
   files lazy {
     {
-      "/etc/chef/trusted_certs/#{chef_server_fqdn}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_fqdn}.crt"
+      "/etc/chef/trusted_certs/#{chef_server_fqdn}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_fqdn}.crt",
     }
   }
   action :converge

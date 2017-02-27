@@ -60,18 +60,18 @@ describe DeliveryCluster::Provisioning::Vagrant do
           bootstrap_proxy: vagrant_data['bootstrap_proxy'],
           chef_config: vagrant_data['chef_config'],
           chef_version: vagrant_data['chef_version'],
-          install_sh_path: vagrant_data['install_sh_path']
+          install_sh_path: vagrant_data['install_sh_path'],
         },
         vagrant_options: {
           'vm.box' => vagrant_data['vm_box'],
           'vm.box_url' => vagrant_data['image_url'],
-          'vm.hostname' => vagrant_data['vm_hostname']
+          'vm.hostname' => vagrant_data['vm_hostname'],
         },
         vagrant_config: vagrant_data['vagrant_config'],
         transport_options: {
           options: {
-            prefix: 'sudo '
-          }
+            prefix: 'sudo ',
+          },
         },
         use_private_ip_for_ssh: vagrant_data['use_private_ip_for_ssh']
       )

@@ -31,9 +31,9 @@ describe DeliveryCluster::Helpers::Insights do
           'exchange' => 'chefspec-insights',
           'user' => 'chefspec-insights',
           'password' => 'chefspec-chefrocks',
-          'vip' => 'delivery-server.mock.io'
-        }
-      }
+          'vip' => 'delivery-server.mock.io',
+        },
+      },
     }
   end
 

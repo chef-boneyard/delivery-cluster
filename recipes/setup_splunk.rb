@@ -70,7 +70,7 @@ file "#{current_dir}/data_bags/vault/splunk_certificates.json" do
       'id' => 'splunk_certificates',
       'data' => {
         'self-signed.example.com.crt' => File.read("#{cluster_data_dir}/splunk.crt"),
-        'self-signed.example.com.key' => File.read("#{cluster_data_dir}/splunk.key")
+        'self-signed.example.com.key' => File.read("#{cluster_data_dir}/splunk.key"),
       }
     )
   }
@@ -86,7 +86,7 @@ machine splunk_server_hostname do
   end
   files lazy {
     {
-      "/etc/chef/trusted_certs/#{chef_server_fqdn}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_fqdn}.crt"
+      "/etc/chef/trusted_certs/#{chef_server_fqdn}.crt" => "#{Chef::Config[:trusted_certs_dir]}/#{chef_server_fqdn}.crt",
     }
   }
   action :converge
@@ -136,8 +136,8 @@ machine splunk_server_hostname do
   attributes lazy {
     {
       'splunk' => {
-        'accept_license' => true
-      }
+        'accept_license' => true,
+      },
     }
   }
   converge true

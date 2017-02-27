@@ -164,7 +164,7 @@ module DeliveryCluster
                                 "https://#{DeliveryCluster::Helpers::Supermarket.supermarket_server_fqdn(node)}"
                               else
                                 ''
-                              end
+                              end,
       }
     end
 

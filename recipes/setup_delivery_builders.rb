@@ -39,7 +39,7 @@ machine_batch "#{node['delivery-cluster']['builders']['count']}-build-nodes" do
       add_machine_options(
         convergence_options: {
           chef_config_text: "encrypted_data_bag_secret File.join(File.dirname(__FILE__), 'encrypted_data_bag_secret')",
-          ssl_verify_mode: :verify_none
+          ssl_verify_mode: :verify_none,
         }
       )
       provisioning.specific_machine_options('builders', i).each do |option|

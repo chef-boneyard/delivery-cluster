@@ -59,16 +59,16 @@ module DeliveryCluster
             bootstrap_proxy: @bootstrap_proxy,
             chef_config: @chef_config,
             chef_version: @chef_version,
-            install_sh_path: @install_sh_path
+            install_sh_path: @install_sh_path,
           },
           bootstrap_options: {
             instance_type:      @flavor,
             key_name:           @key_name,
-            security_group_ids: @security_group_ids
+            security_group_ids: @security_group_ids,
           },
           ssh_username:           @ssh_username,
           image_id:               @image_id,
-          use_private_ip_for_ssh: @use_private_ip_for_ssh
+          use_private_ip_for_ssh: @use_private_ip_for_ssh,
         }
 
         # Add any optional machine options

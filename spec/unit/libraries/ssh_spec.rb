@@ -60,18 +60,18 @@ describe DeliveryCluster::Provisioning::Ssh do
           bootstrap_proxy: ssh_data['bootstrap_proxy'],
           chef_config: ssh_data['chef_config'],
           chef_version: ssh_data['chef_version'],
-          install_sh_path: ssh_data['install_sh_path']
+          install_sh_path: ssh_data['install_sh_path'],
         },
         transport_options: {
           username: ssh_data['ssh_username'],
           ssh_options: {
             user: ssh_data['ssh_username'],
             password: nil,
-            keys: [ssh_data['key_file']]
+            keys: [ssh_data['key_file']],
           },
           options: {
-            prefix: ssh_data['prefix']
-          }
+            prefix: ssh_data['prefix'],
+          },
         }
       )
     end
@@ -91,8 +91,8 @@ describe DeliveryCluster::Provisioning::Ssh do
         expect(ssh_object.specific_machine_options('chef-server')).to eq(
           [{
             transport_options: {
-              host: 'chef-server.chef.io'
-            }
+              host: 'chef-server.chef.io',
+            },
           }]
         )
       end
@@ -111,8 +111,8 @@ describe DeliveryCluster::Provisioning::Ssh do
           expect(ssh_object.specific_machine_options('builders', 1)).to eq(
             [{
               transport_options: {
-                ip_address: '33.33.33.20'
-              }
+                ip_address: '33.33.33.20',
+              },
             }]
           )
         end
