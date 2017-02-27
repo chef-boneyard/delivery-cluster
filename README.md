@@ -1,4 +1,13 @@
+# DEPRECATED
+
+We have deprecated this repository; to install Chef Automate please use the following instructions:
+
+https://docs.chef.io/install_chef_automate.html
+
+No further development on delivery-cluster should happen at this point.
+
 # `delivery-cluster` cookbook
+
 This cookbook installs Chef Delivery, a solution for continuously delivering
 applications and infrastructure safely at speed.
 
