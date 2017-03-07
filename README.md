@@ -81,6 +81,12 @@ To switch your environment run:
   # export CHEF_ENV=my_environment_name
 ```
 
+Hackers note: The only rake task that depends on prequisites is setup:cluster.
+Any individual server task that runs will not automatically vendor cookbooks.
+ie. run setup:prerequisites after making any delivery-cluster changes and before 
+running setup:delivery_build_nodes, setup:chef_server, etc...
+
+
 Easy Setup
 ------------
 
