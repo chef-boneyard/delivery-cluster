@@ -1,10 +1,10 @@
 #
 # Cookbook Name:: delivery-cluster
-# Library:: ssh
+# Library:: openstack 
 #
-# Author:: Salim Afiune (<afiune@chef.io>)
+# Author:: Chris McClimans (<c@vulk.coop>)
 #
-# Copyright:: Copyright (c) 2015 Chef Software, Inc.
+# Copyright:: Copyright (c) 2016 Vulk Coop
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,13 +25,12 @@ require_relative '_base'
 module DeliveryCluster
   module Provisioning
     #
-    # Ssh class for SsH Provisioning Driver
+    # AWS class for AWS Provisioning Driver
     #
     # Specify all the methods a Provisioning Driver should implement
     # @author Salim Afiune <afiune@chef.io>
-    class Ssh < DeliveryCluster::Provisioning::Base
+    class Openstack < DeliveryCluster::Provisioning::Base
       attr_accessor :node
-      attr_accessor :prefix
       attr_accessor :ssh_username
       alias username ssh_username
 
@@ -39,65 +38,61 @@ module DeliveryCluster
       #
       # @param node [Chef::Node]
       def initialize(node)
-        require 'chef/provisioning/ssh_driver'
+        require 'chef/provisioning/fog_driver/driver'
+        require 'chef/provisioning/fog_driver/providers/openstack'
 
         DeliveryCluster::Helpers.check_attribute?(node['delivery-cluster'][driver], "node['delivery-cluster']['#{driver}']")
-        @node         = node
-        @prefix       = 'sudo '
-        @driver_hash  = @node['delivery-cluster'][driver]
+        @node            = node
+        @driver_hash     = @node['delivery-cluster'][driver]
 
         @driver_hash.each do |attr, value|
           singleton_class.class_eval { attr_accessor attr }
           instance_variable_set("@#{attr}", value)
         end
-
-        raise 'You should not specify both key_file and password.' if @password && @key_file
       end
 
       # Return the machine options to use.
       #
       # @return [Hash] the machine_options for the specific driver
       def machine_options
-        {
+        opts = {
           convergence_options: {
-            bootstrap_proxy: @bootstrap_proxy,
-            chef_config: @chef_config,
-            chef_version: @chef_version,
-            install_sh_path: @install_sh_path,
+            bootstrap_proxy:      @bootstrap_proxy,
+            chef_config:          @chef_config,
+            chef_version:         @chef_version,
+            install_sh_path:      @install_sh_path
           },
-          transport_options: {
-            username: @ssh_username,
-            ssh_options: {
-              user: @ssh_username,
-              password: @password,
-              keys: @key_file.nil? ? [] : [@key_file],
-            },
-            options: {
-              prefix: @prefix,
-            },
+          bootstrap_options: {
+            flavor_ref:           @flavor_ref,
+            image_ref:            @image_ref,
+            key_name:             @key_name,
+            nics:                 @nics,
+            security_groups:      @security_groups
           },
+          ssh_username:           @ssh_username,
+          use_private_ip_for_ssh: @use_private_ip_for_ssh
         }
+
+        # Add any optional machine options
+        require 'chef/mixin/deep_merge'
+        opts = Chef::Mixin::DeepMerge.hash_only_merge(opts, bootstrap_options: { subnet_id: @subnet_id }) if @subnet_id
+        #require 'pry-byebug' ; binding.pry
+
+        opts
       end
 
       # Create a array of machine_options specifics to a component
       #
       # @param component [String] component name
-      # @param id [Integer] component id
+      # @param count [Integer] component number
       # @return [Array] specific machine_options for the specific component
-      def specific_machine_options(component, id = nil)
+      def specific_machine_options(component, _count = nil)
         return [] unless @node['delivery-cluster'][component]
         options = []
-        if id && @node['delivery-cluster'][component][id.to_s]
-          if @node['delivery-cluster'][component][id.to_s]['host']
-            options << { transport_options: { host: @node['delivery-cluster'][component][id.to_s]['host'] } }
-          elsif @node['delivery-cluster'][component][id.to_s]['ip']
-            options << { transport_options: { ip_address: @node['delivery-cluster'][component][id.to_s]['ip'] } }
-          end
-        elsif @node['delivery-cluster'][component]['host']
-          options << { transport_options: { host: @node['delivery-cluster'][component]['host'] } }
-        elsif @node['delivery-cluster'][component]['ip']
-          options << { transport_options: { ip_address: @node['delivery-cluster'][component]['ip'] } }
-        end
+        options << { bootstrap_options: { instance_type: @node['delivery-cluster'][component]['flavor_ref'] } } if @node['delivery-cluster'][component]['flavor_ref']
+        options << { bootstrap_options: { security_group_ids: @node['delivery-cluster'][component]['security_group_ids'] } } if @node['delivery-cluster'][component]['security_group_ids']
+        options << { image_id: @node['delivery-cluster'][component]['image_id'] } if @node['delivery-cluster'][component]['image_id']
+        options << { aws_tags: @node['delivery-cluster'][component]['aws_tags'] } if @node['delivery-cluster'][component]['aws_tags']
         # Specify more specific machine_options to add
         options
       end
@@ -106,14 +101,20 @@ module DeliveryCluster
       #
       # @return [String] the provisioning driver name
       def driver
-        'ssh'
+        'fog:OpenStack'
       end
 
       # Return the driver options to use.
       #
       # @return [Hash] the driver_options for the specific driver
       def driver_options
-        {}
+        options = {}
+        creds = Fog.credentials.find_all{ |k,v|
+          k.to_s.start_with?('openstack') }
+        creds.each { |k,v|
+          options[k] = v
+        }
+        options
       end
 
       # Return the ipaddress from the machine.
@@ -121,7 +122,7 @@ module DeliveryCluster
       # @param node [Chef::Node]
       # @return [String] an ipaddress
       def ipaddress(node)
-        node['ipaddress']
+        @use_private_ip_for_ssh ? node['cloud']['local_ipv4'] : node['cloud']['public_ipv4']
       end
     end
   end

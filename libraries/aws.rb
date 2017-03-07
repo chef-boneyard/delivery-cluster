@@ -101,6 +101,13 @@ module DeliveryCluster
         'aws'
       end
 
+      # Return the driver options to use.
+      #
+      # @return [Hash] the driver_options for the specific driver
+      def machine_options
+        {}
+      end
+
       # Return the ipaddress from the machine.
       #
       # @param node [Chef::Node]

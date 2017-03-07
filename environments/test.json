@@ -1,0 +1,50 @@
+{
+  "name": "test",
+  "description": "Delivery Cluster Environment",
+  "json_class": "Chef::Environment",
+  "chef_type": "environment",
+  "override_attributes": {
+    "delivery-cluster": {
+      "accept_license": true,
+      "id": "test",
+      "driver": "openstack",
+        "fog:OpenStack": {
+            "endpoint_type": "internalURL",
+            "key_name": "provisioning",
+            "ssh_username": "ubuntu",
+            "image_ref": "640f24c6-188b-46b5-9c8a-49ca92920e6e",
+            "flavor_ref": "4",
+            "nics": [
+                { "net_id": "35dc0155-23aa-4096-9a9f-e79be9dd7e4f" }
+            ],
+            "security_groups": [
+                "open_to_world"
+            ],
+            "use_private_ip_for_ssh": true
+        },
+      "chef-server": {
+        "organization": "test",
+        "flavor_ref": "4"
+      },
+      "delivery": {
+        "version": "latest",
+        "enterprise": "test",
+        "license_file": "/home/devops/delivery.license",
+        "flavor_ref": "4",
+        "disaster_recovery": {
+          "enable": false
+        }
+      },
+      "analytics": {
+        "flavor_ref": "4"
+      },
+      "supermarket": {
+        "flavor_ref": "4"
+      },
+      "builders": {
+        "count": "1",
+        "flavor_ref": "4"
+      }
+    }
+  }
+}
