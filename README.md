@@ -129,6 +129,7 @@ Now it is time to get access. You can use the `admin` credentials shown by:
 ```
 rake info:delivery_creds
 ```
+Note: `admin` login will work only if navigating to https://<fqdn of delivery server> and not if using ip address only.
 
 #### Provision a Supermarket Server
 
