@@ -25,7 +25,7 @@ The following steps describes the process to upgrade delivery using `delivery-cl
 
 6. Validate the version of delivery by accessing this URL:
   ```
-  httpd://my-delivery.com/status/version
+  https://my-delivery.com/status/version
   ```
 
 **If the version of Delivery is pinned in the environment file, this upgrade will have no effect.**
